@@ -14,8 +14,10 @@ task1/data/synthetic_traces/
 # OS
 .DS_Store
 Thumbs.db
-# Models (will be large)
+# Models and outputs (will be large)
 *.pt
 *.pth
 *.bin
 trained_models/
+task1/outputs/
+task1/data/test_split.csv

@@ -6,11 +6,13 @@ Research project for distilling knowledge from LLM agents into smaller, efficien
 
 ```
 agent-distillation/
-├── task1/                      # Task 1: Dataset Creation
+├── task1/                      # Task 1: Dataset Creation & Model Training
 │   ├── scripts/
-│   │   └── create_dataset.py   # Script to create task1_dataset.csv
+│   │   ├── create_dataset.py   # Script to create task1_dataset.csv
+│   │   └── train_model.py      # Script to fine-tune models with LoRA
 │   ├── data/
 │   │   └── task1_dataset.csv   # Processed supervised dataset
+│   ├── outputs/                # Training outputs (gitignored)
 │   └── requirements.txt
 └── README.md
 ```
@@ -59,6 +61,40 @@ python create_dataset.py
 - Python 3.8+
 - No external dependencies (uses only standard library)
 
+## Model Training
+
+### Description
+
+Fine-tunes a language model using LoRA (Low-Rank Adaptation) on the supervised dataset. Supports multi-GPU training with automatic GPU selection based on available memory.
+
+### Usage
+
+```bash
+cd task1
+pip install -r requirements.txt
+python scripts/train_model.py
+```
+
+### Configuration
+
+Edit `train_model.py` to change:
+- **Model**: Default is `google/gemma-3-270m-it` (other options commented in script)
+- **GPU requirements**: `min_free_gb=40` (minimum free VRAM per GPU)
+- **Training hyperparameters**: batch size, learning rate, epochs, etc.
+
+### Outputs
+
+All outputs are saved to `task1/outputs/`:
+- `training.log` — Training logs
+- `{model}-lora-checkpoints/` — Intermediate checkpoints
+- `{model}-lora-final/` — Final trained model
+
+### Requirements
+
+- Python 3.8+
+- CUDA-capable GPU
+- See `requirements.txt` for Python dependencies
+
 ## Getting Started
 
 1. Clone the repository:
@@ -72,6 +108,21 @@ python create_dataset.py
    # Place raw traces in task1/data/synthetic_traces/
    cd task1/scripts
    python create_dataset.py
+   ```
+
+3. To train a model:
+   ```bash
+   # Install dependencies
+   cd task1
+   pip install -r requirements.txt
+   
+   # Run training
+   python scripts/train_model.py
+   ```
+
+   To train using accelerate, run:
+   ```bash
+   accelerate launch --multi_gpu --num_processes=4 scripts/train_model.py
    ```
 
 ## License
