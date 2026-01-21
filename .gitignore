@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+*.egg
+venv/
+.env
+# Data (raw traces - too large, regenerate with scripts)
+task1/data/synthetic_traces/
+# IDE
+.vscode/
+.idea/
+# OS
+.DS_Store
+Thumbs.db
+# Models (will be large)
+*.pt
+*.pth
+*.bin
+trained_models/
