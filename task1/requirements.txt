@@ -1,9 +1,9 @@
 # Task 1: Dataset Creation and Model Training
 
-# Dataset creation (create_dataset.py)
+# Dataset creation (01_create_train_dataset.py)
 # Uses only Python standard library - no external dependencies required
 
-# Model training (train_model.py)
+# Model training (02_train_model_lora.py, 03_train_model_full_finetune.py)
 torch>=2.0.0
 transformers>=4.40.0
 datasets>=2.18.0

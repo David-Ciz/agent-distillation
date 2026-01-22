@@ -21,3 +21,5 @@ Thumbs.db
 trained_models/
 task1/outputs/
 task1/data/test_split.csv
+
+evaluate_model.py

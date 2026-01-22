@@ -8,8 +8,10 @@ Research project for distilling knowledge from LLM agents into smaller, efficien
 agent-distillation/
 ├── task1/                      # Task 1: Dataset Creation & Model Training
 │   ├── scripts/
-│   │   ├── create_dataset.py   # Script to create task1_dataset.csv
-│   │   └── train_model.py      # Script to fine-tune models with LoRA
+│   │   ├── 01_create_train_dataset.py   # Create task1_dataset.csv
+│   │   ├── 02_train_model_lora.py       # LoRA fine-tuning
+│   │   ├── 03_train_model_full_finetune.py # Full fine-tuning
+│   │   └── evaluate_model.py            # Model evaluation
 │   ├── data/
 │   │   └── task1_dataset.csv   # Processed supervised dataset
 │   ├── outputs/                # Training outputs (gitignored)
@@ -53,7 +55,7 @@ Raw trace data in `data/synthetic_traces/` (not included in repo due to size). E
 
 ```bash
 cd task1/scripts
-python create_dataset.py
+python 01_create_train_dataset.py
 ```
 
 ### Requirements
@@ -63,37 +65,96 @@ python create_dataset.py
 
 ## Model Training
 
-### Description
-
-Fine-tunes a language model using LoRA (Low-Rank Adaptation) on the supervised dataset. Supports multi-GPU training with automatic GPU selection based on available memory.
-
-### Usage
+### Setup
 
 ```bash
 cd task1
 pip install -r requirements.txt
-python scripts/train_model.py
 ```
 
-### Configuration
+---
 
-Edit `train_model.py` to change:
-- **Model**: Default is `google/gemma-3-270m-it` (other options commented in script)
-- **GPU requirements**: `min_free_gb=40` (minimum free VRAM per GPU)
-- **Training hyperparameters**: batch size, learning rate, epochs, etc.
+### LoRA Fine-tuning (`02_train_model_lora.py`)
+
+Memory-efficient fine-tuning using Low-Rank Adaptation. Trains only adapter weights.
+
+#### Without Accelerate (auto GPU selection)
+```bash
+python scripts/02_train_model_lora.py
+```
+
+#### With Accelerate (multi-GPU)
+```bash
+accelerate launch --multi_gpu --num_processes=4 scripts/02_train_model_lora.py
+```
+
+**Default model**: `google/gemma-3-270m-it` (edit script to change)
+
+---
+
+### Full Fine-tuning (`03_train_model_full_finetune.py`)
+
+Trains all model parameters. Better quality but requires more VRAM.
+
+#### Without Accelerate (auto GPU selection)
+```bash
+python scripts/03_train_model_full_finetune.py
+```
+
+#### With Accelerate (multi-GPU)
+```bash
+accelerate launch --multi_gpu --num_processes=4 scripts/03_train_model_full_finetune.py
+```
+
+#### Arguments
+
+| Argument | Default | Description |
+|----------|---------|-------------|
+| `--model_name` | `Qwen/Qwen2.5-3B-Instruct` | HuggingFace model name |
+| `--dataset_path` | `data/task1_dataset.csv` | Path to training CSV |
+| `--output_dir` | Auto | Checkpoint directory |
+| `--final_model_dir` | Auto | Final model directory |
+| `--num_epochs` | `3` | Training epochs |
+| `--batch_size` | `2` | Per-device batch size |
+| `--learning_rate` | `2e-5` | Learning rate |
+| `--gradient_accumulation_steps` | `4` | Gradient accumulation |
+| `--stats_only` | Flag | Print model stats only |
+
+#### Examples
+
+```bash
+# Train with default model (Qwen 3B)
+python scripts/03_train_model_full_finetune.py
+
+# Train a specific model
+python scripts/03_train_model_full_finetune.py --model_name "Qwen/Qwen2.5-1.5B-Instruct"
+python scripts/03_train_model_full_finetune.py --model_name "Qwen/Qwen2.5-7B-Instruct"
+
+# Custom hyperparameters
+python scripts/03_train_model_full_finetune.py --num_epochs 5 --batch_size 4 --learning_rate 1e-5
+
+# Multi-GPU with accelerate + custom model
+accelerate launch --multi_gpu --num_processes=4 scripts/03_train_model_full_finetune.py \
+    --model_name "Qwen/Qwen2.5-7B-Instruct"
+
+# Check model stats without training
+python scripts/03_train_model_full_finetune.py --model_name "Qwen/Qwen2.5-7B-Instruct" --stats_only
+```
+
+---
 
 ### Outputs
 
-All outputs are saved to `task1/outputs/`:
-- `training.log` — Training logs
-- `{model}-lora-checkpoints/` — Intermediate checkpoints
-- `{model}-lora-final/` — Final trained model
+All outputs saved to `task1/outputs/`:
+- `training.log` / `training_full_finetune.log` — Logs
+- `{model}-lora-checkpoints/` or `{model}-full-finetune-checkpoints/` — Checkpoints
+- `{model}-lora-final/` or `{model}-full-finetune-final/` — Final model
 
 ### Requirements
 
 - Python 3.8+
 - CUDA-capable GPU
-- See `requirements.txt` for Python dependencies
+- See `requirements.txt` for dependencies
 
 ## Getting Started
 
@@ -107,22 +168,14 @@ All outputs are saved to `task1/outputs/`:
    ```bash
    # Place raw traces in task1/data/synthetic_traces/
    cd task1/scripts
-   python create_dataset.py
+   python 01_create_train_dataset.py
    ```
 
-3. To train a model:
+3. To train a model (see [Model Training](#model-training) for details):
    ```bash
-   # Install dependencies
    cd task1
    pip install -r requirements.txt
-   
-   # Run training
-   python scripts/train_model.py
-   ```
-
-   To train using accelerate, run:
-   ```bash
-   accelerate launch --multi_gpu --num_processes=4 scripts/train_model.py
+   python scripts/03_train_model_full_finetune.py
    ```
 
 ## License
