@@ -1021,10 +1021,56 @@ Examples:
             traceback.print_exc()
             continue
     
-    # Create comparison summary
-    if len(all_metrics) > 0:
-        summary_path = os.path.join(run_output_dir, "model_comparison_summary.csv")
-        create_comparison_summary(all_metrics, summary_path)
+    # Create comparison summary - only on main process to avoid race conditions
+    # With accelerate, each process has its own all_metrics list, so we rebuild from summary.json files
+    is_main_process = True
+    try:
+        from accelerate import PartialState
+        state = PartialState()
+        is_main_process = state.is_main_process
+    except:
+        pass
+    
+    if is_main_process and len(all_metrics) > 0:
+        # Wait a moment for all processes to finish writing their summary.json files
+        import time
+        time.sleep(2)
+        
+        # Rebuild comparison from all summary.json files to avoid race conditions
+        from pathlib import Path
+        all_summaries = []
+        for model_dir in Path(run_output_dir).iterdir():
+            if model_dir.is_dir():
+                summary_files = list(model_dir.glob("*_summary.json"))
+                for sf in summary_files:
+                    try:
+                        with open(sf, 'r') as f:
+                            summary = json.load(f)
+                        metrics = {
+                            'model_name': summary.get('model_name', ''),
+                            'num_samples': summary.get('num_samples', 0),
+                            'loss': summary.get('loss_perplexity', {}).get('loss', None),
+                            'perplexity': summary.get('loss_perplexity', {}).get('perplexity', None),
+                            'teacher_abstain_rate': summary.get('teacher_stats', {}).get('abstain_rate', None),
+                            'student_abstain_rate': summary.get('student_stats', {}).get('abstain_rate', None),
+                            'abstain_agreement_rate': summary.get('agreement', {}).get('abstain_agreement_rate', None),
+                            'both_abstain_rate': summary.get('agreement', {}).get('both_abstain_rate', None),
+                            'both_answer_rate': summary.get('agreement', {}).get('both_answer_rate', None),
+                            'exact_match_avg': summary.get('exact_match', {}).get('avg_score', None),
+                            'embedding_similarity_avg': summary.get('embedding_similarity', {}).get('all_pairs', {}).get('mean', None),
+                            'embedding_similarity_adjusted_avg': summary.get('embedding_similarity', {}).get('adjusted_for_abstain', {}).get('mean', None),
+                            'token_overlap_avg': summary.get('token_overlap', {}).get('mean', None),
+                            'model_path': summary.get('model_path', ''),
+                            'timestamp': summary.get('timestamp_utc', ''),
+                            'model_type': summary.get('model_type', ''),
+                        }
+                        all_summaries.append(metrics)
+                    except Exception as e:
+                        logging.warning(f"Could not read {sf}: {e}")
+        
+        if all_summaries:
+            summary_path = os.path.join(run_output_dir, "model_comparison_summary.csv")
+            create_comparison_summary(all_summaries, summary_path)
     
     logging.info("\nEvaluation complete!")
     logging.info(f"Results saved to: {run_output_dir}")
