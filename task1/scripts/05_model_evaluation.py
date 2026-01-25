@@ -467,22 +467,90 @@ def compute_state_counts(results: List[Dict]) -> Dict[str, int]:
     return state_counts
 
 
+def load_qwen_embedding_model(model_name: str = "Qwen/Qwen3-Embedding-0.6B", device: str = None):
+    """Load the Qwen embedding model and tokenizer."""
+    from transformers import AutoModel, AutoTokenizer
+    
+    if device is None:
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+    
+    logging.info(f"Loading embedding model: {model_name}")
+    logging.info(f"Using device: {device}")
+    
+    tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+    model = AutoModel.from_pretrained(model_name, trust_remote_code=True)
+    model = model.to(device)
+    model.eval()
+    
+    return model, tokenizer, device
+
+
+def compute_qwen_embeddings_batch(
+    texts: List[str], 
+    model, 
+    tokenizer, 
+    device: str,
+    batch_size: int = 32,
+    max_length: int = 512
+) -> np.ndarray:
+    """Compute embeddings for a batch of texts using Qwen embedding model."""
+    all_embeddings = []
+    
+    for i in range(0, len(texts), batch_size):
+        batch_texts = texts[i:i + batch_size]
+        
+        # Handle empty or None texts
+        batch_texts = [t if t and isinstance(t, str) else "" for t in batch_texts]
+        
+        with torch.no_grad():
+            inputs = tokenizer(
+                batch_texts,
+                padding=True,
+                truncation=True,
+                max_length=max_length,
+                return_tensors="pt"
+            ).to(device)
+            
+            outputs = model(**inputs)
+            
+            # Use last hidden state mean pooling
+            attention_mask = inputs['attention_mask']
+            last_hidden = outputs.last_hidden_state
+            
+            # Mean pooling
+            input_mask_expanded = attention_mask.unsqueeze(-1).expand(last_hidden.size()).float()
+            sum_embeddings = torch.sum(last_hidden * input_mask_expanded, 1)
+            sum_mask = torch.clamp(input_mask_expanded.sum(1), min=1e-9)
+            embeddings = sum_embeddings / sum_mask
+            
+            # Normalize embeddings
+            embeddings = torch.nn.functional.normalize(embeddings, p=2, dim=1)
+            
+            all_embeddings.append(embeddings.cpu().numpy())
+    
+    return np.vstack(all_embeddings) if all_embeddings else np.array([])
+
+
 def compute_embedding_similarities(
     results: List[Dict],
-    embedding_model_name: str = "sentence-transformers/all-MiniLM-L6-v2",
-    batch_size: int = 32
+    embedding_model_name: str = "Qwen/Qwen3-Embedding-0.6B",
+    batch_size: int = 32,
+    embedding_model=None
 ) -> Tuple[List[Optional[float]], List[Optional[float]]]:
     """
     Compute cosine similarity between teacher and student answers using embeddings.
+    
+    Uses Qwen3-Embedding-0.6B for high-quality semantic similarity.
     
     Returns two lists:
         - similarities_all: Embedding similarity for all pairs (None if either is empty)
         - similarities_adjusted: Same but 0 if abstain mismatch, 1 if both abstain
     """
-    from sentence_transformers import SentenceTransformer
-    
-    logging.info(f"Loading embedding model: {embedding_model_name}")
-    model = SentenceTransformer(embedding_model_name)
+    # Load model if not provided
+    if embedding_model is None:
+        model, tokenizer, device = load_qwen_embedding_model(embedding_model_name)
+    else:
+        model, tokenizer, device = embedding_model
     
     similarities_all = []
     similarities_adjusted = []
@@ -515,27 +583,26 @@ def compute_embedding_similarities(
         else:
             similarities_all.append(None)
     
-    # Batch encode
+    # Batch encode using Qwen model
     if valid_indices:
         logging.info(f"Computing embeddings for {len(valid_indices)} valid answer pairs...")
-        teacher_embeddings = model.encode(teacher_texts, batch_size=batch_size, show_progress_bar=True)
-        student_embeddings = model.encode(student_texts, batch_size=batch_size, show_progress_bar=True)
+        teacher_embeddings = compute_qwen_embeddings_batch(
+            teacher_texts, model, tokenizer, device, batch_size
+        )
+        student_embeddings = compute_qwen_embeddings_batch(
+            student_texts, model, tokenizer, device, batch_size
+        )
         
-        # Compute cosine similarities
-        for idx, (t_emb, s_emb) in enumerate(zip(teacher_embeddings, student_embeddings)):
+        # Compute cosine similarities (embeddings are already normalized)
+        cosine_sims = np.sum(teacher_embeddings * student_embeddings, axis=1)
+        
+        for idx, sim in enumerate(cosine_sims):
             orig_idx = valid_indices[idx]
-            norm_t = np.linalg.norm(t_emb)
-            norm_s = np.linalg.norm(s_emb)
-            if norm_t > 0 and norm_s > 0:
-                sim = float(np.dot(t_emb, s_emb) / (norm_t * norm_s))
-            else:
-                sim = 0.0
-            
-            similarities_all[orig_idx] = sim
+            similarities_all[orig_idx] = float(sim)
             
             # Also update adjusted if it was None (both have answers)
             if similarities_adjusted[orig_idx] is None:
-                similarities_adjusted[orig_idx] = sim
+                similarities_adjusted[orig_idx] = float(sim)
     
     return similarities_all, similarities_adjusted
 
@@ -565,7 +632,7 @@ def evaluate_model(
     batch_size: int = 4,
     gen_batch_size: int = 8,
     compute_generation: bool = True,
-    embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
+    embedding_model: str = "Qwen/Qwen3-Embedding-0.6B"
 ) -> Dict:
     """
     Evaluate a single model and save comprehensive results.
@@ -917,8 +984,8 @@ Examples:
     parser.add_argument(
         "--embedding_model",
         type=str,
-        default="sentence-transformers/all-MiniLM-L6-v2",
-        help="Sentence transformer model for embedding similarity"
+        default="Qwen/Qwen3-Embedding-0.6B",
+        help="Embedding model for semantic similarity (default: Qwen3-Embedding-0.6B)"
     )
     
     args = parser.parse_args()
