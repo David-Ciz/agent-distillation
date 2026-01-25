@@ -23,3 +23,6 @@ task1/outputs/
 task1/data/test_split.csv
 
 evaluate_model.py
+agent-distillation/task1/data/eval/exploratory_causalqa_test
+agent-distillation/task1/data/eval/exploratory_msmarco_test
+agent-distillation/task1/data/eval/exploratory_quasart_test
