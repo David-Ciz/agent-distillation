@@ -1,0 +1,83 @@
+{
+  "timestamp_utc": "20260124_085126_UTC",
+  "model_name": "Qwen2.5-0.5B-Instruct-base",
+  "model_path": "Qwen/Qwen2.5-0.5B-Instruct",
+  "model_type": "full_finetune",
+  "num_samples": 1886,
+  "config": {
+    "batch_size": 4,
+    "gen_batch_size": 32,
+    "embedding_model": "Qwen/Qwen3-Embedding-0.6B"
+  },
+  "loss_perplexity": {
+    "loss": 1.3674590840979104,
+    "perplexity": 3.9253639933662017
+  },
+  "answer_states": {
+    "state_counts": {
+      "both_abstain": 311,
+      "teacher_answer_student_abstain": 89,
+      "teacher_abstain_student_answer": 1009,
+      "both_answer": 477
+    },
+    "state_percentages": {
+      "both_abstain": 16.489925768822904,
+      "teacher_answer_student_abstain": 4.71898197242842,
+      "teacher_abstain_student_answer": 53.49946977730647,
+      "both_answer": 25.291622481442204
+    }
+  },
+  "teacher_stats": {
+    "abstain_count": 1320,
+    "answer_count": 566,
+    "abstain_rate": 0.6998939554612937
+  },
+  "student_stats": {
+    "abstain_count": 400,
+    "answer_count": 1486,
+    "abstain_rate": 0.21208907741251326
+  },
+  "agreement": {
+    "abstain_agreement_count": 788,
+    "abstain_agreement_rate": 0.4178154825026511,
+    "both_abstain_rate": 0.16489925768822905,
+    "both_answer_rate": 0.25291622481442205
+  },
+  "exact_match": {
+    "avg_score": 0.16755037115588547,
+    "stats": {
+      "count": 1886,
+      "mean": 0.16755037009716034,
+      "min": 0.0,
+      "median": 0.0,
+      "max": 1.0,
+      "std": 0.37346649169921875
+    }
+  },
+  "embedding_similarity": {
+    "all_pairs": {
+      "count": 477,
+      "mean": 0.8012349009513855,
+      "min": 0.4161456227302551,
+      "median": 0.8262232542037964,
+      "max": 1.0,
+      "std": 0.11695806682109833
+    },
+    "adjusted_for_abstain": {
+      "count": 1886,
+      "mean": 0.36754456759763293,
+      "min": 0.0,
+      "median": 0.0,
+      "max": 1.0,
+      "std": 0.4423080769798128
+    }
+  },
+  "token_overlap": {
+    "count": 1886,
+    "mean": 0.08226697891950607,
+    "min": 0.0,
+    "median": 0.03942187875509262,
+    "max": 1.0,
+    "std": 0.14669835567474365
+  }
+}

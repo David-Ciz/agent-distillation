@@ -1,0 +1,83 @@
+{
+  "timestamp_utc": "20260124_070317_UTC",
+  "model_name": "Qwen2.5-1.5B-Instruct-lora",
+  "model_path": "outputs/models/Qwen2.5-1.5B-Instruct-lora-final",
+  "model_type": "lora",
+  "num_samples": 1886,
+  "config": {
+    "batch_size": 4,
+    "gen_batch_size": 32,
+    "embedding_model": "Qwen/Qwen3-Embedding-0.6B"
+  },
+  "loss_perplexity": {
+    "loss": 0.46281587505691635,
+    "perplexity": 1.5885408254979951
+  },
+  "answer_states": {
+    "state_counts": {
+      "both_abstain": 1194,
+      "teacher_answer_student_abstain": 311,
+      "teacher_abstain_student_answer": 126,
+      "both_answer": 255
+    },
+    "state_percentages": {
+      "both_abstain": 63.3085896076352,
+      "teacher_answer_student_abstain": 16.489925768822904,
+      "teacher_abstain_student_answer": 6.680805938494168,
+      "both_answer": 13.520678685047722
+    }
+  },
+  "teacher_stats": {
+    "abstain_count": 1320,
+    "answer_count": 566,
+    "abstain_rate": 0.6998939554612937
+  },
+  "student_stats": {
+    "abstain_count": 1505,
+    "answer_count": 381,
+    "abstain_rate": 0.7979851537645811
+  },
+  "agreement": {
+    "abstain_agreement_count": 1449,
+    "abstain_agreement_rate": 0.7682926829268293,
+    "both_abstain_rate": 0.633085896076352,
+    "both_answer_rate": 0.1352067868504772
+  },
+  "exact_match": {
+    "avg_score": 0.6447507953340403,
+    "stats": {
+      "count": 1886,
+      "mean": 0.6447507739067078,
+      "min": 0.0,
+      "median": 1.0,
+      "max": 1.0,
+      "std": 0.4785887897014618
+    }
+  },
+  "embedding_similarity": {
+    "all_pairs": {
+      "count": 255,
+      "mean": 0.9158383011817932,
+      "min": 0.5220503807067871,
+      "median": 0.932046115398407,
+      "max": 1.0000001192092896,
+      "std": 0.07682222872972488
+    },
+    "adjusted_for_abstain": {
+      "count": 1886,
+      "mean": 0.7569134558056217,
+      "min": 0.0,
+      "median": 1.0,
+      "max": 1.0000001192092896,
+      "std": 0.41757860032779714
+    }
+  },
+  "token_overlap": {
+    "count": 1886,
+    "mean": 0.5948927998542786,
+    "min": 0.0,
+    "median": 1.0,
+    "max": 1.0,
+    "std": 0.4537254869937897
+  }
+}
