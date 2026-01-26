@@ -1,187 +1,236 @@
 # Agent Distillation
 
-Research project for distilling knowledge from LLM agents into smaller, efficient models.
+Research project for distilling knowledge from large language model (LLM) agents into smaller, efficient models. The goal is to train compact student models that can replicate the behavior of powerful teacher models on specific agentic tasks.
+
+## Overview
+
+This project implements a multi-task distillation pipeline:
+
+1. **Trace Collection**: Collect behavioral traces from a teacher model (e.g., GPT-4o) performing agentic tasks
+2. **Dataset Creation**: Process traces into supervised training datasets
+3. **Model Training**: Fine-tune smaller models (LoRA or full fine-tuning) on the collected data
+4. **Evaluation**: Comprehensively evaluate student models against teacher outputs
+
+Currently implemented tasks:
+- **Task 1**: Answer-Abstain QA
+
+---
+
+## Task 1: Answer-Abstain QA
+
+### Task Description
+
+Given a user query and a set of retrieved evidence passages, the model must decide whether the evidence is sufficient to answer the query:
+- **If sufficient**: Generate a document-grounded answer
+- **If insufficient or unsupported**: Abstain with "I cannot answer based on the provided evidence."
+
+This task tests the model's ability to:
+- Ground answers strictly in provided evidence
+- Recognize when evidence is insufficient
+- Avoid hallucination by abstaining appropriately
+
+### Data Format
+
+| Component | Description |
+|-----------|-------------|
+| **Input** | Query + top-k retrieved evidence passages (max 10) |
+| **Teacher Output** | Answer or abstention decision with reasoning |
+| **Student Output** | Answer or abstention decision |
+
+### Evaluation Metrics
+
+| Metric | Description |
+|--------|-------------|
+| **Embedding Similarity** | Cosine similarity between teacher and student answers (using Qwen3-Embedding-0.6B) |
+| **Abstain Accuracy** | Accuracy of student abstain decisions vs teacher |
+| **Abstain F1/Precision/Recall** | Classification metrics for abstain detection |
+| **Exact Match Rate** | Percentage of exact answer matches |
+| **Token Overlap** | Jaccard similarity of answer tokens |
+
+---
 
 ## Project Structure
 
 ```
 agent-distillation/
-├── task1/                      # Task 1: Dataset Creation & Model Training
+├── task1/                              # Task 1: Answer-Abstain QA
 │   ├── scripts/
-│   │   ├── 01_create_train_dataset.py   # Create task1_dataset.csv
-│   │   ├── 02_train_model_lora.py       # LoRA fine-tuning
+│   │   ├── 01_create_train_dataset.py      # Create training dataset from traces
+│   │   ├── 02_train_model_lora.py          # LoRA fine-tuning
 │   │   ├── 03_train_model_full_finetune.py # Full fine-tuning
-│   │   └── evaluate_model.py            # Model evaluation
+│   │   ├── 04_create_eval_dataset.py       # Create evaluation dataset
+│   │   ├── 05_model_evaluation.py          # Evaluate trained models
+│   │   ├── 06_analyse_visualize_results.py # Generate analysis plots
+│   │   ├── update_embedding_metrics.py     # Update embedding metrics
+│   │   └── extract_metrics_from_summary.py # Extract metrics to CSV
 │   ├── data/
-│   │   └── task1_dataset.csv   # Processed supervised dataset
-│   ├── outputs/                # Training outputs (gitignored)
-│   └── requirements.txt
+│   │   ├── task1_dataset.csv           # Training dataset (~94MB)
+│   │   ├── task1_eval_dataset.csv      # Evaluation dataset (~8MB)
+│   │   ├── eval/                       # Evaluation trace data
+│   │   └── synthetic_traces/           # Raw traces (gitignored, ~large)
+│   ├── outputs/                        # Training & evaluation outputs (gitignored)
+│   │   ├── models/                     # Trained model checkpoints
+│   │   ├── evaluations/                # Evaluation results
+│   │   └── analysis/                   # Visualization outputs (tracked)
+│   ├── EVALUATION_METRICS.md           # Detailed metrics documentation
+│   └── requirements.txt                # Python dependencies
 └── README.md
 ```
 
-## Task 1: Dataset Creation
+### What's Included in the Repository
 
-### Description
+| Item | Included | Notes |
+|------|----------|-------|
+| Training dataset (`task1_dataset.csv`) | ✅ | ~94MB, processed from traces |
+| Evaluation dataset (`task1_eval_dataset.csv`) | ✅ | ~8MB |
+| All scripts | ✅ | Complete pipeline |
+| Analysis outputs | ✅ | Plots and visualizations |
+| Evaluation results | ✅ | All evaluation results |
+| Raw traces (`synthetic_traces/`) | ❌ | Too large, regenerate with scripts |
+| Trained models | ❌ | Too large, retrain with scripts |
 
-Creates a supervised dataset from synthetic agent traces for model distillation. The script scans trace directories, extracts supervised training examples, and parses REASONING/ANSWER sections from LLM outputs.
+---
 
-### Input
+## Step-by-Step Guide
 
-Raw trace data in `data/synthetic_traces/` (not included in repo due to size). Each sample directory contains:
-- `config.json` — Run metadata (run_uuid, teacher_id, query, search_index)
-- `supervised.jsonl` — Training examples (input, output, tool, decision_label, latency_ms, tokens)
-
-### Output
-
-`task1_dataset.csv` with the following columns:
-
-| Column | Description |
-|--------|-------------|
-| `data_source` | Source dataset (e.g., causalqa, msmarco) |
-| `run_uuid` | Unique run identifier |
-| `teacher_id` | Teacher model identifier |
-| `query` | Input query |
-| `search_index` | Search index used |
-| `llm_input` | Input prompt to the LLM |
-| `llm_output` | Raw LLM output |
-| `tool` | Tool called by the agent |
-| `decision_label` | Decision classification |
-| `latency_ms` | Response latency in milliseconds |
-| `token_count` | Number of tokens |
-| `llm_reasoning` | Extracted REASONING section |
-| `llm_answer` | Extracted ANSWER section |
-
-### Usage
-
-```bash
-cd task1/scripts
-python 01_create_train_dataset.py
-```
-
-### Requirements
-
-- Python 3.8+
-- No external dependencies (uses only standard library)
-
-## Model Training
-
-### Setup
+### Prerequisites
 
 ```bash
 cd task1
 pip install -r requirements.txt
 ```
 
----
-
-### LoRA Fine-tuning (`02_train_model_lora.py`)
-
-Memory-efficient fine-tuning using Low-Rank Adaptation. Trains only adapter weights.
-
-#### Without Accelerate (auto GPU selection)
-```bash
-python scripts/02_train_model_lora.py
-```
-
-#### With Accelerate (multi-GPU)
-```bash
-accelerate launch --multi_gpu --num_processes=4 scripts/02_train_model_lora.py
-```
-
-**Default model**: `google/gemma-3-270m-it` (edit script to change)
+Required: Python 3.8+, CUDA-capable GPU
 
 ---
 
-### Full Fine-tuning (`03_train_model_full_finetune.py`)
+### Step 1: Create Training Dataset
 
-Trains all model parameters. Better quality but requires more VRAM.
+> **Note**: The processed dataset `task1_dataset.csv` is already included. Only run this if you have raw traces.
 
-#### Without Accelerate (auto GPU selection)
 ```bash
-python scripts/03_train_model_full_finetune.py
+cd task1/scripts
+python 01_create_train_dataset.py
 ```
 
-#### With Accelerate (multi-GPU)
+**Input**: Raw traces in `data/synthetic_traces/`  
+**Output**: `data/task1_dataset.csv`
+
+---
+
+### Step 2: Train Models
+
+#### Option A: LoRA Fine-tuning (Memory Efficient)
+
 ```bash
-accelerate launch --multi_gpu --num_processes=4 scripts/03_train_model_full_finetune.py
+# Single GPU
+python scripts/02_train_model_lora.py --model_name "Qwen/Qwen2.5-0.5B-Instruct"
+
+# Multi-GPU
+accelerate launch --multi_gpu --num_processes=4 scripts/02_train_model_lora.py \
+    --model_name "Qwen/Qwen2.5-3B-Instruct"
 ```
 
-#### Arguments
+#### Option B: Full Fine-tuning (Better Quality)
+
+```bash
+# Single GPU
+python scripts/03_train_model_full_finetune.py --model_name "Qwen/Qwen2.5-0.5B-Instruct"
+
+# Multi-GPU
+accelerate launch --multi_gpu --num_processes=4 scripts/03_train_model_full_finetune.py \
+    --model_name "Qwen/Qwen2.5-3B-Instruct"
+```
+
+**Training Arguments**:
 
 | Argument | Default | Description |
 |----------|---------|-------------|
-| `--model_name` | `Qwen/Qwen2.5-3B-Instruct` | HuggingFace model name |
-| `--dataset_path` | `data/task1_dataset.csv` | Path to training CSV |
-| `--output_dir` | Auto | Checkpoint directory |
-| `--final_model_dir` | Auto | Final model directory |
+| `--model_name` | `Qwen/Qwen2.5-3B-Instruct` | HuggingFace model |
 | `--num_epochs` | `3` | Training epochs |
 | `--batch_size` | `2` | Per-device batch size |
 | `--learning_rate` | `2e-5` | Learning rate |
 | `--gradient_accumulation_steps` | `4` | Gradient accumulation |
-| `--stats_only` | Flag | Print model stats only |
 
-#### Examples
+**Output**: `outputs/models/{model}-{lora|full-finetune}-final/`
+
+---
+
+### Step 3: Create Evaluation Dataset
+
+> **Note**: The evaluation dataset `task1_eval_dataset.csv` is already included.
 
 ```bash
-# Train with default model (Qwen 3B)
-python scripts/03_train_model_full_finetune.py
+python scripts/04_create_eval_dataset.py
+```
 
-# Train a specific model
-python scripts/03_train_model_full_finetune.py --model_name "Qwen/Qwen2.5-1.5B-Instruct"
-python scripts/03_train_model_full_finetune.py --model_name "Qwen/Qwen2.5-7B-Instruct"
+**Output**: `data/task1_eval_dataset.csv`
 
-# Custom hyperparameters
-python scripts/03_train_model_full_finetune.py --num_epochs 5 --batch_size 4 --learning_rate 1e-5
+---
 
-# Multi-GPU with accelerate + custom model
-accelerate launch --multi_gpu --num_processes=4 scripts/03_train_model_full_finetune.py \
-    --model_name "Qwen/Qwen2.5-7B-Instruct"
+### Step 4: Evaluate Models
 
-# Check model stats without training
-python scripts/03_train_model_full_finetune.py --model_name "Qwen/Qwen2.5-7B-Instruct" --stats_only
+Evaluate multiple models in a single run:
+
+```bash
+accelerate launch --multi_gpu --num_processes=4 scripts/05_model_evaluation.py \
+    --models \
+        "outputs/models/Qwen2.5-0.5B-Instruct-lora-final,Qwen2.5-0.5B-lora,lora,32" \
+        "outputs/models/Qwen2.5-0.5B-Instruct-full-finetune-final,Qwen2.5-0.5B-full,full_finetune,32" \
+        "Qwen/Qwen2.5-0.5B-Instruct,Qwen2.5-0.5B-base,base,32"
+```
+
+**Model config format**: `path,name,type,batch_size`
+
+**Output**:
+- `outputs/evaluations/eval_run_{timestamp}/` — Per-model results
+- `{model}_detailed_results.csv` — Per-sample metrics
+- `{model}_summary.json` — Aggregate statistics
+- `model_comparison_summary.csv` — Cross-model comparison
+
+---
+
+### Step 5: Analyze and Visualize Results
+
+```bash
+python scripts/06_analyse_visualize_results.py \
+    --eval_run_dir outputs/evaluations/eval_run_YYYYMMDD_HHMMSS \
+    --output_dir outputs/analysis
+```
+
+**Generated Plots**:
+- `answer_state_distribution.png` — Stacked bar chart of answer states
+- `abstain_metrics_comparison.png` — F1, Precision, Recall, Accuracy
+- `abstain_rates_comparison.png` — Student vs teacher abstain rates
+- `violin_embedding-similarity-adjusted_*.png` — Distribution plots
+- `heatmap_metrics.png` — Model comparison heatmap
+- `training_effect_by_size.png` — Training method comparison
+- `improvement_rate_by_training.png` — Improvement from base models
+
+---
+
+### Optional: Update Embedding Metrics
+
+If you need to recompute embedding similarity with a different model:
+
+```bash
+python scripts/update_embedding_metrics.py \
+    --eval_dir outputs/evaluations/eval_run_YYYYMMDD_HHMMSS \
+    --batch_size 32
 ```
 
 ---
 
-### Outputs
+## Models Trained
 
-All outputs saved to `task1/outputs/`:
-- `training.log` / `training_full_finetune.log` — Logs
-- `{model}-lora-checkpoints/` or `{model}-full-finetune-checkpoints/` — Checkpoints
-- `{model}-lora-final/` or `{model}-full-finetune-final/` — Final model
+The following models have been trained and evaluated:
 
-### Requirements
+| Model | Parameters | Training Methods |
+|-------|------------|------------------|
+| Gemma 3 270M IT | 270M | Base, LoRA |
+| Qwen 2.5 0.5B Instruct | 0.5B | Base, LoRA, Full Finetune |
+| Qwen 2.5 1.5B Instruct | 1.5B | Base, LoRA |
+| Qwen 2.5 3B Instruct | 3B | Base, LoRA, Full Finetune |
+| Qwen 2.5 7B Instruct | 7B | Base, LoRA |
 
-- Python 3.8+
-- CUDA-capable GPU
-- See `requirements.txt` for dependencies
-
-## Getting Started
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/padas-lab-de/agent-distillation.git
-   cd agent-distillation
-   ```
-
-2. For Task 1, the processed dataset is already included. To regenerate from raw traces:
-   ```bash
-   # Place raw traces in task1/data/synthetic_traces/
-   cd task1/scripts
-   python 01_create_train_dataset.py
-   ```
-
-3. To train a model (see [Model Training](#model-training) for details):
-   ```bash
-   cd task1
-   pip install -r requirements.txt
-   python scripts/03_train_model_full_finetune.py
-   ```
-
-## License
-
-[Add your license]
-
-## Citation
-
-[Add citation information]
+---
