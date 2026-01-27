@@ -61,7 +61,6 @@ agent-distillation/
 │   │   ├── 04_create_eval_dataset.py       # Create evaluation dataset
 │   │   ├── 05_model_evaluation.py          # Evaluate trained models
 │   │   └── 06_analyse_visualize_results.py # Generate analysis plots
-│   │   
 │   ├── data/
 │   │   ├── task1_dataset.csv           # Training dataset (~94MB)
 │   │   ├── task1_eval_dataset.csv      # Evaluation dataset (~8MB)
