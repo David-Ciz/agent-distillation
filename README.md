@@ -60,9 +60,8 @@ agent-distillation/
 │   │   ├── 03_train_model_full_finetune.py # Full fine-tuning
 │   │   ├── 04_create_eval_dataset.py       # Create evaluation dataset
 │   │   ├── 05_model_evaluation.py          # Evaluate trained models
-│   │   ├── 06_analyse_visualize_results.py # Generate analysis plots
-│   │   ├── update_embedding_metrics.py     # Update embedding metrics
-│   │   └── extract_metrics_from_summary.py # Extract metrics to CSV
+│   │   └── 06_analyse_visualize_results.py # Generate analysis plots
+│   │   
 │   ├── data/
 │   │   ├── task1_dataset.csv           # Training dataset (~94MB)
 │   │   ├── task1_eval_dataset.csv      # Evaluation dataset (~8MB)
