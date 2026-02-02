@@ -79,7 +79,7 @@ ACTION_COLORS = {
 def get_train_type(model_name: str) -> str:
     """Extract training type from model name."""
     name_lower = model_name.lower()
-    if "full-finetune" in name_lower or "full_finetune" in name_lower:
+    if "full-finetune" in name_lower or "full_finetune" in name_lower or "fullft" in name_lower:
         return "Full Finetune"
     elif "lora" in name_lower:
         return "LoRA"
@@ -95,7 +95,10 @@ def get_model_group(model_name: str) -> str:
     # Fallback: infer from name
     name_lower = model_name.lower()
     if "gemma" in name_lower:
-        return "Gemma 270M"
+        if "1b" in name_lower:
+            return "Gemma 1B"
+        else:
+            return "Gemma 270M"
     elif "0.5b" in name_lower:
         return "Qwen 2.5 0.5B"
     elif "1.5b" in name_lower:
@@ -199,10 +202,10 @@ def plot_per_class_f1_comparison(results: List[Dict], output_dir: Path):
 
 def plot_accuracy_comparison(results: List[Dict], output_dir: Path):
     """Plot accuracy comparison across models grouped by training type."""
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(14, 7))
     
     # Group by model group
-    group_order = ["Gemma 270M", "Qwen 2.5 0.5B", "Qwen 2.5 1.5B", "Qwen 2.5 3B", "Qwen 2.5 7B"]
+    group_order = ["Gemma 270M", "Gemma 1B", "Qwen 2.5 0.5B", "Qwen 2.5 1.5B", "Qwen 2.5 3B", "Qwen 2.5 7B"]
     type_order = ["Base", "LoRA", "Full Finetune"]
     
     # Organize data
@@ -210,30 +213,44 @@ def plot_accuracy_comparison(results: List[Dict], output_dir: Path):
     for r in results:
         group_data[r['model_group']][r['train_type']] = r.get('accuracy', 0)
     
+    # Determine which groups have Full Finetune
+    has_full_ft = {g: group_data.get(g, {}).get('Full Finetune', 0) > 0 for g in group_order}
+    
     x = np.arange(len(group_order))
     width = 0.25
     
     for i, train_type in enumerate(type_order):
         values = [group_data.get(g, {}).get(train_type, 0) for g in group_order]
-        if any(v > 0 for v in values):
-            offset = (i - 1) * width
-            bars = ax.bar(x + offset, values, width, label=train_type,
-                         color=TRAIN_TYPE_COLORS.get(train_type, '#888888'), alpha=0.8)
-            
-            # Add value labels
-            for bar, val in zip(bars, values):
-                if val > 0:
-                    ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01,
-                           f'{val*100:.1f}%', ha='center', va='bottom', fontsize=8)
+        offset = (i - 1) * width
+        bars = ax.bar(x + offset, values, width, label=train_type,
+                     color=TRAIN_TYPE_COLORS.get(train_type, '#888888'), alpha=0.8)
+        
+        # Add value labels
+        for bar, val in zip(bars, values):
+            if val > 0:
+                ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.01,
+                       f'{val*100:.1f}%', ha='center', va='bottom', fontsize=8)
+    
+    # Add indicators for models with/without Full Finetune
+    for idx, group in enumerate(group_order):
+        if has_full_ft[group]:
+            ax.annotate('✓ FT', xy=(idx, -0.08), ha='center', fontsize=9, color='#9B59B6', fontweight='bold')
+        else:
+            ax.annotate('○ No FT', xy=(idx, -0.08), ha='center', fontsize=8, color='#888888')
     
     ax.set_xlabel('Model', fontsize=12)
     ax.set_ylabel('Accuracy', fontsize=12)
     ax.set_title('Accuracy Comparison by Model and Training Type', fontsize=14, fontweight='bold')
     ax.set_xticks(x)
     ax.set_xticklabels(group_order, rotation=30, ha='right')
-    ax.set_ylim(0, 1.15)
+    ax.set_ylim(-0.05, 1.15)
     ax.legend(loc='upper left', fontsize=10)
     ax.grid(axis='y', alpha=0.3)
+    
+    # Add note about Full Finetune availability
+    ax.text(0.98, 0.02, '✓ FT = Full Finetune available\n○ No FT = LoRA only',
+            transform=ax.transAxes, ha='right', va='bottom', fontsize=9,
+            bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
     
     plt.tight_layout()
     plt.savefig(output_dir / "accuracy_comparison.png", dpi=150, bbox_inches='tight')
@@ -298,7 +315,7 @@ def plot_training_effect_by_model(results: List[Dict], output_dir: Path):
         ('macro_f1', 'Macro F1 Improvement'),
     ]
     
-    group_order = ["Gemma 270M", "Qwen 2.5 0.5B", "Qwen 2.5 1.5B", "Qwen 2.5 3B", "Qwen 2.5 7B"]
+    group_order = ["Gemma 270M", "Gemma 1B", "Qwen 2.5 0.5B", "Qwen 2.5 1.5B", "Qwen 2.5 3B", "Qwen 2.5 7B"]
     
     # Organize data by group and type
     group_data = defaultdict(dict)
@@ -320,12 +337,10 @@ def plot_training_effect_by_model(results: List[Dict], output_dir: Path):
             full_ft_val = group_data.get(group, {}).get('Full Finetune', {}).get(metric_key, 0)
             
             # Calculate improvement (percentage points)
-            if base_val > 0:
-                lora_imp = (lora_val - base_val) * 100 if lora_val > 0 else 0
-                full_ft_imp = (full_ft_val - base_val) * 100 if full_ft_val > 0 else 0
-            else:
-                lora_imp = 0
-                full_ft_imp = 0
+            # When base is 0, use a tiny value to avoid div by zero but still show the improvement
+            effective_base = base_val if base_val > 0 else 1e-6
+            lora_imp = (lora_val - effective_base) * 100 if lora_val > 0 else 0
+            full_ft_imp = (full_ft_val - effective_base) * 100 if full_ft_val > 0 else 0
             
             lora_improvements.append(lora_imp)
             full_ft_improvements.append(full_ft_imp)
@@ -374,7 +389,7 @@ def plot_metrics_heatmap(results: List[Dict], output_dir: Path):
     
     # Sort results by model group and train type
     def sort_key(r):
-        group_order = ["Gemma 270M", "Qwen 2.5 0.5B", "Qwen 2.5 1.5B", "Qwen 2.5 3B", "Qwen 2.5 7B"]
+        group_order = ["Gemma 270M", "Gemma 1B", "Qwen 2.5 0.5B", "Qwen 2.5 1.5B", "Qwen 2.5 3B", "Qwen 2.5 7B"]
         type_order = ["Base", "LoRA", "Full Finetune"]
         g_idx = group_order.index(r['model_group']) if r['model_group'] in group_order else 99
         t_idx = type_order.index(r['train_type']) if r['train_type'] in type_order else 99
