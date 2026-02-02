@@ -1,0 +1,135 @@
+{
+  "model_name": "Qwen2.5-7B-Base",
+  "model_path": "Qwen/Qwen2.5-7B-Instruct",
+  "model_type": "base",
+  "accuracy": 0.03617571059431524,
+  "macro_precision": 0.1625,
+  "macro_recall": 0.07208237986270023,
+  "macro_f1": 0.037839183470251433,
+  "weighted_precision": 0.3027454780361757,
+  "weighted_recall": 0.03617571059431524,
+  "weighted_f1": 0.027800452727072728,
+  "per_class": {
+    "query_formulator": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "chatnoir_retriever": {
+      "precision": 1.0,
+      "recall": 0.02631578947368421,
+      "f1": 0.05128205128205128,
+      "support": 114
+    },
+    "opensearch_retriever": {
+      "precision": 0.1375,
+      "recall": 0.4782608695652174,
+      "f1": 0.21359223300970873,
+      "support": 23
+    },
+    "reranker": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 53
+    },
+    "deduplicator": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "answer_drafter": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 160
+    },
+    "finish": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 37
+    }
+  },
+  "confusion_matrix": [
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      90,
+      3,
+      20,
+      0,
+      0,
+      0,
+      1
+    ],
+    [
+      10,
+      0,
+      11,
+      0,
+      0,
+      0,
+      2
+    ],
+    [
+      42,
+      0,
+      11,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      125,
+      0,
+      32,
+      0,
+      0,
+      0,
+      3
+    ],
+    [
+      31,
+      0,
+      6,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "classification_report": "                      precision    recall  f1-score   support\n\n    query_formulator       0.00      0.00      0.00         0\n  chatnoir_retriever       1.00      0.03      0.05       114\nopensearch_retriever       0.14      0.48      0.21        23\n            reranker       0.00      0.00      0.00        53\n        deduplicator       0.00      0.00      0.00         0\n      answer_drafter       0.00      0.00      0.00       160\n              finish       0.00      0.00      0.00        37\n\n            accuracy                           0.04       387\n           macro avg       0.16      0.07      0.04       387\n        weighted avg       0.30      0.04      0.03       387\n",
+  "timing": {
+    "total_eval_time": 114.00406646728516,
+    "avg_inference_time_per_sample": 0.11579828237875914,
+    "std_inference_time": 0.02874895113037377,
+    "min_inference_time": 0.09241107106208801,
+    "max_inference_time": 0.2648947983980179
+  },
+  "memory": {
+    "peak_inference_memory_gb": 2.503688335418701
+  },
+  "valid_predictions": 387,
+  "invalid_predictions": 588,
+  "total_samples": 975
+}

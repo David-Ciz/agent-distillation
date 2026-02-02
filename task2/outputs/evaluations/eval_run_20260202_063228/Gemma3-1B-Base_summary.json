@@ -1,0 +1,135 @@
+{
+  "model_name": "Gemma3-1B-Base",
+  "model_path": "google/gemma-3-1b-it",
+  "model_type": "base",
+  "accuracy": 0.23858921161825727,
+  "macro_precision": 0.10148199807701543,
+  "macro_recall": 0.11084200763085225,
+  "macro_f1": 0.09394374543497938,
+  "weighted_precision": 0.19445487361802646,
+  "weighted_recall": 0.23858921161825727,
+  "weighted_f1": 0.1948603618391434,
+  "per_class": {
+    "query_formulator": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "chatnoir_retriever": {
+      "precision": 0.1,
+      "recall": 0.00796812749003984,
+      "f1": 0.014760147601476014,
+      "support": 251
+    },
+    "opensearch_retriever": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 93
+    },
+    "reranker": {
+      "precision": 0.1643835616438356,
+      "recall": 0.192,
+      "f1": 0.17712177121771217,
+      "support": 125
+    },
+    "deduplicator": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "answer_drafter": {
+      "precision": 0.362657091561939,
+      "recall": 0.5611111111111111,
+      "f1": 0.440567066521265,
+      "support": 360
+    },
+    "finish": {
+      "precision": 0.08333333333333333,
+      "recall": 0.014814814814814815,
+      "f1": 0.025157232704402517,
+      "support": 135
+    }
+  },
+  "confusion_matrix": [
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      39,
+      2,
+      0,
+      36,
+      0,
+      165,
+      9
+    ],
+    [
+      43,
+      5,
+      0,
+      6,
+      0,
+      39,
+      0
+    ],
+    [
+      29,
+      3,
+      0,
+      24,
+      0,
+      69,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      76,
+      9,
+      0,
+      60,
+      0,
+      202,
+      13
+    ],
+    [
+      30,
+      1,
+      0,
+      20,
+      0,
+      82,
+      2
+    ]
+  ],
+  "classification_report": "                      precision    recall  f1-score   support\n\n    query_formulator       0.00      0.00      0.00         0\n  chatnoir_retriever       0.10      0.01      0.01       251\nopensearch_retriever       0.00      0.00      0.00        93\n            reranker       0.16      0.19      0.18       125\n        deduplicator       0.00      0.00      0.00         0\n      answer_drafter       0.36      0.56      0.44       360\n              finish       0.08      0.01      0.03       135\n\n            accuracy                           0.24       964\n           macro avg       0.10      0.11      0.09       964\n        weighted avg       0.19      0.24      0.19       964\n",
+  "timing": {
+    "total_eval_time": 50.957202434539795,
+    "avg_inference_time_per_sample": 0.05144530394138434,
+    "std_inference_time": 0.019441594996171825,
+    "min_inference_time": 0.04274747520685196,
+    "max_inference_time": 0.20284709930419922
+  },
+  "memory": {
+    "peak_inference_memory_gb": 0.0
+  },
+  "valid_predictions": 964,
+  "invalid_predictions": 11,
+  "total_samples": 975
+}

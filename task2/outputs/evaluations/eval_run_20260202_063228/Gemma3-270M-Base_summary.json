@@ -1,0 +1,135 @@
+{
+  "model_name": "Gemma3-270M-Base",
+  "model_path": "google/gemma-3-270m-it",
+  "model_type": "base",
+  "accuracy": 0.14051282051282052,
+  "macro_precision": 0.02009386916984453,
+  "macro_recall": 0.14285714285714285,
+  "macro_f1": 0.035232094638035234,
+  "weighted_precision": 0.019764123624493233,
+  "weighted_recall": 0.14051282051282052,
+  "weighted_f1": 0.03465392693115465,
+  "per_class": {
+    "query_formulator": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "chatnoir_retriever": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 253
+    },
+    "opensearch_retriever": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 94
+    },
+    "reranker": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 129
+    },
+    "deduplicator": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "answer_drafter": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 362
+    },
+    "finish": {
+      "precision": 0.1406570841889117,
+      "recall": 1.0,
+      "f1": 0.24662466246624662,
+      "support": 137
+    }
+  },
+  "confusion_matrix": [
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      0,
+      0,
+      0,
+      0,
+      252
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      94
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      129
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      362
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      137
+    ]
+  ],
+  "classification_report": "                      precision    recall  f1-score   support\n\n    query_formulator       0.00      0.00      0.00         0\n  chatnoir_retriever       0.00      0.00      0.00       253\nopensearch_retriever       0.00      0.00      0.00        94\n            reranker       0.00      0.00      0.00       129\n        deduplicator       0.00      0.00      0.00         0\n      answer_drafter       0.00      0.00      0.00       362\n              finish       0.14      1.00      0.25       137\n\n            accuracy                           0.14       975\n           macro avg       0.02      0.14      0.04       975\n        weighted avg       0.02      0.14      0.03       975\n",
+  "timing": {
+    "total_eval_time": 35.38290500640869,
+    "avg_inference_time_per_sample": 0.03560687162937262,
+    "std_inference_time": 0.006298444942609263,
+    "min_inference_time": 0.030858956277370453,
+    "max_inference_time": 0.0685873031616211
+  },
+  "memory": {
+    "peak_inference_memory_gb": 0.0
+  },
+  "valid_predictions": 975,
+  "invalid_predictions": 0,
+  "total_samples": 975
+}

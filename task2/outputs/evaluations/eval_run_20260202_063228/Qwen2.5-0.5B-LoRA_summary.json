@@ -1,0 +1,135 @@
+{
+  "model_name": "Qwen2.5-0.5B-LoRA",
+  "model_path": "outputs/models/Qwen-Qwen2.5-0.5B-Instruct-lora-final",
+  "model_type": "lora",
+  "accuracy": 0.6,
+  "macro_precision": 0.36783485870759197,
+  "macro_recall": 0.3777079354524858,
+  "macro_f1": 0.31736933781723936,
+  "weighted_precision": 0.5629277172494193,
+  "weighted_recall": 0.6,
+  "weighted_f1": 0.526082643908123,
+  "per_class": {
+    "query_formulator": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "chatnoir_retriever": {
+      "precision": 0.5401459854014599,
+      "recall": 0.8774703557312253,
+      "f1": 0.6686746987951807,
+      "support": 253
+    },
+    "opensearch_retriever": {
+      "precision": 0.5357142857142857,
+      "recall": 0.9574468085106383,
+      "f1": 0.6870229007633588,
+      "support": 94
+    },
+    "reranker": {
+      "precision": 0.3333333333333333,
+      "recall": 0.007751937984496124,
+      "f1": 0.015151515151515152,
+      "support": 129
+    },
+    "deduplicator": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "answer_drafter": {
+      "precision": 0.7073170731707317,
+      "recall": 0.7209944751381215,
+      "f1": 0.7140902872777017,
+      "support": 362
+    },
+    "finish": {
+      "precision": 0.4583333333333333,
+      "recall": 0.08029197080291971,
+      "f1": 0.13664596273291926,
+      "support": 137
+    }
+  },
+  "confusion_matrix": [
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      222,
+      2,
+      0,
+      0,
+      21,
+      8
+    ],
+    [
+      0,
+      0,
+      90,
+      1,
+      0,
+      3,
+      0
+    ],
+    [
+      0,
+      76,
+      20,
+      1,
+      0,
+      31,
+      1
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      63,
+      33,
+      1,
+      0,
+      261,
+      4
+    ],
+    [
+      0,
+      50,
+      23,
+      0,
+      0,
+      53,
+      11
+    ]
+  ],
+  "classification_report": "                      precision    recall  f1-score   support\n\n    query_formulator       0.00      0.00      0.00         0\n  chatnoir_retriever       0.54      0.88      0.67       253\nopensearch_retriever       0.54      0.96      0.69        94\n            reranker       0.33      0.01      0.02       129\n        deduplicator       0.00      0.00      0.00         0\n      answer_drafter       0.71      0.72      0.71       362\n              finish       0.46      0.08      0.14       137\n\n            accuracy                           0.60       975\n           macro avg       0.37      0.38      0.32       975\n        weighted avg       0.56      0.60      0.53       975\n",
+  "timing": {
+    "total_eval_time": 14.323127031326294,
+    "avg_inference_time_per_sample": 0.013689239697578626,
+    "std_inference_time": 0.008717752899908827,
+    "min_inference_time": 0.010422512888908386,
+    "max_inference_time": 0.06050075590610504
+  },
+  "memory": {
+    "peak_inference_memory_gb": 0.0
+  },
+  "valid_predictions": 975,
+  "invalid_predictions": 0,
+  "total_samples": 975
+}

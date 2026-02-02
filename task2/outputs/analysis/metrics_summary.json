@@ -1,0 +1,2194 @@
+[
+  {
+    "model_name": "Qwen2.5-7B-Base",
+    "model_path": "Qwen/Qwen2.5-7B-Instruct",
+    "model_type": "base",
+    "accuracy": 0.03617571059431524,
+    "macro_precision": 0.1625,
+    "macro_recall": 0.07208237986270023,
+    "macro_f1": 0.037839183470251433,
+    "weighted_precision": 0.3027454780361757,
+    "weighted_recall": 0.03617571059431524,
+    "weighted_f1": 0.027800452727072728,
+    "per_class": {
+      "query_formulator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "chatnoir_retriever": {
+        "precision": 1.0,
+        "recall": 0.02631578947368421,
+        "f1": 0.05128205128205128,
+        "support": 114
+      },
+      "opensearch_retriever": {
+        "precision": 0.1375,
+        "recall": 0.4782608695652174,
+        "f1": 0.21359223300970873,
+        "support": 23
+      },
+      "reranker": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 53
+      },
+      "deduplicator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "answer_drafter": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 160
+      },
+      "finish": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 37
+      }
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        90,
+        3,
+        20,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        10,
+        0,
+        11,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        42,
+        0,
+        11,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        125,
+        0,
+        32,
+        0,
+        0,
+        0,
+        3
+      ],
+      [
+        31,
+        0,
+        6,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "classification_report": "                      precision    recall  f1-score   support\n\n    query_formulator       0.00      0.00      0.00         0\n  chatnoir_retriever       1.00      0.03      0.05       114\nopensearch_retriever       0.14      0.48      0.21        23\n            reranker       0.00      0.00      0.00        53\n        deduplicator       0.00      0.00      0.00         0\n      answer_drafter       0.00      0.00      0.00       160\n              finish       0.00      0.00      0.00        37\n\n            accuracy                           0.04       387\n           macro avg       0.16      0.07      0.04       387\n        weighted avg       0.30      0.04      0.03       387\n",
+    "timing": {
+      "total_eval_time": 114.00406646728516,
+      "avg_inference_time_per_sample": 0.11579828237875914,
+      "std_inference_time": 0.02874895113037377,
+      "min_inference_time": 0.09241107106208801,
+      "max_inference_time": 0.2648947983980179
+    },
+    "memory": {
+      "peak_inference_memory_gb": 2.503688335418701
+    },
+    "valid_predictions": 387,
+    "invalid_predictions": 588,
+    "total_samples": 975,
+    "model_group": "Qwen 2.5 7B",
+    "train_type": "Base"
+  },
+  {
+    "model_name": "Qwen2.5-7B-LoRA",
+    "model_path": "outputs/models/Qwen-Qwen2.5-7B-Instruct-lora-final",
+    "model_type": "lora",
+    "accuracy": 0.6061538461538462,
+    "macro_precision": 0.37598322014364133,
+    "macro_recall": 0.38799013639226204,
+    "macro_f1": 0.33452147876355115,
+    "weighted_precision": 0.5750934938452601,
+    "weighted_recall": 0.6061538461538462,
+    "weighted_f1": 0.5427747534594517,
+    "per_class": {
+      "query_formulator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "chatnoir_retriever": {
+        "precision": 0.5352798053527981,
+        "recall": 0.8695652173913043,
+        "f1": 0.6626506024096386,
+        "support": 253
+      },
+      "opensearch_retriever": {
+        "precision": 0.5416666666666666,
+        "recall": 0.9680851063829787,
+        "f1": 0.6946564885496184,
+        "support": 94
+      },
+      "reranker": {
+        "precision": 0.25,
+        "recall": 0.007751937984496124,
+        "f1": 0.015037593984962405,
+        "support": 129
+      },
+      "deduplicator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "answer_drafter": {
+        "precision": 0.7259887005649718,
+        "recall": 0.7099447513812155,
+        "f1": 0.7178770949720671,
+        "support": 362
+      },
+      "finish": {
+        "precision": 0.5789473684210527,
+        "recall": 0.16058394160583941,
+        "f1": 0.25142857142857145,
+        "support": 137
+      }
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        220,
+        1,
+        2,
+        0,
+        20,
+        10
+      ],
+      [
+        0,
+        0,
+        91,
+        0,
+        0,
+        3,
+        0
+      ],
+      [
+        0,
+        77,
+        18,
+        1,
+        0,
+        31,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        67,
+        34,
+        0,
+        0,
+        257,
+        4
+      ],
+      [
+        0,
+        47,
+        24,
+        1,
+        0,
+        43,
+        22
+      ]
+    ],
+    "classification_report": "                      precision    recall  f1-score   support\n\n    query_formulator       0.00      0.00      0.00         0\n  chatnoir_retriever       0.54      0.87      0.66       253\nopensearch_retriever       0.54      0.97      0.69        94\n            reranker       0.25      0.01      0.02       129\n        deduplicator       0.00      0.00      0.00         0\n      answer_drafter       0.73      0.71      0.72       362\n              finish       0.58      0.16      0.25       137\n\n            accuracy                           0.61       975\n           macro avg       0.38      0.39      0.33       975\n        weighted avg       0.58      0.61      0.54       975\n",
+    "timing": {
+      "total_eval_time": 58.61062526702881,
+      "avg_inference_time_per_sample": 0.05921662990863506,
+      "std_inference_time": 0.013319787463193062,
+      "min_inference_time": 0.03073526918888092,
+      "max_inference_time": 0.08210603892803192
+    },
+    "memory": {
+      "peak_inference_memory_gb": 3.519291400909424
+    },
+    "valid_predictions": 975,
+    "invalid_predictions": 0,
+    "total_samples": 975,
+    "model_group": "Qwen 2.5 7B",
+    "train_type": "LoRA"
+  },
+  {
+    "model_name": "Qwen2.5-0.5B-LoRA",
+    "model_path": "outputs/models/Qwen-Qwen2.5-0.5B-Instruct-lora-final",
+    "model_type": "lora",
+    "accuracy": 0.6,
+    "macro_precision": 0.36783485870759197,
+    "macro_recall": 0.3777079354524858,
+    "macro_f1": 0.31736933781723936,
+    "weighted_precision": 0.5629277172494193,
+    "weighted_recall": 0.6,
+    "weighted_f1": 0.526082643908123,
+    "per_class": {
+      "query_formulator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "chatnoir_retriever": {
+        "precision": 0.5401459854014599,
+        "recall": 0.8774703557312253,
+        "f1": 0.6686746987951807,
+        "support": 253
+      },
+      "opensearch_retriever": {
+        "precision": 0.5357142857142857,
+        "recall": 0.9574468085106383,
+        "f1": 0.6870229007633588,
+        "support": 94
+      },
+      "reranker": {
+        "precision": 0.3333333333333333,
+        "recall": 0.007751937984496124,
+        "f1": 0.015151515151515152,
+        "support": 129
+      },
+      "deduplicator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "answer_drafter": {
+        "precision": 0.7073170731707317,
+        "recall": 0.7209944751381215,
+        "f1": 0.7140902872777017,
+        "support": 362
+      },
+      "finish": {
+        "precision": 0.4583333333333333,
+        "recall": 0.08029197080291971,
+        "f1": 0.13664596273291926,
+        "support": 137
+      }
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        222,
+        2,
+        0,
+        0,
+        21,
+        8
+      ],
+      [
+        0,
+        0,
+        90,
+        1,
+        0,
+        3,
+        0
+      ],
+      [
+        0,
+        76,
+        20,
+        1,
+        0,
+        31,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        63,
+        33,
+        1,
+        0,
+        261,
+        4
+      ],
+      [
+        0,
+        50,
+        23,
+        0,
+        0,
+        53,
+        11
+      ]
+    ],
+    "classification_report": "                      precision    recall  f1-score   support\n\n    query_formulator       0.00      0.00      0.00         0\n  chatnoir_retriever       0.54      0.88      0.67       253\nopensearch_retriever       0.54      0.96      0.69        94\n            reranker       0.33      0.01      0.02       129\n        deduplicator       0.00      0.00      0.00         0\n      answer_drafter       0.71      0.72      0.71       362\n              finish       0.46      0.08      0.14       137\n\n            accuracy                           0.60       975\n           macro avg       0.37      0.38      0.32       975\n        weighted avg       0.56      0.60      0.53       975\n",
+    "timing": {
+      "total_eval_time": 14.323127031326294,
+      "avg_inference_time_per_sample": 0.013689239697578626,
+      "std_inference_time": 0.008717752899908827,
+      "min_inference_time": 0.010422512888908386,
+      "max_inference_time": 0.06050075590610504
+    },
+    "memory": {
+      "peak_inference_memory_gb": 0.0
+    },
+    "valid_predictions": 975,
+    "invalid_predictions": 0,
+    "total_samples": 975,
+    "model_group": "Qwen 2.5 0.5B",
+    "train_type": "LoRA"
+  },
+  {
+    "model_name": "Qwen2.5-3B-Base",
+    "model_path": "Qwen/Qwen2.5-3B-Instruct",
+    "model_type": "base",
+    "accuracy": 0.22601984564498345,
+    "macro_precision": 0.05928571428571428,
+    "macro_recall": 0.12423469387755103,
+    "macro_f1": 0.06741641337386019,
+    "weighted_precision": 0.08831312017640573,
+    "weighted_recall": 0.22601984564498345,
+    "weighted_f1": 0.11799291562082151,
+    "per_class": {
+      "query_formulator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "chatnoir_retriever": {
+        "precision": 0.29,
+        "recall": 0.8458333333333333,
+        "f1": 0.4319148936170213,
+        "support": 240
+      },
+      "opensearch_retriever": {
+        "precision": 0.125,
+        "recall": 0.023809523809523808,
+        "f1": 0.04,
+        "support": 84
+      },
+      "reranker": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 117
+      },
+      "deduplicator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "answer_drafter": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 336
+      },
+      "finish": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 130
+      }
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        35,
+        203,
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        34,
+        46,
+        2,
+        0,
+        0,
+        0,
+        2
+      ],
+      [
+        25,
+        90,
+        2,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        68,
+        259,
+        9,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        27,
+        102,
+        1,
+        0,
+        0,
+        0,
+        0
+      ]
+    ],
+    "classification_report": "                      precision    recall  f1-score   support\n\n    query_formulator       0.00      0.00      0.00         0\n  chatnoir_retriever       0.29      0.85      0.43       240\nopensearch_retriever       0.12      0.02      0.04        84\n            reranker       0.00      0.00      0.00       117\n        deduplicator       0.00      0.00      0.00         0\n      answer_drafter       0.00      0.00      0.00       336\n              finish       0.00      0.00      0.00       130\n\n            accuracy                           0.23       907\n           macro avg       0.06      0.12      0.07       907\n        weighted avg       0.09      0.23      0.12       907\n",
+    "timing": {
+      "total_eval_time": 108.39973974227905,
+      "avg_inference_time_per_sample": 0.11046988756228716,
+      "std_inference_time": 0.035113812396375704,
+      "min_inference_time": 0.06002514809370041,
+      "max_inference_time": 0.3263015906016032
+    },
+    "memory": {
+      "peak_inference_memory_gb": 1.0614686012268066
+    },
+    "valid_predictions": 907,
+    "invalid_predictions": 68,
+    "total_samples": 975,
+    "model_group": "Qwen 2.5 3B",
+    "train_type": "Base"
+  },
+  {
+    "model_name": "Gemma3-270M-FullFT",
+    "model_path": "outputs/models/google-gemma-3-270m-it-full-finetune-final",
+    "model_type": "full_finetune",
+    "accuracy": 0.5394871794871795,
+    "macro_precision": 0.33879944345060625,
+    "macro_recall": 0.3106552562871331,
+    "macro_f1": 0.2708731484766551,
+    "weighted_precision": 0.5145043295669415,
+    "weighted_recall": 0.5394871794871795,
+    "weighted_f1": 0.47103683325755435,
+    "per_class": {
+      "query_formulator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "chatnoir_retriever": {
+        "precision": 0.49743589743589745,
+        "recall": 0.766798418972332,
+        "f1": 0.6034214618973561,
+        "support": 253
+      },
+      "opensearch_retriever": {
+        "precision": 0.4222222222222222,
+        "recall": 0.6063829787234043,
+        "f1": 0.4978165938864629,
+        "support": 94
+      },
+      "reranker": {
+        "precision": 0.25,
+        "recall": 0.015503875968992248,
+        "f1": 0.029197080291970802,
+        "support": 129
+      },
+      "deduplicator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "answer_drafter": {
+        "precision": 0.6186046511627907,
+        "recall": 0.7348066298342542,
+        "f1": 0.6717171717171717,
+        "support": 362
+      },
+      "finish": {
+        "precision": 0.5833333333333334,
+        "recall": 0.051094890510948905,
+        "f1": 0.09395973154362416,
+        "support": 137
+      }
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        194,
+        11,
+        3,
+        0,
+        44,
+        1
+      ],
+      [
+        0,
+        22,
+        57,
+        0,
+        0,
+        14,
+        1
+      ],
+      [
+        0,
+        70,
+        21,
+        2,
+        0,
+        34,
+        2
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        63,
+        31,
+        1,
+        0,
+        266,
+        1
+      ],
+      [
+        0,
+        41,
+        15,
+        2,
+        0,
+        72,
+        7
+      ]
+    ],
+    "classification_report": "                      precision    recall  f1-score   support\n\n    query_formulator       0.00      0.00      0.00         0\n  chatnoir_retriever       0.50      0.77      0.60       253\nopensearch_retriever       0.42      0.61      0.50        94\n            reranker       0.25      0.02      0.03       129\n        deduplicator       0.00      0.00      0.00         0\n      answer_drafter       0.62      0.73      0.67       362\n              finish       0.58      0.05      0.09       137\n\n            accuracy                           0.54       975\n           macro avg       0.34      0.31      0.27       975\n        weighted avg       0.51      0.54      0.47       975\n",
+    "timing": {
+      "total_eval_time": 18.843064785003662,
+      "avg_inference_time_per_sample": 0.01858565892928686,
+      "std_inference_time": 0.013973806371710537,
+      "min_inference_time": 0.013034306466579437,
+      "max_inference_time": 0.1286457856496175
+    },
+    "memory": {
+      "peak_inference_memory_gb": 0.0
+    },
+    "valid_predictions": 975,
+    "invalid_predictions": 0,
+    "total_samples": 975,
+    "model_group": "Gemma 270M",
+    "train_type": "Base"
+  },
+  {
+    "model_name": "Gemma3-270M-LoRA",
+    "model_path": "outputs/models/google-gemma-3-270m-it-lora-final",
+    "model_type": "lora",
+    "accuracy": 0.563076923076923,
+    "macro_precision": 0.34477347760098265,
+    "macro_recall": 0.34489038454688886,
+    "macro_f1": 0.3106291282666992,
+    "weighted_precision": 0.5347803574403778,
+    "weighted_recall": 0.563076923076923,
+    "weighted_f1": 0.5147015223505339,
+    "per_class": {
+      "query_formulator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "chatnoir_retriever": {
+        "precision": 0.5149051490514905,
+        "recall": 0.7509881422924901,
+        "f1": 0.6109324758842444,
+        "support": 253
+      },
+      "opensearch_retriever": {
+        "precision": 0.445859872611465,
+        "recall": 0.7446808510638298,
+        "f1": 0.5577689243027888,
+        "support": 94
+      },
+      "reranker": {
+        "precision": 0.23809523809523808,
+        "recall": 0.03875968992248062,
+        "f1": 0.06666666666666667,
+        "support": 129
+      },
+      "deduplicator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "answer_drafter": {
+        "precision": 0.6760925449871465,
+        "recall": 0.7265193370165746,
+        "f1": 0.7003994673768309,
+        "support": 362
+      },
+      "finish": {
+        "precision": 0.5384615384615384,
+        "recall": 0.15328467153284672,
+        "f1": 0.23863636363636365,
+        "support": 137
+      }
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        190,
+        15,
+        7,
+        0,
+        30,
+        11
+      ],
+      [
+        0,
+        14,
+        70,
+        2,
+        0,
+        3,
+        5
+      ],
+      [
+        0,
+        72,
+        18,
+        5,
+        0,
+        33,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        57,
+        36,
+        5,
+        0,
+        263,
+        1
+      ],
+      [
+        0,
+        36,
+        18,
+        2,
+        0,
+        60,
+        21
+      ]
+    ],
+    "classification_report": "                      precision    recall  f1-score   support\n\n    query_formulator       0.00      0.00      0.00         0\n  chatnoir_retriever       0.51      0.75      0.61       253\nopensearch_retriever       0.45      0.74      0.56        94\n            reranker       0.24      0.04      0.07       129\n        deduplicator       0.00      0.00      0.00         0\n      answer_drafter       0.68      0.73      0.70       362\n              finish       0.54      0.15      0.24       137\n\n            accuracy                           0.56       975\n           macro avg       0.34      0.34      0.31       975\n        weighted avg       0.53      0.56      0.51       975\n",
+    "timing": {
+      "total_eval_time": 14.798012256622314,
+      "avg_inference_time_per_sample": 0.014600750116201548,
+      "std_inference_time": 0.002209155071320417,
+      "min_inference_time": 0.012601517140865326,
+      "max_inference_time": 0.03144286473592122
+    },
+    "memory": {
+      "peak_inference_memory_gb": 0.0
+    },
+    "valid_predictions": 975,
+    "invalid_predictions": 0,
+    "total_samples": 975,
+    "model_group": "Gemma 270M",
+    "train_type": "LoRA"
+  },
+  {
+    "model_name": "Qwen2.5-0.5B-Base",
+    "model_path": "Qwen/Qwen2.5-0.5B-Instruct",
+    "model_type": "base",
+    "accuracy": 0.0,
+    "macro_precision": 0.0,
+    "macro_recall": 0.0,
+    "macro_f1": 0.0,
+    "weighted_precision": 0.0,
+    "weighted_recall": 0.0,
+    "weighted_f1": 0.0,
+    "per_class": {
+      "query_formulator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "chatnoir_retriever": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 174
+      },
+      "opensearch_retriever": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 55
+      },
+      "reranker": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 82
+      },
+      "deduplicator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "answer_drafter": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 230
+      },
+      "finish": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 81
+      }
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        173,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        52,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3
+      ],
+      [
+        82,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        229,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      [
+        80,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0
+      ]
+    ],
+    "classification_report": "                      precision    recall  f1-score   support\n\n    query_formulator       0.00      0.00      0.00       0.0\n  chatnoir_retriever       0.00      0.00      0.00     174.0\nopensearch_retriever       0.00      0.00      0.00      55.0\n            reranker       0.00      0.00      0.00      82.0\n        deduplicator       0.00      0.00      0.00       0.0\n      answer_drafter       0.00      0.00      0.00     230.0\n              finish       0.00      0.00      0.00      81.0\n\n            accuracy                           0.00     622.0\n           macro avg       0.00      0.00      0.00     622.0\n        weighted avg       0.00      0.00      0.00     622.0\n",
+    "timing": {
+      "total_eval_time": 31.104767322540283,
+      "avg_inference_time_per_sample": 0.030757269247984276,
+      "std_inference_time": 0.005449706403139664,
+      "min_inference_time": 0.026804015040397644,
+      "max_inference_time": 0.057637866338094076
+    },
+    "memory": {
+      "peak_inference_memory_gb": 0.0
+    },
+    "valid_predictions": 622,
+    "invalid_predictions": 353,
+    "total_samples": 975,
+    "model_group": "Qwen 2.5 0.5B",
+    "train_type": "Base"
+  },
+  {
+    "model_name": "Qwen2.5-3B-LoRA",
+    "model_path": "outputs/models/Qwen-Qwen2.5-3B-Instruct-lora-final",
+    "model_type": "lora",
+    "accuracy": 0.6051282051282051,
+    "macro_precision": 0.47521181767292076,
+    "macro_recall": 0.38551417929534704,
+    "macro_f1": 0.3313578090861104,
+    "weighted_precision": 0.6644624261138937,
+    "weighted_recall": 0.6051282051282051,
+    "weighted_f1": 0.5390940874939145,
+    "per_class": {
+      "query_formulator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "chatnoir_retriever": {
+        "precision": 0.5388349514563107,
+        "recall": 0.8774703557312253,
+        "f1": 0.6676691729323309,
+        "support": 253
+      },
+      "opensearch_retriever": {
+        "precision": 0.5454545454545454,
+        "recall": 0.9574468085106383,
+        "f1": 0.694980694980695,
+        "support": 94
+      },
+      "reranker": {
+        "precision": 1.0,
+        "recall": 0.007751937984496124,
+        "f1": 0.015384615384615385,
+        "support": 129
+      },
+      "deduplicator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "answer_drafter": {
+        "precision": 0.7158774373259053,
+        "recall": 0.7099447513812155,
+        "f1": 0.7128987517337032,
+        "support": 362
+      },
+      "finish": {
+        "precision": 0.5263157894736842,
+        "recall": 0.145985401459854,
+        "f1": 0.22857142857142856,
+        "support": 137
+      }
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        222,
+        1,
+        0,
+        0,
+        20,
+        10
+      ],
+      [
+        0,
+        1,
+        90,
+        0,
+        0,
+        2,
+        1
+      ],
+      [
+        0,
+        75,
+        19,
+        1,
+        0,
+        33,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        67,
+        32,
+        0,
+        0,
+        257,
+        6
+      ],
+      [
+        0,
+        47,
+        23,
+        0,
+        0,
+        47,
+        20
+      ]
+    ],
+    "classification_report": "                      precision    recall  f1-score   support\n\n    query_formulator       0.00      0.00      0.00         0\n  chatnoir_retriever       0.54      0.88      0.67       253\nopensearch_retriever       0.55      0.96      0.69        94\n            reranker       1.00      0.01      0.02       129\n        deduplicator       0.00      0.00      0.00         0\n      answer_drafter       0.72      0.71      0.71       362\n              finish       0.53      0.15      0.23       137\n\n            accuracy                           0.61       975\n           macro avg       0.48      0.39      0.33       975\n        weighted avg       0.66      0.61      0.54       975\n",
+    "timing": {
+      "total_eval_time": 39.08973789215088,
+      "avg_inference_time_per_sample": 0.0391794317196577,
+      "std_inference_time": 0.005111244385506751,
+      "min_inference_time": 0.0324920117855072,
+      "max_inference_time": 0.07003472646077474
+    },
+    "memory": {
+      "peak_inference_memory_gb": 1.06129789352417
+    },
+    "valid_predictions": 975,
+    "invalid_predictions": 0,
+    "total_samples": 975,
+    "model_group": "Qwen 2.5 3B",
+    "train_type": "LoRA"
+  },
+  {
+    "model_name": "Gemma3-270M-Base",
+    "model_path": "google/gemma-3-270m-it",
+    "model_type": "base",
+    "accuracy": 0.14051282051282052,
+    "macro_precision": 0.02009386916984453,
+    "macro_recall": 0.14285714285714285,
+    "macro_f1": 0.035232094638035234,
+    "weighted_precision": 0.019764123624493233,
+    "weighted_recall": 0.14051282051282052,
+    "weighted_f1": 0.03465392693115465,
+    "per_class": {
+      "query_formulator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "chatnoir_retriever": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 253
+      },
+      "opensearch_retriever": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 94
+      },
+      "reranker": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 129
+      },
+      "deduplicator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "answer_drafter": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 362
+      },
+      "finish": {
+        "precision": 0.1406570841889117,
+        "recall": 1.0,
+        "f1": 0.24662466246624662,
+        "support": 137
+      }
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        252
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        94
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        129
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        362
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        137
+      ]
+    ],
+    "classification_report": "                      precision    recall  f1-score   support\n\n    query_formulator       0.00      0.00      0.00         0\n  chatnoir_retriever       0.00      0.00      0.00       253\nopensearch_retriever       0.00      0.00      0.00        94\n            reranker       0.00      0.00      0.00       129\n        deduplicator       0.00      0.00      0.00         0\n      answer_drafter       0.00      0.00      0.00       362\n              finish       0.14      1.00      0.25       137\n\n            accuracy                           0.14       975\n           macro avg       0.02      0.14      0.04       975\n        weighted avg       0.02      0.14      0.03       975\n",
+    "timing": {
+      "total_eval_time": 35.38290500640869,
+      "avg_inference_time_per_sample": 0.03560687162937262,
+      "std_inference_time": 0.006298444942609263,
+      "min_inference_time": 0.030858956277370453,
+      "max_inference_time": 0.0685873031616211
+    },
+    "memory": {
+      "peak_inference_memory_gb": 0.0
+    },
+    "valid_predictions": 975,
+    "invalid_predictions": 0,
+    "total_samples": 975,
+    "model_group": "Gemma 270M",
+    "train_type": "Base"
+  },
+  {
+    "model_name": "Qwen2.5-1.5B-LoRA",
+    "model_path": "outputs/models/Qwen-Qwen2.5-1.5B-Instruct-lora-final",
+    "model_type": "lora",
+    "accuracy": 0.5825641025641025,
+    "macro_precision": 0.3283486088182408,
+    "macro_recall": 0.3653459808800784,
+    "macro_f1": 0.31674937732463615,
+    "weighted_precision": 0.5312475329625928,
+    "weighted_recall": 0.5825641025641025,
+    "weighted_f1": 0.5251618810337285,
+    "per_class": {
+      "query_formulator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "chatnoir_retriever": {
+        "precision": 0.5194174757281553,
+        "recall": 0.8458498023715415,
+        "f1": 0.643609022556391,
+        "support": 253
+      },
+      "opensearch_retriever": {
+        "precision": 0.4909090909090909,
+        "recall": 0.8617021276595744,
+        "f1": 0.6254826254826255,
+        "support": 94
+      },
+      "reranker": {
+        "precision": 0.1111111111111111,
+        "recall": 0.007751937984496124,
+        "f1": 0.014492753623188406,
+        "support": 129
+      },
+      "deduplicator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "answer_drafter": {
+        "precision": 0.7325581395348837,
+        "recall": 0.6961325966850829,
+        "f1": 0.7138810198300283,
+        "support": 362
+      },
+      "finish": {
+        "precision": 0.4444444444444444,
+        "recall": 0.145985401459854,
+        "f1": 0.21978021978021978,
+        "support": 137
+      }
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        214,
+        6,
+        3,
+        0,
+        19,
+        11
+      ],
+      [
+        0,
+        6,
+        81,
+        1,
+        0,
+        2,
+        4
+      ],
+      [
+        0,
+        74,
+        20,
+        1,
+        0,
+        30,
+        4
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        68,
+        33,
+        3,
+        0,
+        252,
+        6
+      ],
+      [
+        0,
+        50,
+        25,
+        1,
+        0,
+        41,
+        20
+      ]
+    ],
+    "classification_report": "                      precision    recall  f1-score   support\n\n    query_formulator       0.00      0.00      0.00         0\n  chatnoir_retriever       0.52      0.85      0.64       253\nopensearch_retriever       0.49      0.86      0.63        94\n            reranker       0.11      0.01      0.01       129\n        deduplicator       0.00      0.00      0.00         0\n      answer_drafter       0.73      0.70      0.71       362\n              finish       0.44      0.15      0.22       137\n\n            accuracy                           0.58       975\n           macro avg       0.33      0.37      0.32       975\n        weighted avg       0.53      0.58      0.53       975\n",
+    "timing": {
+      "total_eval_time": 20.141027688980103,
+      "avg_inference_time_per_sample": 0.01987404432052221,
+      "std_inference_time": 0.00757850744440772,
+      "min_inference_time": 0.013948723673820496,
+      "max_inference_time": 0.058469414710998535
+    },
+    "memory": {
+      "peak_inference_memory_gb": 0.0
+    },
+    "valid_predictions": 975,
+    "invalid_predictions": 0,
+    "total_samples": 975,
+    "model_group": "Qwen 2.5 1.5B",
+    "train_type": "LoRA"
+  },
+  {
+    "model_name": "Gemma3-1B-LoRA",
+    "model_path": "outputs/models/google-gemma-3-1b-it-lora-final",
+    "model_type": "lora",
+    "accuracy": 0.5753846153846154,
+    "macro_precision": 0.3259159090983868,
+    "macro_recall": 0.36452536971562466,
+    "macro_f1": 0.31596394352238877,
+    "weighted_precision": 0.5212529934271107,
+    "weighted_recall": 0.5753846153846154,
+    "weighted_f1": 0.5181924716488409,
+    "per_class": {
+      "query_formulator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "chatnoir_retriever": {
+        "precision": 0.5238095238095238,
+        "recall": 0.8260869565217391,
+        "f1": 0.6411042944785276,
+        "support": 253
+      },
+      "opensearch_retriever": {
+        "precision": 0.5121951219512195,
+        "recall": 0.8936170212765957,
+        "f1": 0.6511627906976745,
+        "support": 94
+      },
+      "reranker": {
+        "precision": 0.14285714285714285,
+        "recall": 0.015503875968992248,
+        "f1": 0.027972027972027972,
+        "support": 129
+      },
+      "deduplicator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "answer_drafter": {
+        "precision": 0.7025495750708215,
+        "recall": 0.6850828729281768,
+        "f1": 0.6937062937062937,
+        "support": 362
+      },
+      "finish": {
+        "precision": 0.4,
+        "recall": 0.13138686131386862,
+        "f1": 0.1978021978021978,
+        "support": 137
+      }
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        209,
+        4,
+        6,
+        0,
+        22,
+        12
+      ],
+      [
+        0,
+        3,
+        84,
+        1,
+        0,
+        3,
+        3
+      ],
+      [
+        0,
+        71,
+        21,
+        2,
+        0,
+        31,
+        4
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        69,
+        33,
+        4,
+        0,
+        248,
+        8
+      ],
+      [
+        0,
+        47,
+        22,
+        1,
+        0,
+        49,
+        18
+      ]
+    ],
+    "classification_report": "                      precision    recall  f1-score   support\n\n    query_formulator       0.00      0.00      0.00         0\n  chatnoir_retriever       0.52      0.83      0.64       253\nopensearch_retriever       0.51      0.89      0.65        94\n            reranker       0.14      0.02      0.03       129\n        deduplicator       0.00      0.00      0.00         0\n      answer_drafter       0.70      0.69      0.69       362\n              finish       0.40      0.13      0.20       137\n\n            accuracy                           0.58       975\n           macro avg       0.33      0.36      0.32       975\n        weighted avg       0.52      0.58      0.52       975\n",
+    "timing": {
+      "total_eval_time": 26.13449239730835,
+      "avg_inference_time_per_sample": 0.025852041978102463,
+      "std_inference_time": 0.0034579336997196015,
+      "min_inference_time": 0.020066015422344208,
+      "max_inference_time": 0.04483942985534668
+    },
+    "memory": {
+      "peak_inference_memory_gb": 0.0
+    },
+    "valid_predictions": 975,
+    "invalid_predictions": 0,
+    "total_samples": 975,
+    "model_group": "Gemma 270M",
+    "train_type": "LoRA"
+  },
+  {
+    "model_name": "Qwen2.5-0.5B-FullFT",
+    "model_path": "outputs/models/Qwen-Qwen2.5-0.5B-Instruct-full-finetune-final",
+    "model_type": "full_finetune",
+    "accuracy": 0.5856410256410256,
+    "macro_precision": 0.36204706191292374,
+    "macro_recall": 0.3566667749185766,
+    "macro_f1": 0.31164397888930256,
+    "weighted_precision": 0.5484347079339256,
+    "weighted_recall": 0.5856410256410256,
+    "weighted_f1": 0.5174870171945526,
+    "per_class": {
+      "query_formulator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "chatnoir_retriever": {
+        "precision": 0.5308641975308642,
+        "recall": 0.849802371541502,
+        "f1": 0.6534954407294833,
+        "support": 253
+      },
+      "opensearch_retriever": {
+        "precision": 0.5352112676056338,
+        "recall": 0.8085106382978723,
+        "f1": 0.6440677966101694,
+        "support": 94
+      },
+      "reranker": {
+        "precision": 0.2727272727272727,
+        "recall": 0.023255813953488372,
+        "f1": 0.04285714285714286,
+        "support": 129
+      },
+      "deduplicator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "answer_drafter": {
+        "precision": 0.6717171717171717,
+        "recall": 0.7348066298342542,
+        "f1": 0.7018469656992085,
+        "support": 362
+      },
+      "finish": {
+        "precision": 0.5238095238095238,
+        "recall": 0.08029197080291971,
+        "f1": 0.13924050632911392,
+        "support": 137
+      }
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        215,
+        0,
+        4,
+        0,
+        30,
+        4
+      ],
+      [
+        0,
+        5,
+        76,
+        3,
+        0,
+        7,
+        3
+      ],
+      [
+        0,
+        77,
+        14,
+        3,
+        0,
+        34,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        63,
+        30,
+        1,
+        0,
+        266,
+        2
+      ],
+      [
+        0,
+        45,
+        22,
+        0,
+        0,
+        59,
+        11
+      ]
+    ],
+    "classification_report": "                      precision    recall  f1-score   support\n\n    query_formulator       0.00      0.00      0.00         0\n  chatnoir_retriever       0.53      0.85      0.65       253\nopensearch_retriever       0.54      0.81      0.64        94\n            reranker       0.27      0.02      0.04       129\n        deduplicator       0.00      0.00      0.00         0\n      answer_drafter       0.67      0.73      0.70       362\n              finish       0.52      0.08      0.14       137\n\n            accuracy                           0.59       975\n           macro avg       0.36      0.36      0.31       975\n        weighted avg       0.55      0.59      0.52       975\n",
+    "timing": {
+      "total_eval_time": 15.2991783618927,
+      "avg_inference_time_per_sample": 0.014608149895301232,
+      "std_inference_time": 0.014336219798548702,
+      "min_inference_time": 0.009275257587432861,
+      "max_inference_time": 0.09137839823961258
+    },
+    "memory": {
+      "peak_inference_memory_gb": 0.0
+    },
+    "valid_predictions": 975,
+    "invalid_predictions": 0,
+    "total_samples": 975,
+    "model_group": "Qwen 2.5 0.5B",
+    "train_type": "Base"
+  },
+  {
+    "model_name": "Gemma3-1B-FullFT",
+    "model_path": "outputs/models/google-gemma-3-1b-it-full-finetune-final",
+    "model_type": "full_finetune",
+    "accuracy": 0.563076923076923,
+    "macro_precision": 0.29588571693338145,
+    "macro_recall": 0.34288275945410085,
+    "macro_f1": 0.29570169432706483,
+    "weighted_precision": 0.4820849212203324,
+    "weighted_recall": 0.563076923076923,
+    "weighted_f1": 0.4972010702428482,
+    "per_class": {
+      "query_formulator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "chatnoir_retriever": {
+        "precision": 0.5207253886010362,
+        "recall": 0.7944664031620553,
+        "f1": 0.6291079812206573,
+        "support": 253
+      },
+      "opensearch_retriever": {
+        "precision": 0.5135135135135135,
+        "recall": 0.8085106382978723,
+        "f1": 0.628099173553719,
+        "support": 94
+      },
+      "reranker": {
+        "precision": 0.06666666666666667,
+        "recall": 0.007751937984496124,
+        "f1": 0.013888888888888888,
+        "support": 129
+      },
+      "deduplicator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "answer_drafter": {
+        "precision": 0.6599496221662469,
+        "recall": 0.7237569060773481,
+        "f1": 0.6903820816864296,
+        "support": 362
+      },
+      "finish": {
+        "precision": 0.3103448275862069,
+        "recall": 0.06569343065693431,
+        "f1": 0.10843373493975904,
+        "support": 137
+      }
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        201,
+        3,
+        4,
+        0,
+        34,
+        11
+      ],
+      [
+        0,
+        6,
+        76,
+        3,
+        0,
+        5,
+        4
+      ],
+      [
+        0,
+        75,
+        16,
+        1,
+        0,
+        34,
+        3
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        63,
+        32,
+        3,
+        0,
+        262,
+        2
+      ],
+      [
+        0,
+        41,
+        21,
+        4,
+        0,
+        62,
+        9
+      ]
+    ],
+    "classification_report": "                      precision    recall  f1-score   support\n\n    query_formulator       0.00      0.00      0.00         0\n  chatnoir_retriever       0.52      0.79      0.63       253\nopensearch_retriever       0.51      0.81      0.63        94\n            reranker       0.07      0.01      0.01       129\n        deduplicator       0.00      0.00      0.00         0\n      answer_drafter       0.66      0.72      0.69       362\n              finish       0.31      0.07      0.11       137\n\n            accuracy                           0.56       975\n           macro avg       0.30      0.34      0.30       975\n        weighted avg       0.48      0.56      0.50       975\n",
+    "timing": {
+      "total_eval_time": 27.369455099105835,
+      "avg_inference_time_per_sample": 0.027212009674463515,
+      "std_inference_time": 0.012553576986438905,
+      "min_inference_time": 0.0222538560628891,
+      "max_inference_time": 0.09158668667078018
+    },
+    "memory": {
+      "peak_inference_memory_gb": 0.0
+    },
+    "valid_predictions": 975,
+    "invalid_predictions": 0,
+    "total_samples": 975,
+    "model_group": "Gemma 270M",
+    "train_type": "Base"
+  },
+  {
+    "model_name": "Qwen2.5-1.5B-Base",
+    "model_path": "Qwen/Qwen2.5-1.5B-Instruct",
+    "model_type": "base",
+    "accuracy": 0.3167259786476868,
+    "macro_precision": 0.09917898193760262,
+    "macro_recall": 0.12847439228972732,
+    "macro_f1": 0.09595129143544255,
+    "weighted_precision": 0.231742136049413,
+    "weighted_recall": 0.3167259786476868,
+    "weighted_f1": 0.2318744198613099,
+    "per_class": {
+      "query_formulator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "chatnoir_retriever": {
+        "precision": 0.3333333333333333,
+        "recall": 0.12209302325581395,
+        "f1": 0.17872340425531916,
+        "support": 172
+      },
+      "opensearch_retriever": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 34
+      },
+      "reranker": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 75
+      },
+      "deduplicator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "answer_drafter": {
+        "precision": 0.36091954022988504,
+        "recall": 0.7772277227722773,
+        "f1": 0.49293563579277866,
+        "support": 202
+      },
+      "finish": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 79
+      }
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        9,
+        21,
+        0,
+        0,
+        0,
+        142,
+        0
+      ],
+      [
+        10,
+        2,
+        0,
+        0,
+        0,
+        19,
+        3
+      ],
+      [
+        7,
+        10,
+        0,
+        0,
+        0,
+        58,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        22,
+        19,
+        0,
+        0,
+        0,
+        157,
+        4
+      ],
+      [
+        9,
+        11,
+        0,
+        0,
+        0,
+        59,
+        0
+      ]
+    ],
+    "classification_report": "                      precision    recall  f1-score   support\n\n    query_formulator       0.00      0.00      0.00         0\n  chatnoir_retriever       0.33      0.12      0.18       172\nopensearch_retriever       0.00      0.00      0.00        34\n            reranker       0.00      0.00      0.00        75\n        deduplicator       0.00      0.00      0.00         0\n      answer_drafter       0.36      0.78      0.49       202\n              finish       0.00      0.00      0.00        79\n\n            accuracy                           0.32       562\n           macro avg       0.10      0.13      0.10       562\n        weighted avg       0.23      0.32      0.23       562\n",
+    "timing": {
+      "total_eval_time": 51.25870871543884,
+      "avg_inference_time_per_sample": 0.05186497199229705,
+      "std_inference_time": 0.022079938429566865,
+      "min_inference_time": 0.036554060876369476,
+      "max_inference_time": 0.17021449406941733
+    },
+    "memory": {
+      "peak_inference_memory_gb": 0.0
+    },
+    "valid_predictions": 562,
+    "invalid_predictions": 413,
+    "total_samples": 975,
+    "model_group": "Qwen 2.5 1.5B",
+    "train_type": "Base"
+  },
+  {
+    "model_name": "Qwen2.5-3B-FullFT",
+    "model_path": "outputs/models/Qwen-Qwen2.5-3B-Instruct-full-finetune-final",
+    "model_type": "full_finetune",
+    "accuracy": 0.5846153846153846,
+    "macro_precision": 0.3364995921792899,
+    "macro_recall": 0.37301930718754095,
+    "macro_f1": 0.32807479023456415,
+    "weighted_precision": 0.535452120109285,
+    "weighted_recall": 0.5846153846153846,
+    "weighted_f1": 0.5295173207794932,
+    "per_class": {
+      "query_formulator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "chatnoir_retriever": {
+        "precision": 0.5184331797235023,
+        "recall": 0.8893280632411067,
+        "f1": 0.6550218340611353,
+        "support": 253
+      },
+      "opensearch_retriever": {
+        "precision": 0.5503355704697986,
+        "recall": 0.8723404255319149,
+        "f1": 0.6748971193415638,
+        "support": 94
+      },
+      "reranker": {
+        "precision": 0.125,
+        "recall": 0.007751937984496124,
+        "f1": 0.014598540145985401,
+        "support": 129
+      },
+      "deduplicator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "answer_drafter": {
+        "precision": 0.7283950617283951,
+        "recall": 0.6519337016574586,
+        "f1": 0.6880466472303207,
+        "support": 362
+      },
+      "finish": {
+        "precision": 0.43333333333333335,
+        "recall": 0.1897810218978102,
+        "f1": 0.2639593908629442,
+        "support": 137
+      }
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        225,
+        0,
+        1,
+        0,
+        18,
+        9
+      ],
+      [
+        0,
+        4,
+        82,
+        4,
+        0,
+        2,
+        2
+      ],
+      [
+        0,
+        77,
+        16,
+        1,
+        0,
+        32,
+        3
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        73,
+        31,
+        2,
+        0,
+        236,
+        20
+      ],
+      [
+        0,
+        55,
+        20,
+        0,
+        0,
+        36,
+        26
+      ]
+    ],
+    "classification_report": "                      precision    recall  f1-score   support\n\n    query_formulator       0.00      0.00      0.00         0\n  chatnoir_retriever       0.52      0.89      0.66       253\nopensearch_retriever       0.55      0.87      0.67        94\n            reranker       0.12      0.01      0.01       129\n        deduplicator       0.00      0.00      0.00         0\n      answer_drafter       0.73      0.65      0.69       362\n              finish       0.43      0.19      0.26       137\n\n            accuracy                           0.58       975\n           macro avg       0.34      0.37      0.33       975\n        weighted avg       0.54      0.58      0.53       975\n",
+    "timing": {
+      "total_eval_time": 39.39064002037048,
+      "avg_inference_time_per_sample": 0.03958046962053348,
+      "std_inference_time": 0.022969922516978252,
+      "min_inference_time": 0.021474972367286682,
+      "max_inference_time": 0.1891326427459717
+    },
+    "memory": {
+      "peak_inference_memory_gb": 1.787872314453125
+    },
+    "valid_predictions": 975,
+    "invalid_predictions": 0,
+    "total_samples": 975,
+    "model_group": "Qwen 2.5 3B",
+    "train_type": "Base"
+  },
+  {
+    "model_name": "Gemma3-1B-Base",
+    "model_path": "google/gemma-3-1b-it",
+    "model_type": "base",
+    "accuracy": 0.23858921161825727,
+    "macro_precision": 0.10148199807701543,
+    "macro_recall": 0.11084200763085225,
+    "macro_f1": 0.09394374543497938,
+    "weighted_precision": 0.19445487361802646,
+    "weighted_recall": 0.23858921161825727,
+    "weighted_f1": 0.1948603618391434,
+    "per_class": {
+      "query_formulator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "chatnoir_retriever": {
+        "precision": 0.1,
+        "recall": 0.00796812749003984,
+        "f1": 0.014760147601476014,
+        "support": 251
+      },
+      "opensearch_retriever": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 93
+      },
+      "reranker": {
+        "precision": 0.1643835616438356,
+        "recall": 0.192,
+        "f1": 0.17712177121771217,
+        "support": 125
+      },
+      "deduplicator": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 0
+      },
+      "answer_drafter": {
+        "precision": 0.362657091561939,
+        "recall": 0.5611111111111111,
+        "f1": 0.440567066521265,
+        "support": 360
+      },
+      "finish": {
+        "precision": 0.08333333333333333,
+        "recall": 0.014814814814814815,
+        "f1": 0.025157232704402517,
+        "support": 135
+      }
+    },
+    "confusion_matrix": [
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        39,
+        2,
+        0,
+        36,
+        0,
+        165,
+        9
+      ],
+      [
+        43,
+        5,
+        0,
+        6,
+        0,
+        39,
+        0
+      ],
+      [
+        29,
+        3,
+        0,
+        24,
+        0,
+        69,
+        0
+      ],
+      [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      [
+        76,
+        9,
+        0,
+        60,
+        0,
+        202,
+        13
+      ],
+      [
+        30,
+        1,
+        0,
+        20,
+        0,
+        82,
+        2
+      ]
+    ],
+    "classification_report": "                      precision    recall  f1-score   support\n\n    query_formulator       0.00      0.00      0.00         0\n  chatnoir_retriever       0.10      0.01      0.01       251\nopensearch_retriever       0.00      0.00      0.00        93\n            reranker       0.16      0.19      0.18       125\n        deduplicator       0.00      0.00      0.00         0\n      answer_drafter       0.36      0.56      0.44       360\n              finish       0.08      0.01      0.03       135\n\n            accuracy                           0.24       964\n           macro avg       0.10      0.11      0.09       964\n        weighted avg       0.19      0.24      0.19       964\n",
+    "timing": {
+      "total_eval_time": 50.957202434539795,
+      "avg_inference_time_per_sample": 0.05144530394138434,
+      "std_inference_time": 0.019441594996171825,
+      "min_inference_time": 0.04274747520685196,
+      "max_inference_time": 0.20284709930419922
+    },
+    "memory": {
+      "peak_inference_memory_gb": 0.0
+    },
+    "valid_predictions": 964,
+    "invalid_predictions": 11,
+    "total_samples": 975,
+    "model_group": "Gemma 270M",
+    "train_type": "Base"
+  }
+]
