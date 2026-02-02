@@ -1,0 +1,334 @@
+{
+  "base_vs_lora": [
+    {
+      "group": "Qwen 2.5 0.5B",
+      "metric": "Abstain Accuracy",
+      "base_mean": 0.4178154825026511,
+      "lora_mean": 0.7099681866383881,
+      "t_statistic": -18.926290545199894,
+      "p_value": 2.172376392844697e-76,
+      "significant": "True"
+    },
+    {
+      "group": "Qwen 2.5 0.5B",
+      "metric": "Embedding Similarity",
+      "base_mean": 0.36754456759763293,
+      "lora_mean": 0.7006072857410253,
+      "t_statistic": -22.922609225843242,
+      "p_value": 5.649681079108627e-109,
+      "significant": "True"
+    },
+    {
+      "group": "Qwen 2.5 0.5B",
+      "metric": "Token Overlap",
+      "base_mean": 0.08226697789295631,
+      "lora_mean": 0.5676136378324391,
+      "t_statistic": -42.829738407896365,
+      "p_value": 0.0,
+      "significant": "True"
+    },
+    {
+      "group": "Qwen 2.5 1.5B",
+      "metric": "Abstain Accuracy",
+      "base_mean": 0.7205726405090138,
+      "lora_mean": 0.7682926829268293,
+      "t_statistic": -3.3637744559616136,
+      "p_value": 0.0007765189095355887,
+      "significant": "True"
+    },
+    {
+      "group": "Qwen 2.5 1.5B",
+      "metric": "Embedding Similarity",
+      "base_mean": 0.6998845677455435,
+      "lora_mean": 0.7569134558056217,
+      "t_statistic": -4.076685397906166,
+      "p_value": 4.6624526092370235e-05,
+      "significant": "True"
+    },
+    {
+      "group": "Qwen 2.5 1.5B",
+      "metric": "Token Overlap",
+      "base_mean": 0.49322035904897843,
+      "lora_mean": 0.5948927893972946,
+      "t_statistic": -6.871322725416864,
+      "p_value": 7.41086683665563e-12,
+      "significant": "True"
+    },
+    {
+      "group": "Qwen 2.5 3B",
+      "metric": "Abstain Accuracy",
+      "base_mean": 0.7444326617179216,
+      "lora_mean": 0.8229056203605515,
+      "t_statistic": -5.877816128948593,
+      "p_value": 4.517719627331163e-09,
+      "significant": "True"
+    },
+    {
+      "group": "Qwen 2.5 3B",
+      "metric": "Embedding Similarity",
+      "base_mean": 0.7278641103623654,
+      "lora_mean": 0.8104199068038107,
+      "t_statistic": -6.266029097597987,
+      "p_value": 4.1205397035040626e-10,
+      "significant": "True"
+    },
+    {
+      "group": "Qwen 2.5 3B",
+      "metric": "Token Overlap",
+      "base_mean": 0.5320624256015507,
+      "lora_mean": 0.6365934413531935,
+      "t_statistic": -7.241736709683359,
+      "p_value": 5.3435826813324e-13,
+      "significant": "True"
+    },
+    {
+      "group": "Qwen 2.5 7B",
+      "metric": "Abstain Accuracy",
+      "base_mean": 0.8186638388123012,
+      "lora_mean": 0.865323435843054,
+      "t_statistic": -3.9353209781368683,
+      "p_value": 8.458346155967348e-05,
+      "significant": "True"
+    },
+    {
+      "group": "Qwen 2.5 7B",
+      "metric": "Embedding Similarity",
+      "base_mean": 0.8111015915048969,
+      "lora_mean": 0.8510923822699776,
+      "t_statistic": -3.3965052833286467,
+      "p_value": 0.0006895864895495544,
+      "significant": "True"
+    },
+    {
+      "group": "Qwen 2.5 7B",
+      "metric": "Token Overlap",
+      "base_mean": 0.6698403357961248,
+      "lora_mean": 0.6613387486054527,
+      "t_statistic": 0.6123855656844411,
+      "p_value": 0.5403196228307015,
+      "significant": "False"
+    },
+    {
+      "group": "Gemma 270M",
+      "metric": "Abstain Accuracy",
+      "base_mean": 0.5742311770943797,
+      "lora_mean": 0.7046659597030753,
+      "t_statistic": -8.41765388213589,
+      "p_value": 5.3860034036779783e-17,
+      "significant": "True"
+    },
+    {
+      "group": "Gemma 270M",
+      "metric": "Embedding Similarity",
+      "base_mean": 0.5436426854493889,
+      "lora_mean": 0.6923706626967939,
+      "t_statistic": -9.84662038382274,
+      "p_value": 1.325045390042608e-22,
+      "significant": "True"
+    },
+    {
+      "group": "Gemma 270M",
+      "metric": "Token Overlap",
+      "base_mean": 0.2726904209091837,
+      "lora_mean": 0.5653466160184193,
+      "t_statistic": -20.814052399306295,
+      "p_value": 3.600757457070479e-91,
+      "significant": "True"
+    }
+  ],
+  "lora_vs_full_ft": [
+    {
+      "group": "Qwen 2.5 0.5B",
+      "metric": "Abstain Accuracy",
+      "lora_mean": 0.7099681866383881,
+      "full_ft_mean": 0.6940615058324496,
+      "t_statistic": 1.0678627945749743,
+      "p_value": 0.28565078052615894,
+      "significant": "False"
+    },
+    {
+      "group": "Qwen 2.5 0.5B",
+      "metric": "Embedding Similarity",
+      "lora_mean": 0.7006072857410253,
+      "full_ft_mean": 0.6854158355474219,
+      "t_statistic": 1.0288558208857967,
+      "p_value": 0.3036134343218746,
+      "significant": "False"
+    },
+    {
+      "group": "Qwen 2.5 0.5B",
+      "metric": "Token Overlap",
+      "lora_mean": 0.5676136378324391,
+      "full_ft_mean": 0.5549820498732898,
+      "t_statistic": 0.8267893088155732,
+      "p_value": 0.40840881528557726,
+      "significant": "False"
+    },
+    {
+      "group": "Qwen 2.5 3B",
+      "metric": "Abstain Accuracy",
+      "lora_mean": 0.8229056203605515,
+      "full_ft_mean": 0.7895015906680806,
+      "t_statistic": 2.5967633781689043,
+      "p_value": 0.009447230331068927,
+      "significant": "True"
+    },
+    {
+      "group": "Qwen 2.5 3B",
+      "metric": "Embedding Similarity",
+      "lora_mean": 0.8104199068038107,
+      "full_ft_mean": 0.7793024082767875,
+      "t_statistic": 2.4399551721702766,
+      "p_value": 0.014734856486578364,
+      "significant": "True"
+    },
+    {
+      "group": "Qwen 2.5 3B",
+      "metric": "Token Overlap",
+      "lora_mean": 0.6365934413531935,
+      "full_ft_mean": 0.6249383765293277,
+      "t_statistic": 0.8072920772528035,
+      "p_value": 0.4195491561496548,
+      "significant": "False"
+    }
+  ],
+  "cross_size": [
+    {
+      "comparison": "Qwen 2.5 0.5B LoRA vs Qwen 2.5 1.5B Base",
+      "metric": "Abstain Accuracy",
+      "model1_mean": 0.7099681866383881,
+      "model2_mean": 0.7205726405090138,
+      "t_statistic": -0.721452155162528,
+      "p_value": 0.470676106368505,
+      "significant": "False"
+    },
+    {
+      "comparison": "Qwen 2.5 0.5B LoRA vs Qwen 2.5 1.5B Base",
+      "metric": "Embedding Similarity",
+      "model1_mean": 0.7006072857410253,
+      "model2_mean": 0.6998845677455435,
+      "t_statistic": 0.04981070373231522,
+      "p_value": 0.9602758755937397,
+      "significant": "False"
+    },
+    {
+      "comparison": "Qwen 2.5 0.5B LoRA vs Qwen 2.5 1.5B Base",
+      "metric": "Token Overlap",
+      "model1_mean": 0.5676136378324391,
+      "model2_mean": 0.49322035904897843,
+      "t_statistic": 4.940651903436595,
+      "p_value": 8.124389182999196e-07,
+      "significant": "True"
+    },
+    {
+      "comparison": "Qwen 2.5 1.5B LoRA vs Qwen 2.5 3B Base",
+      "metric": "Abstain Accuracy",
+      "model1_mean": 0.7682926829268293,
+      "model2_mean": 0.7444326617179216,
+      "t_statistic": 1.7070345976584673,
+      "p_value": 0.08789796652259495,
+      "significant": "False"
+    },
+    {
+      "comparison": "Qwen 2.5 1.5B LoRA vs Qwen 2.5 3B Base",
+      "metric": "Embedding Similarity",
+      "model1_mean": 0.7569134558056217,
+      "model2_mean": 0.7278641103623654,
+      "t_statistic": 2.1062208592805964,
+      "p_value": 0.03525110786364333,
+      "significant": "True"
+    },
+    {
+      "comparison": "Qwen 2.5 1.5B LoRA vs Qwen 2.5 3B Base",
+      "metric": "Token Overlap",
+      "model1_mean": 0.5948927893972946,
+      "model2_mean": 0.5320624256015507,
+      "t_statistic": 4.278666081193665,
+      "p_value": 1.9268559807874968e-05,
+      "significant": "True"
+    },
+    {
+      "comparison": "Qwen 2.5 0.5B Full Finetune vs Qwen 2.5 1.5B Base",
+      "metric": "Abstain Accuracy",
+      "model1_mean": 0.6940615058324496,
+      "model2_mean": 0.7205726405090138,
+      "t_statistic": -1.7895655647064501,
+      "p_value": 0.0736040171383408,
+      "significant": "False"
+    },
+    {
+      "comparison": "Qwen 2.5 0.5B Full Finetune vs Qwen 2.5 1.5B Base",
+      "metric": "Embedding Similarity",
+      "model1_mean": 0.6854158355474219,
+      "model2_mean": 0.6998845677455435,
+      "t_statistic": -0.9893554218365721,
+      "p_value": 0.3225527691602451,
+      "significant": "False"
+    },
+    {
+      "comparison": "Qwen 2.5 0.5B Full Finetune vs Qwen 2.5 1.5B Base",
+      "metric": "Token Overlap",
+      "model1_mean": 0.5549820498732898,
+      "model2_mean": 0.49322035904897843,
+      "t_statistic": 4.107025963329163,
+      "p_value": 4.0929118443835415e-05,
+      "significant": "True"
+    }
+  ],
+  "gemma_vs_qwen": [
+    {
+      "comparison": "Gemma 270M Base vs Qwen 0.5B Base",
+      "metric": "Abstain Accuracy",
+      "gemma_mean": 0.5742311770943797,
+      "qwen_mean": 0.4178154825026511,
+      "t_statistic": 9.723975348803101,
+      "p_value": 4.322405321445087e-22,
+      "significant": "True"
+    },
+    {
+      "comparison": "Gemma 270M Base vs Qwen 0.5B Base",
+      "metric": "Embedding Similarity",
+      "gemma_mean": 0.5436426854493889,
+      "qwen_mean": 0.36754456759763293,
+      "t_statistic": 11.774018880068791,
+      "p_value": 1.8768008719599473e-31,
+      "significant": "True"
+    },
+    {
+      "comparison": "Gemma 270M Base vs Qwen 0.5B Base",
+      "metric": "Token Overlap",
+      "gemma_mean": 0.2726904209091837,
+      "qwen_mean": 0.08226697789295631,
+      "t_statistic": 20.04001884382888,
+      "p_value": 5.66749109549177e-85,
+      "significant": "True"
+    },
+    {
+      "comparison": "Gemma 270M LoRA vs Qwen 0.5B LoRA",
+      "metric": "Abstain Accuracy",
+      "gemma_mean": 0.7046659597030753,
+      "qwen_mean": 0.7099681866383881,
+      "t_statistic": -0.3577672626841658,
+      "p_value": 0.720537519695645,
+      "significant": "False"
+    },
+    {
+      "comparison": "Gemma 270M LoRA vs Qwen 0.5B LoRA",
+      "metric": "Embedding Similarity",
+      "gemma_mean": 0.6923706626967939,
+      "qwen_mean": 0.7006072857410253,
+      "t_statistic": -0.5609957999294088,
+      "p_value": 0.5748337408845262,
+      "significant": "False"
+    },
+    {
+      "comparison": "Gemma 270M LoRA vs Qwen 0.5B LoRA",
+      "metric": "Token Overlap",
+      "gemma_mean": 0.5653466160184193,
+      "qwen_mean": 0.5676136378324391,
+      "t_statistic": -0.14762649020219243,
+      "p_value": 0.8826454424023347,
+      "significant": "False"
+    }
+  ]
+}

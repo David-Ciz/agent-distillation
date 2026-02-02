@@ -34,6 +34,30 @@
       "both_answer": 25.291622481442204,
       "both_abstain": 16.489925768822904,
       "teacher_answer_student_abstain": 4.71898197242842
+    },
+    "abstain_accuracy_ci_low": 0.3952313180764687,
+    "abstain_accuracy_ci_high": 0.43974576279240846,
+    "embedding_similarity_ci_low": 0.34649214125348954,
+    "embedding_similarity_ci_high": 0.38801594535857503,
+    "token_overlap_ci_low": 0.07573860412909633,
+    "token_overlap_ci_high": 0.08958429836420677,
+    "per_teacher": {
+      "gpt-4o": {
+        "count": 1886,
+        "teacher_abstain_rate": 0.6998939554612937,
+        "teacher_abstain_count": "1320",
+        "student_abstain_rate": 0.21208907741251326,
+        "student_abstain_count": "400",
+        "abstain_accuracy": 0.4178154825026511,
+        "abstain_f1": 0.3616279069767442,
+        "abstain_precision": 0.7775,
+        "abstain_recall": 0.2356060606060606,
+        "embedding_similarity_mean": 0.36754456759763293,
+        "embedding_similarity_std": 0.4424253845211884,
+        "token_overlap_mean": 0.08226697789295631,
+        "token_overlap_std": 0.1467372772247472,
+        "exact_match_rate": 0.16755037115588547
+      }
     }
   },
   {
@@ -71,6 +95,30 @@
       "teacher_answer_student_abstain": 22.746553552492045,
       "teacher_abstain_student_answer": 7.84729586426299,
       "both_answer": 7.264050901378578
+    },
+    "abstain_accuracy_ci_low": 0.6727020098081445,
+    "abstain_accuracy_ci_high": 0.7145347710871144,
+    "embedding_similarity_ci_low": 0.6643293991430921,
+    "embedding_similarity_ci_high": 0.7054777159806723,
+    "token_overlap_ci_low": 0.5330855421920524,
+    "token_overlap_ci_high": 0.5759568487015522,
+    "per_teacher": {
+      "gpt-4o": {
+        "count": 1886,
+        "teacher_abstain_rate": 0.6998939554612937,
+        "teacher_abstain_count": "1320",
+        "student_abstain_rate": 0.8488865323435844,
+        "student_abstain_count": "1601",
+        "abstain_accuracy": 0.6940615058324496,
+        "abstain_f1": 0.8024649092776447,
+        "abstain_precision": 0.7320424734540912,
+        "abstain_recall": 0.8878787878787879,
+        "embedding_similarity_mean": 0.6854158355474219,
+        "embedding_similarity_std": 0.4568939329279423,
+        "token_overlap_mean": 0.5549820498732898,
+        "token_overlap_std": 0.46857296981192675,
+        "exact_match_rate": 0.6246023329798516
+      }
     }
   },
   {
@@ -108,6 +156,30 @@
       "teacher_answer_student_abstain": 23.064687168610817,
       "both_answer": 6.945917285259809,
       "teacher_abstain_student_answer": 5.938494167550371
+    },
+    "abstain_accuracy_ci_low": 0.689289501590668,
+    "abstain_accuracy_ci_high": 0.7295864262990456,
+    "embedding_similarity_ci_low": 0.6794513384231543,
+    "embedding_similarity_ci_high": 0.7200706257152067,
+    "token_overlap_ci_low": 0.5470089204776745,
+    "token_overlap_ci_high": 0.5882647305410842,
+    "per_teacher": {
+      "gpt-4o": {
+        "count": 1886,
+        "teacher_abstain_rate": 0.6998939554612937,
+        "teacher_abstain_count": "1320",
+        "student_abstain_rate": 0.8711558854718982,
+        "student_abstain_count": "1643",
+        "abstain_accuracy": 0.7099681866383881,
+        "abstain_f1": 0.8153898076274047,
+        "abstain_precision": 0.7352404138770542,
+        "abstain_recall": 0.9151515151515152,
+        "embedding_similarity_mean": 0.7006072857410253,
+        "embedding_similarity_std": 0.44991901095902775,
+        "token_overlap_mean": 0.5676136378324391,
+        "token_overlap_std": 0.4697419101055479,
+        "exact_match_rate": 0.6415694591728526
+      }
     }
   },
   {
@@ -145,6 +217,30 @@
       "both_answer": 16.118769883351007,
       "teacher_abstain_student_answer": 14.050901378579002,
       "teacher_answer_student_abstain": 13.891834570519618
+    },
+    "abstain_accuracy_ci_low": 0.6993637327677624,
+    "abstain_accuracy_ci_high": 0.7399146697193191,
+    "embedding_similarity_ci_low": 0.6795760538730008,
+    "embedding_similarity_ci_high": 0.7188711486809654,
+    "token_overlap_ci_low": 0.4730610872821259,
+    "token_overlap_ci_high": 0.5144695613770998,
+    "per_teacher": {
+      "gpt-4o": {
+        "count": 1886,
+        "teacher_abstain_rate": 0.6998939554612937,
+        "teacher_abstain_count": "1320",
+        "student_abstain_rate": 0.6983032873806999,
+        "student_abstain_count": "1317",
+        "abstain_accuracy": 0.7205726405090138,
+        "abstain_f1": 0.8001516875237011,
+        "abstain_precision": 0.8010630220197419,
+        "abstain_recall": 0.7992424242424242,
+        "embedding_similarity_mean": 0.6998845677455435,
+        "embedding_similarity_std": 0.441149304048357,
+        "token_overlap_mean": 0.49322035904897843,
+        "token_overlap_std": 0.4549124888918059,
+        "exact_match_rate": 0.5683987274655355
+      }
     }
   },
   {
@@ -182,6 +278,30 @@
       "teacher_answer_student_abstain": 16.489925768822904,
       "both_answer": 13.520678685047722,
       "teacher_abstain_student_answer": 6.680805938494168
+    },
+    "abstain_accuracy_ci_low": 0.7476397499215918,
+    "abstain_accuracy_ci_high": 0.7868504772004242,
+    "embedding_similarity_ci_low": 0.7371303713676473,
+    "embedding_similarity_ci_high": 0.7754305546362182,
+    "token_overlap_ci_low": 0.5751935381484893,
+    "token_overlap_ci_high": 0.6154510269720175,
+    "per_teacher": {
+      "gpt-4o": {
+        "count": 1886,
+        "teacher_abstain_rate": 0.6998939554612937,
+        "teacher_abstain_count": "1320",
+        "student_abstain_rate": 0.7979851537645811,
+        "student_abstain_count": "1505",
+        "abstain_accuracy": 0.7682926829268293,
+        "abstain_f1": 0.8453097345132743,
+        "abstain_precision": 0.7933554817275748,
+        "abstain_recall": 0.9045454545454545,
+        "embedding_similarity_mean": 0.7569134558056217,
+        "embedding_similarity_std": 0.41768934919602946,
+        "token_overlap_mean": 0.5948927893972946,
+        "token_overlap_std": 0.45384583376558824,
+        "exact_match_rate": 0.6447507953340403
+      }
     }
   },
   {
@@ -219,6 +339,30 @@
       "both_answer": 20.784729586426298,
       "teacher_abstain_student_answer": 16.33085896076352,
       "teacher_answer_student_abstain": 9.225874867444327
+    },
+    "abstain_accuracy_ci_low": 0.7232237539766702,
+    "abstain_accuracy_ci_high": 0.7635206786850477,
+    "embedding_similarity_ci_low": 0.7069487996979675,
+    "embedding_similarity_ci_high": 0.7461172605879637,
+    "token_overlap_ci_low": 0.5113039654308462,
+    "token_overlap_ci_high": 0.5529580521335179,
+    "per_teacher": {
+      "gpt-4o": {
+        "count": 1886,
+        "teacher_abstain_rate": 0.6998939554612937,
+        "teacher_abstain_count": "1320",
+        "student_abstain_rate": 0.6288441145281018,
+        "student_abstain_count": "1186",
+        "abstain_accuracy": 0.7444326617179216,
+        "abstain_f1": 0.8076616121308858,
+        "abstain_precision": 0.8532883642495784,
+        "abstain_recall": 0.7666666666666667,
+        "embedding_similarity_mean": 0.7278641103623654,
+        "embedding_similarity_std": 0.42929910212018885,
+        "token_overlap_mean": 0.5320624256015507,
+        "token_overlap_std": 0.4480116947918128,
+        "exact_match_rate": 0.5620360551431601
+      }
     }
   },
   {
@@ -256,6 +400,30 @@
       "teacher_answer_student_abstain": 16.59597030752916,
       "both_answer": 13.414634146341465,
       "teacher_abstain_student_answer": 4.453870625662779
+    },
+    "abstain_accuracy_ci_low": 0.7715904859160755,
+    "abstain_accuracy_ci_high": 0.8081985971776751,
+    "embedding_similarity_ci_low": 0.7615320152591698,
+    "embedding_similarity_ci_high": 0.7974560621746631,
+    "token_overlap_ci_low": 0.6043690270784491,
+    "token_overlap_ci_high": 0.6454128399151675,
+    "per_teacher": {
+      "gpt-4o": {
+        "count": 1886,
+        "teacher_abstain_rate": 0.6998939554612937,
+        "teacher_abstain_count": "1320",
+        "student_abstain_rate": 0.8213149522799575,
+        "student_abstain_count": "1549",
+        "abstain_accuracy": 0.7895015906680806,
+        "abstain_f1": 0.8616242593238062,
+        "abstain_precision": 0.7979341510652034,
+        "abstain_recall": 0.9363636363636364,
+        "embedding_similarity_mean": 0.7793024082767875,
+        "embedding_similarity_std": 0.40456121542267254,
+        "token_overlap_mean": 0.6249383765293277,
+        "token_overlap_std": 0.44817642379490563,
+        "exact_match_rate": 0.6749734888653235
+      }
     }
   },
   {
@@ -293,6 +461,30 @@
       "both_answer": 16.96712619300106,
       "teacher_answer_student_abstain": 13.043478260869565,
       "teacher_abstain_student_answer": 4.665959703075292
+    },
+    "abstain_accuracy_ci_low": 0.8068563120052594,
+    "abstain_accuracy_ci_high": 0.8414634146341463,
+    "embedding_similarity_ci_low": 0.7943738077898059,
+    "embedding_similarity_ci_high": 0.8280840484652237,
+    "token_overlap_ci_low": 0.6157027292920069,
+    "token_overlap_ci_high": 0.6548679808305318,
+    "per_teacher": {
+      "gpt-4o": {
+        "count": 1886,
+        "teacher_abstain_rate": 0.6998939554612937,
+        "teacher_abstain_count": "1320",
+        "student_abstain_rate": 0.7836691410392365,
+        "student_abstain_count": "1478",
+        "abstain_accuracy": 0.8229056203605515,
+        "abstain_f1": 0.8806290207290922,
+        "abstain_precision": 0.8335588633288228,
+        "abstain_recall": 0.9333333333333333,
+        "embedding_similarity_mean": 0.8104199068038107,
+        "embedding_similarity_std": 0.37826205840330074,
+        "token_overlap_mean": 0.6365934413531935,
+        "token_overlap_std": 0.4384562839693218,
+        "exact_match_rate": 0.6744432661717922
+      }
     }
   },
   {
@@ -330,6 +522,30 @@
       "teacher_answer_student_abstain": 15.69459172852598,
       "both_answer": 14.316012725344645,
       "teacher_abstain_student_answer": 2.4390243902439024
+    },
+    "abstain_accuracy_ci_low": 0.8005257361970299,
+    "abstain_accuracy_ci_high": 0.8366914103923648,
+    "embedding_similarity_ci_low": 0.7927351776141037,
+    "embedding_similarity_ci_high": 0.8284552698506981,
+    "token_overlap_ci_low": 0.6496499804586106,
+    "token_overlap_ci_high": 0.6893093565495325,
+    "per_teacher": {
+      "gpt-4o": {
+        "count": 1886,
+        "teacher_abstain_rate": 0.6998939554612937,
+        "teacher_abstain_count": "1320",
+        "student_abstain_rate": 0.8324496288441146,
+        "student_abstain_count": "1570",
+        "abstain_accuracy": 0.8186638388123012,
+        "abstain_f1": 0.8816608996539792,
+        "abstain_precision": 0.8114649681528663,
+        "abstain_recall": 0.9651515151515152,
+        "embedding_similarity_mean": 0.8111015915048969,
+        "embedding_similarity_std": 0.383063642839523,
+        "token_overlap_mean": 0.6698403357961248,
+        "token_overlap_std": 0.4316493929894608,
+        "exact_match_rate": 0.7067868504772005
+      }
     }
   },
   {
@@ -367,6 +583,30 @@
       "both_answer": 21.10286320254507,
       "teacher_answer_student_abstain": 8.907741251325557,
       "teacher_abstain_student_answer": 4.559915164369035
+    },
+    "abstain_accuracy_ci_low": 0.8502465957523347,
+    "abstain_accuracy_ci_high": 0.88016967126193,
+    "embedding_similarity_ci_low": 0.8363639086109306,
+    "embedding_similarity_ci_high": 0.866111268073775,
+    "token_overlap_ci_low": 0.6423541547013683,
+    "token_overlap_ci_high": 0.679826687367743,
+    "per_teacher": {
+      "gpt-4o": {
+        "count": 1886,
+        "teacher_abstain_rate": 0.6998939554612937,
+        "teacher_abstain_count": "1320",
+        "student_abstain_rate": 0.7433722163308589,
+        "student_abstain_count": "1402",
+        "abstain_accuracy": 0.865323435843054,
+        "abstain_f1": 0.9066862601028656,
+        "abstain_precision": 0.8801711840228246,
+        "abstain_recall": 0.9348484848484848,
+        "embedding_similarity_mean": 0.8510923822699776,
+        "embedding_similarity_std": 0.3386994607259579,
+        "token_overlap_mean": 0.6613387486054527,
+        "token_overlap_std": 0.42091360487264146,
+        "exact_match_rate": 0.676033934252386
+      }
     }
   },
   {
@@ -404,6 +644,30 @@
       "teacher_abstain_student_answer": 25.874867444326615,
       "teacher_answer_student_abstain": 16.702014846235418,
       "both_answer": 13.308589607635207
+    },
+    "abstain_accuracy_ci_low": 0.5519618239660657,
+    "abstain_accuracy_ci_high": 0.5975609756097561,
+    "embedding_similarity_ci_low": 0.5200892894455583,
+    "embedding_similarity_ci_high": 0.5645690172321476,
+    "token_overlap_ci_low": 0.25567681437406203,
+    "token_overlap_ci_high": 0.29058022395780664,
+    "per_teacher": {
+      "gpt-4o": {
+        "count": 1886,
+        "teacher_abstain_rate": 0.6998939554612937,
+        "teacher_abstain_count": "1320",
+        "student_abstain_rate": 0.6081654294803818,
+        "student_abstain_count": "1147",
+        "abstain_accuracy": 0.5742311770943797,
+        "abstain_f1": 0.6745034454803405,
+        "abstain_precision": 0.7253705318221447,
+        "abstain_recall": 0.6303030303030303,
+        "embedding_similarity_mean": 0.5436426854493889,
+        "embedding_similarity_std": 0.47555455979589667,
+        "token_overlap_mean": 0.2726904209091837,
+        "token_overlap_std": 0.385690344156928,
+        "exact_match_rate": 0.4411452810180276
+      }
     }
   },
   {
@@ -441,6 +705,30 @@
       "teacher_answer_student_abstain": 24.072110286320257,
       "both_answer": 5.938494167550371,
       "teacher_abstain_student_answer": 5.461293743372217
+    },
+    "abstain_accuracy_ci_low": 0.6845174973488866,
+    "abstain_accuracy_ci_high": 0.7248144220572641,
+    "embedding_similarity_ci_low": 0.6720051390133572,
+    "embedding_similarity_ci_high": 0.7121375046276405,
+    "token_overlap_ci_low": 0.5440106031655902,
+    "token_overlap_ci_high": 0.5863769620813888,
+    "per_teacher": {
+      "gpt-4o": {
+        "count": 1886,
+        "teacher_abstain_rate": 0.6998939554612937,
+        "teacher_abstain_count": "1320",
+        "student_abstain_rate": 0.8860021208907741,
+        "student_abstain_count": "1671",
+        "abstain_accuracy": 0.7046659597030753,
+        "abstain_f1": 0.8137746573052491,
+        "abstain_precision": 0.7283064033512866,
+        "abstain_recall": 0.921969696969697,
+        "embedding_similarity_mean": 0.6923706626967939,
+        "embedding_similarity_std": 0.4518067379238729,
+        "token_overlap_mean": 0.5653466160184193,
+        "token_overlap_std": 0.47339337151341015,
+        "exact_match_rate": 0.6463414634146342
+      }
     }
   }
 ]
