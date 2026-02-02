@@ -29,3 +29,14 @@ task1/data/eval/exploratory_causalqa_test/*
 task1/data/eval/exploratory_msmarco_test/*
 task1/data/eval/exploratory_quasart_test/*
 task1/outputs/evaluations/eval_run_20260124_052629/evaluation.log
+
+# Task 2 - Large files to ignore
+task2/data/raw_data/
+# task2/data/task2_dataset.csv
+# task2/data/test_split.csv
+task2/data/dataset_builder.log
+task2/outputs/models/
+task2/outputs/*.log
+task2/logs/
+# task2/outputs/evaluations/
+!task2/outputs/analysis/
