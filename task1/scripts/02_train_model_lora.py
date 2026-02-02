@@ -133,7 +133,7 @@ def main():
     # model_name = "Qwen/Qwen2.5-1.5B-Instruct"
     # model_name = "Qwen/Qwen2.5-0.5B-Instruct"
     # model_name = "google/gemma-3-270m-it"
-    model_name = "google/gemma-3-1b-it"
+    model_name = "google/gemma-3-1b-it" # newly added
     
     logging.info(f"Loading model: {model_name}")
     tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
