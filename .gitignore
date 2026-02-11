@@ -40,3 +40,8 @@ task2/outputs/*.log
 task2/logs/
 # task2/outputs/evaluations/
 !task2/outputs/analysis/
+!task1/outputs/evaluations_squad/squad_eval_run_20260208_145212/squad_model_comparison_summary.csv
+!task1/outputs/evaluations_squad
+task1/outputs/evaluations_squad/squad_eval_run_20260208_135107
+task1/outputs/evaluations_squad/squad_eval_run_20260208_135135
+task1/outputs/evaluations_squad/squad_eval_run_20260208_135614
