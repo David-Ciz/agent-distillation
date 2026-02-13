@@ -1,0 +1,1610 @@
+[
+  {
+    "model_name": "Qwen2.5-7B-task12-lora",
+    "model_path": "/root/DeKIS/agent-distillation/task12/outputs/models/Qwen-Qwen2.5-7B-Instruct-task12-lora-final",
+    "model_type": "lora",
+    "eval_time_s": 4792.6109890937805,
+    "timestamp": "20260210_012440_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.6802757158006363,
+      "token_overlap_avg": 0.6564608786201169,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.7667020148462355,
+      "abstain_agreement_rate": 0.8472958642629904,
+      "state_counts": {
+        "both_abstain": 1239,
+        "both_answer": 359,
+        "teacher_answer_student_abstain": 207,
+        "teacher_abstain_student_answer": 81
+      },
+      "state_percentages": {
+        "both_abstain": 65.69459172852599,
+        "both_answer": 19.034994697773065,
+        "teacher_answer_student_abstain": 10.975609756097562,
+        "teacher_abstain_student_answer": 4.294803817603393
+      },
+      "embedding_similarity_avg": 0.8920463806498216,
+      "embedding_similarity_adjusted_avg": 0.835140740884071
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1718,
+      "invalid_predictions": 0,
+      "accuracy": 0.7945285215366705,
+      "macro_precision": 0.8044409516765286,
+      "macro_recall": 0.7945285215366705,
+      "macro_f1": 0.7928422861971942,
+      "weighted_precision": 0.8044409516765287,
+      "weighted_recall": 0.7945285215366705,
+      "weighted_f1": 0.7928422861971941,
+      "per_class": {
+        "continue": {
+          "precision": 0.7495069033530573,
+          "recall": 0.8847497089639115,
+          "f1": 0.8115323011211959,
+          "support": 859
+        },
+        "finish": {
+          "precision": 0.859375,
+          "recall": 0.7043073341094296,
+          "f1": 0.7741522712731925,
+          "support": 859
+        }
+      },
+      "confusion_matrix": [
+        [
+          760,
+          99
+        ],
+        [
+          254,
+          605
+        ]
+      ]
+    },
+    "model_family": "Qwen 7B",
+    "training_type": "Task12 LoRA"
+  },
+  {
+    "model_name": "Qwen2.5-3B-task1-lora",
+    "model_path": "/root/DeKIS/agent-distillation/task1/outputs/models/Qwen2.5-3B-Instruct-lora-final",
+    "model_type": "lora",
+    "eval_time_s": 4480.5364644527435,
+    "timestamp": "20260209_191549_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.6786850477200425,
+      "token_overlap_avg": 0.6457173865210851,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.7932131495227995,
+      "abstain_agreement_rate": 0.8229056203605515,
+      "state_counts": {
+        "both_abstain": 1241,
+        "teacher_answer_student_abstain": 255,
+        "teacher_abstain_student_answer": 79,
+        "both_answer": 311
+      },
+      "state_percentages": {
+        "both_abstain": 65.80063626723224,
+        "teacher_answer_student_abstain": 13.520678685047722,
+        "teacher_abstain_student_answer": 4.188759278897137,
+        "both_answer": 16.489925768822904
+      },
+      "embedding_similarity_avg": 0.8805976778205606,
+      "embedding_similarity_adjusted_avg": 0.8111887213913279
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1718,
+      "invalid_predictions": 0,
+      "accuracy": 0.4935972060535506,
+      "macro_precision": 0.24838898652606914,
+      "macro_recall": 0.4935972060535506,
+      "macro_f1": 0.3304754481683554,
+      "weighted_precision": 0.24838898652606914,
+      "weighted_recall": 0.4935972060535506,
+      "weighted_f1": 0.3304754481683554,
+      "per_class": {
+        "continue": {
+          "precision": 0.4967779730521383,
+          "recall": 0.9871944121071012,
+          "f1": 0.6609508963367108,
+          "support": 859
+        },
+        "finish": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 859
+        }
+      },
+      "confusion_matrix": [
+        [
+          848,
+          11
+        ],
+        [
+          859,
+          0
+        ]
+      ]
+    },
+    "model_family": "Qwen 3B",
+    "training_type": "Task1 LoRA"
+  },
+  {
+    "model_name": "Qwen2.5-1.5B-base",
+    "model_path": "Qwen/Qwen2.5-1.5B-Instruct",
+    "model_type": "base",
+    "eval_time_s": 2958.3144764900208,
+    "timestamp": "20260209_145451_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.5779427359490986,
+      "token_overlap_avg": 0.49942698667008456,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.7036055143160127,
+      "abstain_agreement_rate": 0.7279957582184517,
+      "state_counts": {
+        "teacher_abstain_student_answer": 253,
+        "teacher_answer_student_abstain": 260,
+        "both_abstain": 1067,
+        "both_answer": 306
+      },
+      "state_percentages": {
+        "teacher_abstain_student_answer": 13.414634146341465,
+        "teacher_answer_student_abstain": 13.785790031813361,
+        "both_abstain": 56.57476139978791,
+        "both_answer": 16.224814422057264
+      },
+      "embedding_similarity_avg": 0.8181156388238024,
+      "embedding_similarity_adjusted_avg": 0.7077647304737176
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1718,
+      "invalid_predictions": 0,
+      "accuracy": 0.4959254947613504,
+      "macro_precision": 0.4068647191846597,
+      "macro_recall": 0.4959254947613504,
+      "macro_f1": 0.3375608435548131,
+      "weighted_precision": 0.40686471918465966,
+      "weighted_recall": 0.4959254947613504,
+      "weighted_f1": 0.33756084355481314,
+      "per_class": {
+        "continue": {
+          "precision": 0.49793996468510887,
+          "recall": 0.9848661233993015,
+          "f1": 0.6614542611415168,
+          "support": 859
+        },
+        "finish": {
+          "precision": 0.3157894736842105,
+          "recall": 0.006984866123399301,
+          "f1": 0.01366742596810934,
+          "support": 859
+        }
+      },
+      "confusion_matrix": [
+        [
+          846,
+          13
+        ],
+        [
+          853,
+          6
+        ]
+      ]
+    },
+    "model_family": "Qwen 1.5B",
+    "training_type": "Base"
+  },
+  {
+    "model_name": "gemma-270m-task12-lora",
+    "model_path": "/root/DeKIS/agent-distillation/task12/outputs/models/google-gemma-3-270m-it-task12-lora-final",
+    "model_type": "lora",
+    "eval_time_s": 1212.3937847614288,
+    "timestamp": "20260209_114745_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.6256627783669141,
+      "token_overlap_avg": 0.5416558609363706,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.8753976670201484,
+      "abstain_agreement_rate": 0.6728525980911984,
+      "state_counts": {
+        "both_abstain": 1177,
+        "teacher_answer_student_abstain": 474,
+        "teacher_abstain_student_answer": 143,
+        "both_answer": 92
+      },
+      "state_percentages": {
+        "both_abstain": 62.40721102863203,
+        "teacher_answer_student_abstain": 25.13255567338282,
+        "teacher_abstain_student_answer": 7.58218451749735,
+        "both_answer": 4.878048780487805
+      },
+      "embedding_similarity_avg": 0.8058720445398818,
+      "embedding_similarity_adjusted_avg": 0.6638003274213724
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1706,
+      "invalid_predictions": 12,
+      "accuracy": 0.7409144196951934,
+      "macro_precision": 0.7577579213467431,
+      "macro_recall": 0.7406133822609795,
+      "macro_f1": 0.7364516110993055,
+      "weighted_precision": 0.7576047986044563,
+      "weighted_recall": 0.7409144196951934,
+      "weighted_f1": 0.7365320220649972,
+      "per_class": {
+        "continue": {
+          "precision": 0.6924510717614166,
+          "recall": 0.8690058479532163,
+          "f1": 0.770746887966805,
+          "support": 855
+        },
+        "finish": {
+          "precision": 0.8230647709320695,
+          "recall": 0.6122209165687427,
+          "f1": 0.7021563342318059,
+          "support": 851
+        }
+      },
+      "confusion_matrix": [
+        [
+          743,
+          112
+        ],
+        [
+          330,
+          521
+        ]
+      ]
+    },
+    "model_family": "Gemma 270M",
+    "training_type": "Task12 LoRA"
+  },
+  {
+    "model_name": "gemma-270m-task1-lora",
+    "model_path": "/root/DeKIS/agent-distillation/task1/outputs/models/google_gemma-3-270m-it-lora-final",
+    "model_type": "lora",
+    "eval_time_s": 1232.6853070259094,
+    "timestamp": "20260209_111620_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.6431601272534464,
+      "token_overlap_avg": 0.5681039612374126,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.8854718981972428,
+      "abstain_agreement_rate": 0.6988335100742312,
+      "state_counts": {
+        "both_abstain": 1211,
+        "both_answer": 107,
+        "teacher_answer_student_abstain": 459,
+        "teacher_abstain_student_answer": 109
+      },
+      "state_percentages": {
+        "both_abstain": 64.20996818663839,
+        "both_answer": 5.673382820784729,
+        "teacher_answer_student_abstain": 24.337221633085896,
+        "teacher_abstain_student_answer": 5.779427359490986
+      },
+      "embedding_similarity_avg": 0.8189143029905681,
+      "embedding_similarity_adjusted_avg": 0.6877569465217509
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 845,
+      "invalid_predictions": 873,
+      "accuracy": 0.514792899408284,
+      "macro_precision": 0.47553783204935585,
+      "macro_recall": 0.4913971423111081,
+      "macro_f1": 0.4034951790633609,
+      "weighted_precision": 0.47836235231453567,
+      "weighted_recall": 0.514792899408284,
+      "weighted_f1": 0.41843651686309036,
+      "per_class": {
+        "continue": {
+          "precision": 0.5242463958060288,
+          "recall": 0.8948545861297539,
+          "f1": 0.6611570247933884,
+          "support": 447
+        },
+        "finish": {
+          "precision": 0.4268292682926829,
+          "recall": 0.08793969849246232,
+          "f1": 0.14583333333333334,
+          "support": 398
+        }
+      },
+      "confusion_matrix": [
+        [
+          400,
+          47
+        ],
+        [
+          363,
+          35
+        ]
+      ]
+    },
+    "model_family": "Gemma 270M",
+    "training_type": "Task1 LoRA"
+  },
+  {
+    "model_name": "Qwen2.5-0.5B-task2-lora",
+    "model_path": "/root/DeKIS/agent-distillation/task2/outputs/models/Qwen-Qwen2.5-0.5B-Instruct-lora-final",
+    "model_type": "lora",
+    "eval_time_s": 767.3786573410034,
+    "timestamp": "20260209_135215_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.651643690349947,
+      "token_overlap_avg": 0.39658402336218845,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.9236479321314952,
+      "abstain_agreement_rate": 0.6786850477200425,
+      "state_counts": {
+        "both_abstain": 1228,
+        "both_answer": 52,
+        "teacher_answer_student_abstain": 514,
+        "teacher_abstain_student_answer": 92
+      },
+      "state_percentages": {
+        "both_abstain": 65.11134676564157,
+        "both_answer": 2.757158006362672,
+        "teacher_answer_student_abstain": 27.25344644750795,
+        "teacher_abstain_student_answer": 4.878048780487805
+      },
+      "embedding_similarity_avg": 0.7913915422821095,
+      "embedding_similarity_adjusted_avg": 0.6736313291565611
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1718,
+      "invalid_predictions": 0,
+      "accuracy": 0.7828870779976718,
+      "macro_precision": 0.793186414967133,
+      "macro_recall": 0.7828870779976718,
+      "macro_f1": 0.7809634458263818,
+      "weighted_precision": 0.7931864149671329,
+      "weighted_recall": 0.7828870779976718,
+      "weighted_f1": 0.7809634458263818,
+      "per_class": {
+        "continue": {
+          "precision": 0.7382352941176471,
+          "recall": 0.8766006984866124,
+          "f1": 0.8014901543374136,
+          "support": 859
+        },
+        "finish": {
+          "precision": 0.8481375358166189,
+          "recall": 0.689173457508731,
+          "f1": 0.76043673731535,
+          "support": 859
+        }
+      },
+      "confusion_matrix": [
+        [
+          753,
+          106
+        ],
+        [
+          267,
+          592
+        ]
+      ]
+    },
+    "model_family": "Qwen 0.5B",
+    "training_type": "Task2 LoRA"
+  },
+  {
+    "model_name": "Qwen2.5-3B-task12-lora",
+    "model_path": "/root/DeKIS/agent-distillation/task12/outputs/models/Qwen-Qwen2.5-3B-Instruct-task12-lora-final",
+    "model_type": "lora",
+    "eval_time_s": 4792.47522187233,
+    "timestamp": "20260209_211822_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.6659597030752916,
+      "token_overlap_avg": 0.6321881980221226,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.805408271474019,
+      "abstain_agreement_rate": 0.7990455991516436,
+      "state_counts": {
+        "both_abstain": 1230,
+        "both_answer": 277,
+        "teacher_abstain_student_answer": 90,
+        "teacher_answer_student_abstain": 289
+      },
+      "state_percentages": {
+        "both_abstain": 65.21739130434783,
+        "both_answer": 14.687168610816542,
+        "teacher_abstain_student_answer": 4.7720042417815485,
+        "teacher_answer_student_abstain": 15.323435843054083
+      },
+      "embedding_similarity_avg": 0.871199394473979,
+      "embedding_similarity_adjusted_avg": 0.7895827053997702
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1718,
+      "invalid_predictions": 0,
+      "accuracy": 0.7776484284051223,
+      "macro_precision": 0.7878876449650594,
+      "macro_recall": 0.7776484284051222,
+      "macro_f1": 0.775653612645627,
+      "weighted_precision": 0.7878876449650594,
+      "weighted_recall": 0.7776484284051223,
+      "weighted_f1": 0.7756536126456269,
+      "per_class": {
+        "continue": {
+          "precision": 0.7335945151811949,
+          "recall": 0.8719441210710128,
+          "f1": 0.7968085106382978,
+          "support": 859
+        },
+        "finish": {
+          "precision": 0.8421807747489239,
+          "recall": 0.6833527357392316,
+          "f1": 0.7544987146529563,
+          "support": 859
+        }
+      },
+      "confusion_matrix": [
+        [
+          749,
+          110
+        ],
+        [
+          272,
+          587
+        ]
+      ]
+    },
+    "model_family": "Qwen 3B",
+    "training_type": "Task12 LoRA"
+  },
+  {
+    "model_name": "Qwen2.5-7B-task1-lora",
+    "model_path": "/root/DeKIS/agent-distillation/task1/outputs/models/Qwen2.5-7B-Instruct-lora-final",
+    "model_type": "lora",
+    "eval_time_s": 4931.38063454628,
+    "timestamp": "20260209_232559_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.6744432661717922,
+      "token_overlap_avg": 0.6570995961558033,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.7423117709437964,
+      "abstain_agreement_rate": 0.8642629904559915,
+      "state_counts": {
+        "both_abstain": 1232,
+        "both_answer": 398,
+        "teacher_answer_student_abstain": 168,
+        "teacher_abstain_student_answer": 88
+      },
+      "state_percentages": {
+        "both_abstain": 65.32343584305409,
+        "both_answer": 21.10286320254507,
+        "teacher_answer_student_abstain": 8.907741251325557,
+        "teacher_abstain_student_answer": 4.665959703075292
+      },
+      "embedding_similarity_avg": 0.898781704073752,
+      "embedding_similarity_adjusted_avg": 0.8497936022433344
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1718,
+      "invalid_predictions": 0,
+      "accuracy": 0.49941792782305006,
+      "macro_precision": 0.4934408454360807,
+      "macro_recall": 0.49941792782305006,
+      "macro_f1": 0.35173338528311754,
+      "weighted_precision": 0.49344084543608074,
+      "weighted_recall": 0.49941792782305006,
+      "weighted_f1": 0.35173338528311754,
+      "per_class": {
+        "continue": {
+          "precision": 0.4997022036926742,
+          "recall": 0.9767171129220024,
+          "f1": 0.661150512214342,
+          "support": 859
+        },
+        "finish": {
+          "precision": 0.48717948717948717,
+          "recall": 0.02211874272409779,
+          "f1": 0.042316258351893093,
+          "support": 859
+        }
+      },
+      "confusion_matrix": [
+        [
+          839,
+          20
+        ],
+        [
+          840,
+          19
+        ]
+      ]
+    },
+    "model_family": "Qwen 7B",
+    "training_type": "Task1 LoRA"
+  },
+  {
+    "model_name": "gemma-1b-base",
+    "model_path": "google/gemma-3-1b-it",
+    "model_type": "base",
+    "eval_time_s": 1116.8432857990265,
+    "timestamp": "20260209_120650_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.21367974549310711,
+      "token_overlap_avg": 0.18375817708106545,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.24973488865323437,
+      "abstain_agreement_rate": 0.47348886532343587,
+      "state_counts": {
+        "teacher_abstain_student_answer": 921,
+        "teacher_answer_student_abstain": 72,
+        "both_answer": 494,
+        "both_abstain": 399
+      },
+      "state_percentages": {
+        "teacher_abstain_student_answer": 48.83351007423118,
+        "teacher_answer_student_abstain": 3.8176033934252387,
+        "both_answer": 26.193001060445386,
+        "both_abstain": 21.1558854718982
+      },
+      "embedding_similarity_avg": 0.7012559370644399,
+      "embedding_similarity_adjusted_avg": 0.4324007908777114
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1681,
+      "invalid_predictions": 37,
+      "accuracy": 0.4907792980368828,
+      "macro_precision": 0.3962155586243178,
+      "macro_recall": 0.49106364305531963,
+      "macro_f1": 0.3402257362839714,
+      "weighted_precision": 0.39615671373358186,
+      "weighted_recall": 0.4907792980368828,
+      "weighted_f1": 0.34003824741503874,
+      "per_class": {
+        "continue": {
+          "precision": 0.4951338199513382,
+          "recall": 0.969047619047619,
+          "f1": 0.6553945249597424,
+          "support": 840
+        },
+        "finish": {
+          "precision": 0.2972972972972973,
+          "recall": 0.013079667063020214,
+          "f1": 0.025056947608200455,
+          "support": 841
+        }
+      },
+      "confusion_matrix": [
+        [
+          814,
+          26
+        ],
+        [
+          830,
+          11
+        ]
+      ]
+    },
+    "model_family": "Gemma 1B",
+    "training_type": "Base"
+  },
+  {
+    "model_name": "gemma-1b-task2-lora",
+    "model_path": "/root/DeKIS/agent-distillation/task2/outputs/models/google-gemma-3-1b-it-lora-final",
+    "model_type": "lora",
+    "eval_time_s": 408.91431403160095,
+    "timestamp": "20260209_124022_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.6829268292682927,
+      "token_overlap_avg": 0.37961551706069513,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.9734888653234358,
+      "abstain_agreement_rate": 0.6924708377518558,
+      "state_counts": {
+        "both_abstain": 1288,
+        "teacher_answer_student_abstain": 548,
+        "teacher_abstain_student_answer": 32,
+        "both_answer": 18
+      },
+      "state_percentages": {
+        "both_abstain": 68.29268292682927,
+        "teacher_answer_student_abstain": 29.056203605514312,
+        "teacher_abstain_student_answer": 1.6967126193001063,
+        "both_answer": 0.9544008483563097
+      },
+      "embedding_similarity_avg": 0.7575220439745032,
+      "embedding_similarity_adjusted_avg": 0.6887472302890911
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1679,
+      "invalid_predictions": 39,
+      "accuracy": 0.7611673615247171,
+      "macro_precision": 0.768088968727891,
+      "macro_recall": 0.7613102653676864,
+      "macro_f1": 0.7596819979319086,
+      "weighted_precision": 0.7681667395953424,
+      "weighted_recall": 0.7611673615247171,
+      "weighted_f1": 0.7596482396684358,
+      "per_class": {
+        "continue": {
+          "precision": 0.7245632065775951,
+          "recall": 0.8412887828162291,
+          "f1": 0.7785753727222529,
+          "support": 838
+        },
+        "finish": {
+          "precision": 0.8116147308781869,
+          "recall": 0.6813317479191439,
+          "f1": 0.7407886231415644,
+          "support": 841
+        }
+      },
+      "confusion_matrix": [
+        [
+          705,
+          133
+        ],
+        [
+          268,
+          573
+        ]
+      ]
+    },
+    "model_family": "Gemma 1B",
+    "training_type": "Task2 LoRA"
+  },
+  {
+    "model_name": "Qwen2.5-1.5B-task1-lora",
+    "model_path": "/root/DeKIS/agent-distillation/task1/outputs/models/Qwen2.5-1.5B-Instruct-lora-final",
+    "model_type": "lora",
+    "eval_time_s": 2501.4332690238953,
+    "timestamp": "20260209_153703_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.6420996818663839,
+      "token_overlap_avg": 0.5989470156611346,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.7932131495227995,
+      "abstain_agreement_rate": 0.7688229056203606,
+      "state_counts": {
+        "both_abstain": 1190,
+        "teacher_answer_student_abstain": 306,
+        "teacher_abstain_student_answer": 130,
+        "both_answer": 260
+      },
+      "state_percentages": {
+        "both_abstain": 63.0965005302227,
+        "teacher_answer_student_abstain": 16.224814422057264,
+        "teacher_abstain_student_answer": 6.892895015906681,
+        "both_answer": 13.785790031813361
+      },
+      "embedding_similarity_avg": 0.8540953362670708,
+      "embedding_similarity_adjusted_avg": 0.757182887130173
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1718,
+      "invalid_predictions": 0,
+      "accuracy": 0.4935972060535506,
+      "macro_precision": 0.24838898652606914,
+      "macro_recall": 0.4935972060535506,
+      "macro_f1": 0.3304754481683554,
+      "weighted_precision": 0.24838898652606914,
+      "weighted_recall": 0.4935972060535506,
+      "weighted_f1": 0.3304754481683554,
+      "per_class": {
+        "continue": {
+          "precision": 0.4967779730521383,
+          "recall": 0.9871944121071012,
+          "f1": 0.6609508963367108,
+          "support": 859
+        },
+        "finish": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 859
+        }
+      },
+      "confusion_matrix": [
+        [
+          848,
+          11
+        ],
+        [
+          859,
+          0
+        ]
+      ]
+    },
+    "model_family": "Qwen 1.5B",
+    "training_type": "Task1 LoRA"
+  },
+  {
+    "model_name": "Qwen2.5-7B-base",
+    "model_path": "Qwen/Qwen2.5-7B-Instruct",
+    "model_type": "base",
+    "eval_time_s": 2664.186717748642,
+    "timestamp": "20260209_220317_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.7067868504772005,
+      "token_overlap_avg": 0.6698403357961249,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.8324496288441146,
+      "abstain_agreement_rate": 0.8186638388123012,
+      "state_counts": {
+        "both_abstain": 1274,
+        "both_answer": 270,
+        "teacher_answer_student_abstain": 296,
+        "teacher_abstain_student_answer": 46
+      },
+      "state_percentages": {
+        "both_abstain": 67.55037115588547,
+        "both_answer": 14.316012725344645,
+        "teacher_answer_student_abstain": 15.69459172852598,
+        "teacher_abstain_student_answer": 2.4390243902439024
+      },
+      "embedding_similarity_avg": 0.8815579286846604,
+      "embedding_similarity_adjusted_avg": 0.8111015915048969
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1718,
+      "invalid_predictions": 0,
+      "accuracy": 0.5128055878928988,
+      "macro_precision": 0.5543420749942489,
+      "macro_recall": 0.5128055878928988,
+      "macro_f1": 0.39771637802023274,
+      "weighted_precision": 0.5543420749942489,
+      "weighted_recall": 0.5128055878928988,
+      "weighted_f1": 0.39771637802023274,
+      "per_class": {
+        "continue": {
+          "precision": 0.506832298136646,
+          "recall": 0.9499417927823051,
+          "f1": 0.660996354799514,
+          "support": 859
+        },
+        "finish": {
+          "precision": 0.6018518518518519,
+          "recall": 0.07566938300349244,
+          "f1": 0.1344364012409514,
+          "support": 859
+        }
+      },
+      "confusion_matrix": [
+        [
+          816,
+          43
+        ],
+        [
+          794,
+          65
+        ]
+      ]
+    },
+    "model_family": "Qwen 7B",
+    "training_type": "Base"
+  },
+  {
+    "model_name": "Qwen2.5-1.5B-task12-lora",
+    "model_path": "/root/DeKIS/agent-distillation/task12/outputs/models/Qwen-Qwen2.5-1.5B-Instruct-task12-lora-final",
+    "model_type": "lora",
+    "eval_time_s": 2991.9932782649994,
+    "timestamp": "20260209_165624_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.6659597030752916,
+      "token_overlap_avg": 0.6065764766476498,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.8637327677624602,
+      "abstain_agreement_rate": 0.7523860021208908,
+      "state_counts": {
+        "both_abstain": 1241,
+        "teacher_answer_student_abstain": 388,
+        "teacher_abstain_student_answer": 79,
+        "both_answer": 178
+      },
+      "state_percentages": {
+        "both_abstain": 65.80063626723224,
+        "teacher_answer_student_abstain": 20.572640509013787,
+        "teacher_abstain_student_answer": 4.188759278897137,
+        "both_answer": 9.43796394485684
+      },
+      "embedding_similarity_avg": 0.8465351166238203,
+      "embedding_similarity_adjusted_avg": 0.7431397136233644
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1718,
+      "invalid_predictions": 0,
+      "accuracy": 0.7485448195576252,
+      "macro_precision": 0.75002079002079,
+      "macro_recall": 0.7485448195576252,
+      "macro_f1": 0.748173161489267,
+      "weighted_precision": 0.7500207900207901,
+      "weighted_recall": 0.7485448195576252,
+      "weighted_f1": 0.748173161489267,
+      "per_class": {
+        "continue": {
+          "precision": 0.7308108108108108,
+          "recall": 0.7869615832363213,
+          "f1": 0.757847533632287,
+          "support": 859
+        },
+        "finish": {
+          "precision": 0.7692307692307693,
+          "recall": 0.710128055878929,
+          "f1": 0.738498789346247,
+          "support": 859
+        }
+      },
+      "confusion_matrix": [
+        [
+          676,
+          183
+        ],
+        [
+          249,
+          610
+        ]
+      ]
+    },
+    "model_family": "Qwen 1.5B",
+    "training_type": "Task12 LoRA"
+  },
+  {
+    "model_name": "Qwen2.5-0.5B-base",
+    "model_path": "Qwen/Qwen2.5-0.5B-Instruct",
+    "model_type": "base",
+    "eval_time_s": 1051.4697668552399,
+    "timestamp": "20260209_132430_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.16012725344644752,
+      "token_overlap_avg": 0.08383015931867008,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.20254506892895016,
+      "abstain_agreement_rate": 0.41251325556733826,
+      "state_counts": {
+        "both_abstain": 297,
+        "both_answer": 481,
+        "teacher_abstain_student_answer": 1023,
+        "teacher_answer_student_abstain": 85
+      },
+      "state_percentages": {
+        "both_abstain": 15.747613997879109,
+        "both_answer": 25.503711558854718,
+        "teacher_abstain_student_answer": 54.241781548250266,
+        "teacher_answer_student_abstain": 4.506892895015906
+      },
+      "embedding_similarity_avg": 0.6514061855138422,
+      "embedding_similarity_adjusted_avg": 0.36314449858311504
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1718,
+      "invalid_predictions": 0,
+      "accuracy": 0.4947613504074505,
+      "macro_precision": 0.4486551105797968,
+      "macro_recall": 0.4947613504074505,
+      "macro_f1": 0.34850550126522106,
+      "weighted_precision": 0.4486551105797968,
+      "weighted_recall": 0.4947613504074505,
+      "weighted_f1": 0.3485055012652211,
+      "per_class": {
+        "continue": {
+          "precision": 0.49731022115959356,
+          "recall": 0.9685681024447031,
+          "f1": 0.6571879936808847,
+          "support": 859
+        },
+        "finish": {
+          "precision": 0.4,
+          "recall": 0.020954598370197905,
+          "f1": 0.03982300884955752,
+          "support": 859
+        }
+      },
+      "confusion_matrix": [
+        [
+          832,
+          27
+        ],
+        [
+          841,
+          18
+        ]
+      ]
+    },
+    "model_family": "Qwen 0.5B",
+    "training_type": "Base"
+  },
+  {
+    "model_name": "Qwen2.5-0.5B-task12-lora",
+    "model_path": "/root/DeKIS/agent-distillation/task12/outputs/models/Qwen-Qwen2.5-0.5B-Instruct-task12-lora-final",
+    "model_type": "lora",
+    "eval_time_s": 740.3332118988037,
+    "timestamp": "20260209_140502_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.6686108165429481,
+      "token_overlap_avg": 0.5937730472998926,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.9241781548250265,
+      "abstain_agreement_rate": 0.7099681866383881,
+      "state_counts": {
+        "both_abstain": 1258,
+        "teacher_answer_student_abstain": 485,
+        "teacher_abstain_student_answer": 62,
+        "both_answer": 81
+      },
+      "state_percentages": {
+        "both_abstain": 66.70201484623541,
+        "teacher_answer_student_abstain": 25.715800636267232,
+        "teacher_abstain_student_answer": 3.2873806998939554,
+        "both_answer": 4.294803817603393
+      },
+      "embedding_similarity_avg": 0.8283308397579547,
+      "embedding_similarity_adjusted_avg": 0.7041248031916573
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1718,
+      "invalid_predictions": 0,
+      "accuracy": 0.7811408614668219,
+      "macro_precision": 0.7841227057387861,
+      "macro_recall": 0.7811408614668218,
+      "macro_f1": 0.7805651237524543,
+      "weighted_precision": 0.7841227057387861,
+      "weighted_recall": 0.7811408614668219,
+      "weighted_f1": 0.7805651237524545,
+      "per_class": {
+        "continue": {
+          "precision": 0.7550158394931362,
+          "recall": 0.8323632130384168,
+          "f1": 0.7918050941306756,
+          "support": 859
+        },
+        "finish": {
+          "precision": 0.8132295719844358,
+          "recall": 0.729918509895227,
+          "f1": 0.7693251533742331,
+          "support": 859
+        }
+      },
+      "confusion_matrix": [
+        [
+          715,
+          144
+        ],
+        [
+          232,
+          627
+        ]
+      ]
+    },
+    "model_family": "Qwen 0.5B",
+    "training_type": "Task12 LoRA"
+  },
+  {
+    "model_name": "gemma-270m-task2-lora",
+    "model_path": "/root/DeKIS/agent-distillation/task2/outputs/models/google-gemma-3-270m-it-lora-final",
+    "model_type": "lora",
+    "eval_time_s": 607.9107291698456,
+    "timestamp": "20260209_112700_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.679745493107105,
+      "token_overlap_avg": 0.4312594300902869,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.9697773064687168,
+      "abstain_agreement_rate": 0.6898197242841994,
+      "state_counts": {
+        "both_abstain": 1282,
+        "teacher_answer_student_abstain": 547,
+        "teacher_abstain_student_answer": 38,
+        "both_answer": 19
+      },
+      "state_percentages": {
+        "both_abstain": 67.9745493107105,
+        "teacher_answer_student_abstain": 29.003181336161187,
+        "teacher_abstain_student_answer": 2.014846235418876,
+        "both_answer": 1.007423117709438
+      },
+      "embedding_similarity_avg": 0.7489287284373731,
+      "embedding_similarity_adjusted_avg": 0.6849181657283708
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1718,
+      "invalid_predictions": 0,
+      "accuracy": 0.7764842840512224,
+      "macro_precision": 0.7897801924647563,
+      "macro_recall": 0.7764842840512223,
+      "macro_f1": 0.7738906551396527,
+      "weighted_precision": 0.7897801924647563,
+      "weighted_recall": 0.7764842840512224,
+      "weighted_f1": 0.7738906551396527,
+      "per_class": {
+        "continue": {
+          "precision": 0.7277085330776606,
+          "recall": 0.8835855646100116,
+          "f1": 0.7981072555205048,
+          "support": 859
+        },
+        "finish": {
+          "precision": 0.8518518518518519,
+          "recall": 0.6693830034924331,
+          "f1": 0.7496740547588006,
+          "support": 859
+        }
+      },
+      "confusion_matrix": [
+        [
+          759,
+          100
+        ],
+        [
+          284,
+          575
+        ]
+      ]
+    },
+    "model_family": "Gemma 270M",
+    "training_type": "Task2 LoRA"
+  },
+  {
+    "model_name": "Qwen2.5-0.5B-task1-lora",
+    "model_path": "/root/DeKIS/agent-distillation/task1/outputs/models/Qwen2.5-0.5B-Instruct-lora-final",
+    "model_type": "lora",
+    "eval_time_s": 844.1929121017456,
+    "timestamp": "20260209_133901_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.647932131495228,
+      "token_overlap_avg": 0.5776014553580142,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.8700954400848356,
+      "abstain_agreement_rate": 0.717391304347826,
+      "state_counts": {
+        "both_abstain": 1214,
+        "teacher_answer_student_abstain": 427,
+        "teacher_abstain_student_answer": 106,
+        "both_answer": 139
+      },
+      "state_percentages": {
+        "both_abstain": 64.36903499469777,
+        "teacher_answer_student_abstain": 22.64050901378579,
+        "teacher_abstain_student_answer": 5.620360551431601,
+        "both_answer": 7.370095440084835
+      },
+      "embedding_similarity_avg": 0.8279254549220006,
+      "embedding_similarity_adjusted_avg": 0.7072864437785912
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1702,
+      "invalid_predictions": 16,
+      "accuracy": 0.490599294947121,
+      "macro_precision": 0.4520671397994818,
+      "macro_recall": 0.49059929494712107,
+      "macro_f1": 0.3624765891814476,
+      "weighted_precision": 0.4520671397994819,
+      "weighted_recall": 0.490599294947121,
+      "weighted_f1": 0.3624765891814476,
+      "per_class": {
+        "continue": {
+          "precision": 0.4950433705080545,
+          "recall": 0.9388954171562868,
+          "f1": 0.6482758620689655,
+          "support": 851
+        },
+        "finish": {
+          "precision": 0.4090909090909091,
+          "recall": 0.04230317273795535,
+          "f1": 0.07667731629392971,
+          "support": 851
+        }
+      },
+      "confusion_matrix": [
+        [
+          799,
+          52
+        ],
+        [
+          815,
+          36
+        ]
+      ]
+    },
+    "model_family": "Qwen 0.5B",
+    "training_type": "Task1 LoRA"
+  },
+  {
+    "model_name": "gemma-270m-base",
+    "model_path": "google/gemma-3-270m-it",
+    "model_type": "base",
+    "eval_time_s": 1214.0329785346985,
+    "timestamp": "20260209_105520_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.42576882290562035,
+      "token_overlap_avg": 0.27217224434437093,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.5901378579003181,
+      "abstain_agreement_rate": 0.5615058324496288,
+      "state_counts": {
+        "both_abstain": 803,
+        "both_answer": 256,
+        "teacher_answer_student_abstain": 310,
+        "teacher_abstain_student_answer": 517
+      },
+      "state_percentages": {
+        "both_abstain": 42.57688229056203,
+        "both_answer": 13.57370095440085,
+        "teacher_answer_student_abstain": 16.436903499469775,
+        "teacher_abstain_student_answer": 27.41251325556734
+      },
+      "embedding_similarity_avg": 0.7354108998416385,
+      "embedding_similarity_adjusted_avg": 0.529153786259896
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1298,
+      "invalid_predictions": 420,
+      "accuracy": 0.4915254237288136,
+      "macro_precision": 0.48510980388666897,
+      "macro_recall": 0.48808005680347466,
+      "macro_f1": 0.4628305421857482,
+      "weighted_precision": 0.4853310321570878,
+      "weighted_recall": 0.4915254237288136,
+      "weighted_f1": 0.46474353428861925,
+      "per_class": {
+        "continue": {
+          "precision": 0.4994675186368477,
+          "recall": 0.7116843702579666,
+          "f1": 0.5869837296620776,
+          "support": 659
+        },
+        "finish": {
+          "precision": 0.47075208913649025,
+          "recall": 0.2644757433489828,
+          "f1": 0.33867735470941884,
+          "support": 639
+        }
+      },
+      "confusion_matrix": [
+        [
+          469,
+          190
+        ],
+        [
+          470,
+          169
+        ]
+      ]
+    },
+    "model_family": "Gemma 270M",
+    "training_type": "Base"
+  },
+  {
+    "model_name": "gemma-1b-task12-lora",
+    "model_path": "/root/DeKIS/agent-distillation/task12/outputs/models/google-gemma-3-1b-it-task12-lora-final",
+    "model_type": "lora",
+    "eval_time_s": 1533.943908214569,
+    "timestamp": "20260209_130626_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.6166489925768823,
+      "token_overlap_avg": 0.5691885307444828,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.7895015906680806,
+      "abstain_agreement_rate": 0.7279957582184517,
+      "state_counts": {
+        "both_abstain": 1148,
+        "both_answer": 225,
+        "teacher_answer_student_abstain": 341,
+        "teacher_abstain_student_answer": 172
+      },
+      "state_percentages": {
+        "both_abstain": 60.86956521739131,
+        "both_answer": 11.930010604453871,
+        "teacher_answer_student_abstain": 18.080593849416754,
+        "teacher_abstain_student_answer": 9.11983032873807
+      },
+      "embedding_similarity_avg": 0.8342769041926651,
+      "embedding_similarity_adjusted_avg": 0.7100184856107101
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1686,
+      "invalid_predictions": 32,
+      "accuracy": 0.7799525504151839,
+      "macro_precision": 0.7843741823500564,
+      "macro_recall": 0.7798783645349033,
+      "macro_f1": 0.7790626908457949,
+      "weighted_precision": 0.784332468841237,
+      "weighted_recall": 0.7799525504151839,
+      "weighted_f1": 0.7790793237349424,
+      "per_class": {
+        "continue": {
+          "precision": 0.7492096944151738,
+          "recall": 0.8424170616113744,
+          "f1": 0.7930842163970998,
+          "support": 844
+        },
+        "finish": {
+          "precision": 0.819538670284939,
+          "recall": 0.7173396674584323,
+          "f1": 0.7650411652944902,
+          "support": 842
+        }
+      },
+      "confusion_matrix": [
+        [
+          711,
+          133
+        ],
+        [
+          238,
+          604
+        ]
+      ]
+    },
+    "model_family": "Gemma 1B",
+    "training_type": "Task12 LoRA"
+  },
+  {
+    "model_name": "Qwen2.5-3B-task2-lora",
+    "model_path": "/root/DeKIS/agent-distillation/task2/outputs/models/Qwen-Qwen2.5-3B-Instruct-lora-final",
+    "model_type": "lora",
+    "eval_time_s": 2499.561461687088,
+    "timestamp": "20260209_195759_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.6224814422057264,
+      "token_overlap_avg": 0.5555568401006843,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.8160127253446448,
+      "abstain_agreement_rate": 0.7089077412513256,
+      "state_counts": {
+        "both_abstain": 1155,
+        "teacher_answer_student_abstain": 384,
+        "teacher_abstain_student_answer": 165,
+        "both_answer": 182
+      },
+      "state_percentages": {
+        "both_abstain": 61.240721102863205,
+        "teacher_answer_student_abstain": 20.360551431601273,
+        "teacher_abstain_student_answer": 8.748674443266172,
+        "both_answer": 9.650053022269352
+      },
+      "embedding_similarity_avg": 0.821338367993101,
+      "embedding_similarity_adjusted_avg": 0.701296658904024
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1718,
+      "invalid_predictions": 0,
+      "accuracy": 0.7904540162980209,
+      "macro_precision": 0.8037934402202185,
+      "macro_recall": 0.7904540162980209,
+      "macro_f1": 0.7881282192877042,
+      "weighted_precision": 0.8037934402202186,
+      "weighted_recall": 0.7904540162980209,
+      "weighted_f1": 0.788128219287704,
+      "per_class": {
+        "continue": {
+          "precision": 0.7401347449470644,
+          "recall": 0.8952270081490105,
+          "f1": 0.8103266596417281,
+          "support": 859
+        },
+        "finish": {
+          "precision": 0.8674521354933726,
+          "recall": 0.6856810244470314,
+          "f1": 0.7659297789336801,
+          "support": 859
+        }
+      },
+      "confusion_matrix": [
+        [
+          769,
+          90
+        ],
+        [
+          270,
+          589
+        ]
+      ]
+    },
+    "model_family": "Qwen 3B",
+    "training_type": "Task2 LoRA"
+  },
+  {
+    "model_name": "Qwen2.5-1.5B-task2-lora",
+    "model_path": "/root/DeKIS/agent-distillation/task2/outputs/models/Qwen-Qwen2.5-1.5B-Instruct-lora-final",
+    "model_type": "lora",
+    "eval_time_s": 1710.578256368637,
+    "timestamp": "20260209_160604_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.6755037115588547,
+      "token_overlap_avg": 0.32635466495829124,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.9676564156945917,
+      "abstain_agreement_rate": 0.6834570519618239,
+      "state_counts": {
+        "both_abstain": 1274,
+        "teacher_answer_student_abstain": 551,
+        "teacher_abstain_student_answer": 46,
+        "both_answer": 15
+      },
+      "state_percentages": {
+        "both_abstain": 67.55037115588547,
+        "teacher_answer_student_abstain": 29.215270413573702,
+        "teacher_abstain_student_answer": 2.4390243902439024,
+        "both_answer": 0.7953340402969247
+      },
+      "embedding_similarity_avg": 0.7403483128497103,
+      "embedding_similarity_adjusted_avg": 0.6804224158363655
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1718,
+      "invalid_predictions": 0,
+      "accuracy": 0.7130384167636787,
+      "macro_precision": 0.7272762760678719,
+      "macro_recall": 0.7130384167636787,
+      "macro_f1": 0.7084726907626375,
+      "weighted_precision": 0.7272762760678718,
+      "weighted_recall": 0.7130384167636787,
+      "weighted_f1": 0.7084726907626376,
+      "per_class": {
+        "continue": {
+          "precision": 0.6703910614525139,
+          "recall": 0.8381839348079162,
+          "f1": 0.7449560269011899,
+          "support": 859
+        },
+        "finish": {
+          "precision": 0.7841614906832298,
+          "recall": 0.5878928987194412,
+          "f1": 0.6719893546240852,
+          "support": 859
+        }
+      },
+      "confusion_matrix": [
+        [
+          720,
+          139
+        ],
+        [
+          354,
+          505
+        ]
+      ]
+    },
+    "model_family": "Qwen 1.5B",
+    "training_type": "Task2 LoRA"
+  },
+  {
+    "model_name": "Qwen2.5-3B-base",
+    "model_path": "Qwen/Qwen2.5-3B-Instruct",
+    "model_type": "base",
+    "eval_time_s": 3821.7916700839996,
+    "timestamp": "20260209_180038_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.5604453870625663,
+      "token_overlap_avg": 0.5361571650404177,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.6277836691410392,
+      "abstain_agreement_rate": 0.7423117709437964,
+      "state_counts": {
+        "teacher_abstain_student_answer": 311,
+        "both_answer": 391,
+        "both_abstain": 1009,
+        "teacher_answer_student_abstain": 175
+      },
+      "state_percentages": {
+        "teacher_abstain_student_answer": 16.489925768822904,
+        "both_answer": 20.73170731707317,
+        "both_abstain": 53.49946977730647,
+        "teacher_answer_student_abstain": 9.278897136797456
+      },
+      "embedding_similarity_avg": 0.8350816219887071,
+      "embedding_similarity_adjusted_avg": 0.7258678532797105
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1718,
+      "invalid_predictions": 0,
+      "accuracy": 0.4976717112922002,
+      "macro_precision": 0.45774301456119637,
+      "macro_recall": 0.4976717112922002,
+      "macro_f1": 0.34230818538268437,
+      "weighted_precision": 0.45774301456119637,
+      "weighted_recall": 0.4976717112922002,
+      "weighted_f1": 0.34230818538268437,
+      "per_class": {
+        "continue": {
+          "precision": 0.4988193624557261,
+          "recall": 0.9837019790454016,
+          "f1": 0.6619663141402272,
+          "support": 859
+        },
+        "finish": {
+          "precision": 0.4166666666666667,
+          "recall": 0.011641443538998836,
+          "f1": 0.022650056625141562,
+          "support": 859
+        }
+      },
+      "confusion_matrix": [
+        [
+          845,
+          14
+        ],
+        [
+          849,
+          10
+        ]
+      ]
+    },
+    "model_family": "Qwen 3B",
+    "training_type": "Base"
+  },
+  {
+    "model_name": "Qwen2.5-7B-task2-lora",
+    "model_path": "/root/DeKIS/agent-distillation/task2/outputs/models/Qwen-Qwen2.5-7B-Instruct-lora-final",
+    "model_type": "lora",
+    "eval_time_s": 2266.5913877487183,
+    "timestamp": "20260210_000417_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.6956521739130435,
+      "token_overlap_avg": 0.5788973619776122,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.8351007423117709,
+      "abstain_agreement_rate": 0.8117709437963945,
+      "state_counts": {
+        "both_abstain": 1270,
+        "teacher_answer_student_abstain": 305,
+        "teacher_abstain_student_answer": 50,
+        "both_answer": 261
+      },
+      "state_percentages": {
+        "both_abstain": 67.33828207847296,
+        "teacher_answer_student_abstain": 16.171792152704136,
+        "teacher_abstain_student_answer": 2.651113467656416,
+        "both_answer": 13.83881230116649
+      },
+      "embedding_similarity_avg": 0.853608370127506,
+      "embedding_similarity_adjusted_avg": 0.8031342018826263
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1718,
+      "invalid_predictions": 0,
+      "accuracy": 0.7945285215366705,
+      "macro_precision": 0.8041784702549575,
+      "macro_recall": 0.7945285215366705,
+      "macro_f1": 0.7928858668460768,
+      "weighted_precision": 0.8041784702549575,
+      "weighted_recall": 0.7945285215366705,
+      "weighted_f1": 0.7928858668460766,
+      "per_class": {
+        "continue": {
+          "precision": 0.75,
+          "recall": 0.8835855646100116,
+          "f1": 0.8113308391234634,
+          "support": 859
+        },
+        "finish": {
+          "precision": 0.8583569405099151,
+          "recall": 0.7054714784633295,
+          "f1": 0.7744408945686901,
+          "support": 859
+        }
+      },
+      "confusion_matrix": [
+        [
+          759,
+          100
+        ],
+        [
+          253,
+          606
+        ]
+      ]
+    },
+    "model_family": "Qwen 7B",
+    "training_type": "Task2 LoRA"
+  },
+  {
+    "model_name": "gemma-1b-task1-lora",
+    "model_path": "/root/DeKIS/agent-distillation/task1/outputs/models/google_gemma-3-1b-it-lora-final",
+    "model_type": "lora",
+    "eval_time_s": 1541.1897912025452,
+    "timestamp": "20260209_123302_UTC",
+    "task1": {
+      "num_samples": 1886,
+      "exact_match_avg": 0.6383881230116649,
+      "token_overlap_avg": 0.599412814414378,
+      "teacher_abstain_rate": 0.6998939554612937,
+      "student_abstain_rate": 0.7905620360551432,
+      "abstain_agreement_rate": 0.7693531283138918,
+      "state_counts": {
+        "both_abstain": 1188,
+        "both_answer": 263,
+        "teacher_answer_student_abstain": 303,
+        "teacher_abstain_student_answer": 132
+      },
+      "state_percentages": {
+        "both_abstain": 62.990455991516434,
+        "both_answer": 13.944856839872747,
+        "teacher_answer_student_abstain": 16.06574761399788,
+        "teacher_abstain_student_answer": 6.998939554612937
+      },
+      "embedding_similarity_avg": 0.8531359208793174,
+      "embedding_similarity_adjusted_avg": 0.7501371311199627
+    },
+    "task2": {
+      "num_samples": 1718,
+      "valid_predictions": 1686,
+      "invalid_predictions": 32,
+      "accuracy": 0.5065243179122183,
+      "macro_precision": 0.5079787284464372,
+      "macro_recall": 0.5059220848665649,
+      "macro_f1": 0.47219245542003296,
+      "weighted_precision": 0.5079719321355297,
+      "weighted_recall": 0.5065243179122183,
+      "weighted_f1": 0.4725118215827509,
+      "per_class": {
+        "continue": {
+          "precision": 0.5051140833988985,
+          "recall": 0.7597633136094675,
+          "f1": 0.6068052930056711,
+          "support": 845
+        },
+        "finish": {
+          "precision": 0.5108433734939759,
+          "recall": 0.2520808561236623,
+          "f1": 0.3375796178343949,
+          "support": 841
+        }
+      },
+      "confusion_matrix": [
+        [
+          642,
+          203
+        ],
+        [
+          629,
+          212
+        ]
+      ]
+    },
+    "model_family": "Gemma 1B",
+    "training_type": "Task1 LoRA"
+  }
+]
