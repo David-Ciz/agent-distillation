@@ -295,7 +295,6 @@ def main(
         args=training_args,
         processing_class=tokenizer,
         callbacks=[MLflowMetricsCallback()] if is_main_process() else [],
-        dataset_kwargs={"num_proc": 1},  # tokenize once per rank, not per worker
     )
 
     logging.info("Starting training...")

@@ -39,6 +39,16 @@ export MLFLOW_TRACKING_URI="sqlite:////users/${USER}/mlflow/mlflow.db"
 export MLFLOW_ARTIFACT_ROOT="/scratch/project_465002758/${USER}/mlruns"
 echo "MLflow tracking URI: $MLFLOW_TRACKING_URI"
 
+# Background GPU monitor — logs utilisation every 30s to logs/gpu_stats_<JOB_ID>.log
+singularity run "$SIF" bash -c "
+    while true; do
+        echo '--- '\$(date)' ---' >> ${REPO_DIR}/logs/gpu_stats_${SLURM_JOB_ID}.log
+        rocm-smi --showuse --showmeminfo vram >> ${REPO_DIR}/logs/gpu_stats_${SLURM_JOB_ID}.log 2>&1
+        sleep 30
+    done
+" &
+GPU_MONITOR_PID=$!
+
 srun singularity run "$SIF" \
     bash -c "
         [ -n \"${CONTAINER_VENV}\" ] && source \"${CONTAINER_VENV}/bin/activate\"
@@ -52,4 +62,5 @@ srun singularity run "$SIF" \
             --gradient-accumulation-steps 4
     "
 
+kill $GPU_MONITOR_PID 2>/dev/null || true
 echo "Training complete."

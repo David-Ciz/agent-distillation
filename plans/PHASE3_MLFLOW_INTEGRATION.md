@@ -10,13 +10,14 @@
 
 | Date | Job ID | Model | Epochs | GPUs | Epoch time | Status | Notes |
 |------|--------|-------|--------|------|------------|--------|-------|
-| 2026-03-06 | 16513488 | Qwen2.5-0.5B-Instruct | 1 | 8× MI250X | ~27 min | ✅ Complete | First successful run. Slow due to DataLoader workers=4 and per-rank tokenization. Fixed in next run. |
+| 2026-03-06 | 16513488 | Qwen2.5-0.5B-Instruct | 1 | 8× MI250X | ~27 min | ✅ Complete | First successful run. Slow due to `dataloader_num_workers=4`. Fixed. |
+| 2026-03-06 | 16519490 | Qwen2.5-3B-Instruct | 3 | 8× MI250X | — | ❌ Failed | `SFTTrainer` in container's TRL 0.27.1 does not support `dataset_kwargs`. Removed. |
 
 ### Performance notes — job 16513488
 
-- **Tokenization took ~7 min per rank** (8 ranks × 7 min = wasted CPU time). Each rank processed the full 16K dataset independently with 4 DataLoader workers. Fix: `dataloader_num_workers=1`, `dataset_kwargs={"num_proc": 1}`. Applied to script.
+- **Tokenization took ~7 min per rank** — each rank processed the full 16K dataset independently with 4 DataLoader workers. Fix: `dataloader_num_workers=1`. Applied to script. (`dataset_kwargs={"num_proc":1}` was also tried but is not supported by TRL 0.27.1 in the container — removed.)
 - **Actual training**: 257 steps × 3.75 s/it = ~16 min. This is the real GPU compute time and is reasonable for 0.5B on 8 GPUs.
-- **Expected next run**: ~18–20 min total (tokenization ~2 min + training ~16 min).
+- **Expected next run**: ~20–25 min total.
 
 ---
 
@@ -526,5 +527,5 @@ ssh -L 5000:localhost:5000 daciz@lumi.csc.fi
 - [x] `~/mlflow/mlflow.db` created and populated (MLflow DB initialised on first run)
 - [ ] MLflow UI verified locally with correct params + loss curve
 - [ ] Checkpoint artifact visible in `/scratch/.../mlruns/`
-- [x] Performance fix applied: `dataloader_num_workers=1`, `dataset_kwargs={"num_proc": 1}`
+- [x] Performance fix applied: `dataloader_num_workers=1` (container's TRL 0.27.1 does not support `dataset_kwargs` — removed)
 
