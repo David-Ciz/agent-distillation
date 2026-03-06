@@ -9,7 +9,7 @@ import pandas as pd
 import torch
 import mlflow
 from datasets import Dataset
-from peft import LoraConfig, get_peft_model, TaskType
+from peft import LoraConfig, TaskType
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
@@ -189,7 +189,7 @@ def main(
     tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
-        torch_dtype=torch.bfloat16,
+        dtype=torch.bfloat16,
         trust_remote_code=True,
     )
 
@@ -205,9 +205,8 @@ def main(
         lora_dropout=lora_dropout,
         target_modules=target_modules,
     )
-    model = get_peft_model(model, peft_config)
-    if is_main_process():
-        model.print_trainable_parameters()
+    # Note: do NOT call get_peft_model() here — SFTTrainer applies peft_config internally (TRL 0.15+).
+    # Passing an already-wrapped PeftModel together with peft_config raises a ValueError.
 
     # ------------------------------------------------------------------
     # Formatting function

@@ -212,7 +212,7 @@ def main(
 
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
-        torch_dtype=torch.bfloat16,
+        dtype=torch.bfloat16,
         attn_implementation=attn_impl,
         trust_remote_code=True,
         low_cpu_mem_usage=True,
