@@ -1,8 +1,22 @@
 # Phase 3 — MLflow Integration Plan
 
-> **Status**: Ready to implement  
+> **Status**: ✅ First training run successful (2026-03-06)  
 > **Prerequisite**: Phase 2 complete — `lumi_env_check.py` passes all 12 required packages (including `mlflow`)  
 > **Goal**: Every training and evaluation run on LUMI is fully tracked in MLflow from day one — parameters, metrics, artifacts.
+
+---
+
+## Run Log
+
+| Date | Job ID | Model | Epochs | GPUs | Epoch time | Status | Notes |
+|------|--------|-------|--------|------|------------|--------|-------|
+| 2026-03-06 | 16513488 | Qwen2.5-0.5B-Instruct | 1 | 8× MI250X | ~27 min | ✅ Complete | First successful run. Slow due to DataLoader workers=4 and per-rank tokenization. Fixed in next run. |
+
+### Performance notes — job 16513488
+
+- **Tokenization took ~7 min per rank** (8 ranks × 7 min = wasted CPU time). Each rank processed the full 16K dataset independently with 4 DataLoader workers. Fix: `dataloader_num_workers=1`, `dataset_kwargs={"num_proc": 1}`. Applied to script.
+- **Actual training**: 257 steps × 3.75 s/it = ~16 min. This is the real GPU compute time and is reasonable for 0.5B on 8 GPUs.
+- **Expected next run**: ~18–20 min total (tokenization ~2 min + training ~16 min).
 
 ---
 
@@ -495,21 +509,22 @@ ssh -L 5000:localhost:5000 daciz@lumi.csc.fi
 ## 6. Checklist
 
 ### Implementation
-- [ ] Create `task1/scripts/mlflow_utils.py` (Step 3.1)
-- [ ] Update `02_train_model_lora.py` — remove nvidia-smi GPU selection, add argparse, add MLflow (Step 3.2)
-- [ ] Update `03_train_model_full_finetune.py` — same as above + ROCm attn fallback (Step 3.3)
+- [x] Create `task1/scripts/mlflow_utils.py` (Step 3.1)
+- [x] Update `02_train_model_lora.py` — remove nvidia-smi, add Click CLI, add MLflow (Step 3.2)
+- [x] Update `03_train_model_full_finetune.py` — same + ROCm attn fallback (Step 3.3)
 - [ ] Update `05_model_evaluation.py` — add MLflow per-model run (Step 3.4)
-- [ ] Update `task1/scripts/slurm/train_lora_lumi.sh` — add MLflow env vars, venv activation (Step 3.5)
+- [x] Update `task1/scripts/slurm/train_lora_lumi.sh` — add MLflow env vars, venv activation (Step 3.5)
 
 ### Infrastructure on LUMI
-- [ ] Create MLflow DB directory: `mkdir -p ~/mlflow`
-- [ ] Create artifact directory: `mkdir -p /scratch/project_465002758/daciz/mlruns`
-- [ ] Install missing packages into venv: `source ~/agent-distillation/my-env/bin/activate && pip install mlflow click`
-- [ ] Verify imports: `python -c "import mlflow, click; print(mlflow.__version__, click.__version__)"`
+- [x] Create MLflow DB directory: `mkdir -p ~/mlflow`
+- [x] Create artifact directory: `mkdir -p /scratch/project_465002758/daciz/mlruns`
+- [x] Install missing packages into venv: `pip install mlflow click`
+- [x] Verify imports: `python -c "import mlflow, click; print(mlflow.__version__, click.__version__)"`
 
 ### Validation
-- [ ] Smoke test passes (srun 1 epoch, 1 GPU)
-- [ ] `sqlite3 ~/mlflow/mlflow.db "SELECT run_uuid, status FROM runs;"` shows a FINISHED run
-- [ ] MLflow UI accessible locally and shows correct params + loss curve
+- [x] Smoke test passes — job 16513488 completed 1 epoch successfully
+- [x] `~/mlflow/mlflow.db` created and populated (MLflow DB initialised on first run)
+- [ ] MLflow UI verified locally with correct params + loss curve
 - [ ] Checkpoint artifact visible in `/scratch/.../mlruns/`
+- [x] Performance fix applied: `dataloader_num_workers=1`, `dataset_kwargs={"num_proc": 1}`
 
