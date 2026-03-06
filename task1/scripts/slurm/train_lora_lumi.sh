@@ -46,10 +46,10 @@ srun singularity run "$SIF" \
             --nproc_per_node=8 \
             --standalone \
         task1/scripts/02_train_model_lora.py \
-            --model-name 'Qwen/Qwen2.5-0.5B-Instruct' \
-            --num-epochs 1 \
-            --batch-size 4 \
-            --gradient-accumulation-steps 2
+            --model-name 'Qwen/Qwen2.5-0.3B-Instruct' \
+            --num-epochs 3 \
+            --batch-size 2 \
+            --gradient-accumulation-steps 4
     "
 
 echo "Training complete."
