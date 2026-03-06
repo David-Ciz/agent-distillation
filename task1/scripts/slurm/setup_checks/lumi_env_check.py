@@ -25,6 +25,7 @@ REQUIRED_PACKAGES = [
     "sentencepiece",
     "tokenizers",
     "mlflow",
+    "click"
 ]
 
 # Packages that are nice-to-have but not strictly required to start

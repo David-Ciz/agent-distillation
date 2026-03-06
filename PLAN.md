@@ -158,16 +158,15 @@ git add *.dvc && git commit -m "experiment: ..."
 
 **Decision**: MLflow integration will be added **before the first LUMI training run** (see Section 5 Phase 3). Since there will be significant code changes anyway to support the Singularity container environment, it makes sense to bundle MLflow in rather than do two rounds of script changes. This is a deliberate deviation from the original "baseline first, then tooling" approach — justified because we have no existing LUMI baseline to protect.
 
-**TODO — Add MLflow integration** (to be done during Phase 2 / Phase 3 of LUMI bring-up):
+**Full implementation plan**: see [`plans/PHASE3_MLFLOW_INTEGRATION.md`](plans/PHASE3_MLFLOW_INTEGRATION.md)
 
-- [ ] **Task: Add MLflow to training scripts** (`02_train_model_lora.py`, `03_train_model_full_finetune.py`)
-  - Log: `model_name`, `num_epochs`, `batch_size`, `learning_rate`, `lora_rank`, `lora_alpha`
-  - Log: `train_loss` per epoch, final `val_loss`
-  - Save checkpoint path as artifact
-- [ ] **Task: Add MLflow to evaluation script** (`05_model_evaluation.py`)
-  - Log: `abstain_f1`, `abstain_accuracy`, `embedding_similarity_adjusted`, `exact_match_avg`, `token_overlap`
-  - Log: `num_samples`, `model_type`, `eval_dataset_hash`
-  - Save `detailed_results.csv` and `summary.json` as artifacts
+**TODO summary** (Phase 3 checklist):
+
+- [ ] Create `task1/scripts/mlflow_utils.py` — shared setup + dataset hashing helper
+- [ ] Update `02_train_model_lora.py` — remove nvidia-smi GPU selection, add argparse, add MLflow logging
+- [ ] Update `03_train_model_full_finetune.py` — same + ROCm-safe flash-attn fallback
+- [ ] Update `05_model_evaluation.py` — add MLflow per-model run with all eval metrics
+- [ ] Update `task1/scripts/slurm/train_lora_lumi.sh` — add MLflow env vars, venv activation
 - [ ] **Task: Add MLflow to TTA experiment** (new script, see Section 4.2)
   - Log: `n_samples` (how many TTA passes), `temperature`, `aggregation_method`
   - Compare single-pass vs TTA metrics
