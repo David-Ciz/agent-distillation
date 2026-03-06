@@ -17,8 +17,8 @@
 #SBATCH --ntasks-per-node=8
 #SBATCH --gpus-per-node=8
 #SBATCH --time=04:00:00
-#SBATCH --output=logs/train_lora_%j.out
-#SBATCH --error=logs/train_lora_%j.err
+#SBATCH --output=/users/%u/agent-distillation/logs/train_lora_%j.out
+#SBATCH --error=/users/%u/agent-distillation/logs/train_lora_%j.err
 
 set -euo pipefail
 
@@ -26,10 +26,11 @@ module purge
 module use /appl/local/laifs/modules
 module load lumi-aif-singularity-bindings
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/container.env"
+# Use absolute path — SLURM copies the script to a spool dir, so relative paths break
+REPO_DIR="${HOME}/agent-distillation"
+source "${REPO_DIR}/task1/scripts/slurm/container.env"
 
-mkdir -p logs
+mkdir -p "${REPO_DIR}/logs"
 
 export MASTER_ADDR=$(scontrol show hostname "$SLURM_NODELIST" | head -1)
 export MASTER_PORT=29500
