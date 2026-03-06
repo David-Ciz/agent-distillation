@@ -29,3 +29,18 @@ task1/data/eval/exploratory_causalqa_test/*
 task1/data/eval/exploratory_msmarco_test/*
 task1/data/eval/exploratory_quasart_test/*
 task1/outputs/evaluations/eval_run_20260124_052629/evaluation.log
+
+# DVC
+/tmp/
+.dvc/tmp/
+.dvc/cache/
+
+# MLflow
+mlruns/
+mlflow.db
+
+# pyproject build artefacts
+dist/
+build/
+*.egg-info/
+
