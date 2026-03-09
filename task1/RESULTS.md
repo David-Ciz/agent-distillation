@@ -4,6 +4,26 @@ This document provides a detailed analysis of the evaluation results for Task 1 
 
 ---
 
+## LUMI Reproduction Run (March 2026)
+
+New training + evaluation runs on LUMI using the MLflow-tracked pipeline. Models trained from scratch using `02_train_model_lora.py` (3 epochs, 8× MI250X), evaluated with `05_model_evaluation.py`.
+
+| Model | Train Type | Abstain F1 | Abstain Acc | Embed Sim Adj | Student Abstain Rate | MLflow Run |
+|-------|------------|------------|-------------|---------------|----------------------|------------|
+| Qwen 2.5 3B Instruct | **LoRA** | **0.875** | 0.815 | **0.802** | 0.781 | eval-job-20260309_114742 |
+| Qwen 2.5 3B Instruct | Base | 0.820 | 0.752 | 0.737 | 0.677 | eval-job-20260309_114742 |
+
+**Teacher abstain rate**: 70.0% (699/1886 samples)
+
+**Comparison to original baseline** (Qwen 3B LoRA):
+- Original: Abstain F1 = 0.881, Embed Sim = 0.810
+- LUMI run:  Abstain F1 = 0.875, Embed Sim = 0.802
+- Delta: −0.006 F1, −0.008 Embed Sim → **within expected variance ✅**
+
+**Pending**: Qwen 2.5 0.5B LoRA (Step 4.4) and Qwen 2.5 3B Full Finetune (Step 4.5).
+
+---
+
 ## Overview
 
 We trained and evaluated 12 model configurations across 5 model families:

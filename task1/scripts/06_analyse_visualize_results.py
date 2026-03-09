@@ -13,9 +13,7 @@ Usage:
     python 06_analyse_visualize_results.py --results_files file1.csv file2.csv ... --model_names name1 name2
 """
 
-import argparse
 import os
-import sys
 import json
 import warnings
 from pathlib import Path
@@ -848,87 +846,74 @@ def save_metrics_summary(all_metrics: List[Dict], output_dir: str):
     return df
 
 
-def main():
-    parser = argparse.ArgumentParser(
-        description="Analyze and visualize model evaluation results",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  # Analyze results from directories
-  python 06_analyse_visualize_results.py --results_dirs dir1 dir2 dir3 --output_dir plots/
+import click
 
-  # Analyze specific CSV files with custom names
-  python 06_analyse_visualize_results.py --results_files file1.csv file2.csv --model_names Model1 Model2
 
-  # Analyze all models from an eval run
-  python 06_analyse_visualize_results.py --eval_run_dir outputs/evaluations/eval_run_XXXXX --output_dir analysis/
-        """
-    )
-    
-    parser.add_argument('--results_dirs', type=str, nargs='+', 
-                        help='Directories containing *_detailed_results.csv files')
-    parser.add_argument('--results_files', type=str, nargs='+',
-                        help='Direct paths to detailed_results.csv files')
-    parser.add_argument('--model_names', type=str, nargs='+',
-                        help='Custom model names (must match number of results_files)')
-    parser.add_argument('--eval_run_dir', type=str,
-                        help='Path to eval run directory (will find all model subdirs)')
-    parser.add_argument('--output_dir', type=str, default='analysis_output',
-                        help='Directory to save plots and metrics')
-    parser.add_argument('--skip_plots', action='store_true',
-                        help='Only calculate metrics, skip plot generation')
-    
-    args = parser.parse_args()
-    
+@click.command()
+@click.option("--results-dirs", multiple=True,
+              help="Directories containing *_detailed_results.csv files.")
+@click.option("--results-files", multiple=True,
+              help="Direct paths to detailed_results.csv files.")
+@click.option("--model-names", multiple=True,
+              help="Custom model names (must match number of --results-files).")
+@click.option("--eval-run-dir", default=None,
+              help="Path to an eval run directory — finds all model subdirs automatically.")
+@click.option("--output-dir", default="analysis_output", show_default=True,
+              help="Directory to save plots and metrics.")
+@click.option("--skip-plots", is_flag=True,
+              help="Only calculate metrics, skip plot generation.")
+def main(results_dirs, results_files, model_names, eval_run_dir, output_dir, skip_plots):
+    """Analyze and visualize model evaluation results.
+
+    \b
+    Examples:
+      python 06_analyse_visualize_results.py --results-dirs dir1 dir2 --output-dir plots/
+      python 06_analyse_visualize_results.py --results-files f1.csv f2.csv --model-names M1 M2
+      python 06_analyse_visualize_results.py --eval-run-dir outputs/evaluations/eval_run_XXX --output-dir analysis/
+    """
     # Collect results paths
     results_paths = []
-    model_names = []
-    
-    if args.eval_run_dir:
-        # Find all model directories in the eval run
-        eval_dir = Path(args.eval_run_dir)
+    names = list(model_names)
+
+    if eval_run_dir:
+        eval_dir = Path(eval_run_dir)
         for subdir in sorted(eval_dir.iterdir()):
             if subdir.is_dir():
                 csv_files = list(subdir.glob("*_detailed_results.csv"))
                 if csv_files:
                     results_paths.append(str(subdir))
-                    model_names.append(subdir.name)
-    
-    if args.results_dirs:
-        for d in args.results_dirs:
+                    names.append(subdir.name)
+
+    if results_dirs:
+        for d in results_dirs:
             results_paths.append(d)
-            model_names.append(Path(d).name)
-    
-    if args.results_files:
-        results_paths.extend(args.results_files)
-        if args.model_names:
-            if len(args.model_names) != len(args.results_files):
-                print("Error: Number of model_names must match number of results_files")
-                sys.exit(1)
-            model_names.extend(args.model_names)
+            names.append(Path(d).name)
+
+    if results_files:
+        results_paths.extend(results_files)
+        if model_names:
+            if len(model_names) != len(results_files):
+                raise click.UsageError("Number of --model-names must match number of --results-files")
         else:
-            for f in args.results_files:
-                model_names.append(Path(f).stem.replace("_detailed_results", ""))
-    
+            for f in results_files:
+                names.append(Path(f).stem.replace("_detailed_results", ""))
+
     if not results_paths:
-        print("Error: Must provide --results_dirs, --results_files, or --eval_run_dir")
-        sys.exit(1)
-    
-    # Create output directory
-    os.makedirs(args.output_dir, exist_ok=True)
-    
+        raise click.UsageError("Must provide --results-dirs, --results-files, or --eval-run-dir")
+
+    os.makedirs(output_dir, exist_ok=True)
+
     print(f"\n{'='*60}")
     print("MODEL EVALUATION ANALYSIS")
     print(f"{'='*60}")
     print(f"Found {len(results_paths)} models to analyze")
-    print(f"Output directory: {args.output_dir}")
-    
-    # Load all results
+    print(f"Output directory: {output_dir}")
+
     print("\nLoading results...")
     all_data = {}
     all_metrics = []
-    
-    for path, name in zip(results_paths, model_names):
+
+    for path, name in zip(results_paths, names):
         try:
             df, model_name = load_results(path, name)
             all_data[model_name] = df
@@ -937,65 +922,44 @@ Examples:
             print(f"  Loaded: {model_name} ({len(df)} samples)")
         except Exception as e:
             print(f"  Error loading {path}: {e}")
-    
+
     if not all_metrics:
-        print("Error: No valid results loaded")
-        sys.exit(1)
-    
-    # Get teacher abstain rate (should be same for all)
+        raise click.ClickException("No valid results loaded")
+
     teacher_abstain_rate = all_metrics[0]['teacher_abstain_rate']
-    
-    # Save metrics summary
+
     print("\nSaving metrics summary...")
-    metrics_df = save_metrics_summary(all_metrics, args.output_dir)
-    
-    # Print summary table
+    metrics_df = save_metrics_summary(all_metrics, output_dir)
+
     print("\n" + "="*80)
     print("METRICS SUMMARY")
     print("="*80)
-    summary_cols = ['model_name', 'abstain_accuracy', 'abstain_f1', 
+    summary_cols = ['model_name', 'abstain_accuracy', 'abstain_f1',
                     'embedding_similarity_adjusted_mean', 'exact_match_rate']
     print(metrics_df[[c for c in summary_cols if c in metrics_df.columns]].to_string(index=False))
-    
-    if args.skip_plots:
-        print("\nSkipping plot generation (--skip_plots)")
+
+    if skip_plots:
+        print("\nSkipping plot generation (--skip-plots)")
     else:
         print("\nGenerating visualizations...")
-        
-        # 1. Answer state distribution
-        plot_answer_state_distribution(all_metrics, args.output_dir, teacher_abstain_rate)
-        
-        # 2. Violin plots - grouped by model family
-        plot_violin_similarity_grouped(all_data, all_metrics, args.output_dir,
-                                       'embedding_similarity_adjusted', 
+
+        plot_answer_state_distribution(all_metrics, output_dir, teacher_abstain_rate)
+        plot_violin_similarity_grouped(all_data, all_metrics, output_dir,
+                                       'embedding_similarity_adjusted',
                                        'Embedding Similarity Distribution (Adjusted)')
-        
-        # 3. Violin plots - all models
-        plot_violin_all_models(all_data, all_metrics, args.output_dir,
-                              'embedding_similarity_adjusted',
-                              'Embedding Similarity Distribution by Model')
-        
-        # 4. Abstain metrics comparison
-        plot_abstain_metrics_comparison(all_metrics, args.output_dir, teacher_abstain_rate)
-        
-        # 5. Abstain rates comparison
-        plot_abstain_rates_comparison(all_metrics, args.output_dir, teacher_abstain_rate)
-        
-        # 6. Similarity metrics comparison
-        plot_similarity_metrics_comparison(all_metrics, args.output_dir)
-        
-        # 7. Metrics heatmap
-        plot_heatmap_metrics(all_metrics, args.output_dir)
-        
-        # 8. Training effect by size
-        plot_training_effect_by_size(all_metrics, args.output_dir)
-        
-        # 9. Improvement rate by training (new plot)
-        plot_improvement_rate_by_training(all_metrics, args.output_dir)
-    
+        plot_violin_all_models(all_data, all_metrics, output_dir,
+                               'embedding_similarity_adjusted',
+                               'Embedding Similarity Distribution by Model')
+        plot_abstain_metrics_comparison(all_metrics, output_dir, teacher_abstain_rate)
+        plot_abstain_rates_comparison(all_metrics, output_dir, teacher_abstain_rate)
+        plot_similarity_metrics_comparison(all_metrics, output_dir)
+        plot_heatmap_metrics(all_metrics, output_dir)
+        plot_training_effect_by_size(all_metrics, output_dir)
+        plot_improvement_rate_by_training(all_metrics, output_dir)
+
     print(f"\n{'='*60}")
     print("Analysis complete!")
-    print(f"Results saved to: {args.output_dir}")
+    print(f"Results saved to: {output_dir}")
     print(f"{'='*60}")
 
 

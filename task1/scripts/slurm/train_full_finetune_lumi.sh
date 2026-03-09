@@ -1,24 +1,23 @@
 #!/bin/bash
 # =============================================================================
-# train_lora_lumi.sh — Phase 3: LoRA training on LUMI
+# train_full_finetune_lumi.sh — Full finetune training on LUMI
 #
-# GPU utilisation note:
-#   All 8 MI250X GCDs are used correctly by torch.distributed.run --standalone.
-#   The occasional 0% reading in rocm-smi is normal — it's sampled during the
-#   brief DataLoader prefetch gap between training steps, not a real problem.
+# Full finetune is memory-intensive (no LoRA adapter, all weights updated).
+# Uses 8 MI250X GCDs with torch.distributed.run --standalone.
 #
-# Submit: sbatch task1/scripts/slurm/train_lora_lumi.sh
+# Submit: sbatch task1/scripts/slurm/train_full_finetune_lumi.sh
 # Monitor: squeue -u $USER
+# Logs:    tail -f logs/train_full_finetune_<JOB_ID>.out
 # =============================================================================
-#SBATCH --job-name=agent-distill-lora
+#SBATCH --job-name=agent-distill-full-ft
 #SBATCH --account=project_465002758
 #SBATCH --partition=standard-g
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --gpus-per-node=8
-#SBATCH --time=04:00:00
-#SBATCH --output=/users/%u/agent-distillation/logs/train_lora_%j.out
-#SBATCH --error=/users/%u/agent-distillation/logs/train_lora_%j.err
+#SBATCH --time=10:00:00
+#SBATCH --output=/users/%u/agent-distillation/logs/train_full_finetune_%j.out
+#SBATCH --error=/users/%u/agent-distillation/logs/train_full_finetune_%j.err
 
 set -euo pipefail
 
@@ -26,7 +25,6 @@ module purge
 module use /appl/local/laifs/modules
 module load lumi-aif-singularity-bindings
 
-# Use absolute path — SLURM copies the script to a spool dir, so relative paths break
 REPO_DIR="${HOME}/agent-distillation"
 source "${REPO_DIR}/task1/scripts/slurm/container.env"
 
@@ -55,32 +53,22 @@ GPU_MONITOR_PID=$!
 
 # ------------------------------------------------------------------
 # Launch — single srun task, torch.distributed.run --standalone spawns
-# 8 worker processes internally (one per GCD). No port conflicts.
+# 8 worker processes internally (one per GCD).
+# batch_size=1 + grad_accum=8 → effective batch = 8 per GPU × 8 GPUs = 64
 # ------------------------------------------------------------------
-# ------------------------------------------------------------------
-# Model / training hyperparams — override via env before sbatch, e.g.:
-#   MODEL_NAME=Qwen/Qwen2.5-0.5B-Instruct BATCH_SIZE=4 GRAD_ACCUM=2 \
-#       sbatch task1/scripts/slurm/train_lora_lumi.sh
-# ------------------------------------------------------------------
-MODEL_NAME="${MODEL_NAME:-Qwen/Qwen2.5-3B-Instruct}"
-NUM_EPOCHS="${NUM_EPOCHS:-3}"
-BATCH_SIZE="${BATCH_SIZE:-2}"
-GRAD_ACCUM="${GRAD_ACCUM:-4}"
-
-echo "Model: $MODEL_NAME  Epochs: $NUM_EPOCHS  Batch: $BATCH_SIZE  GradAccum: $GRAD_ACCUM"
-
 srun singularity run "$SIF" \
     bash -c "
         [ -n \"${CONTAINER_VENV}\" ] && source \"${CONTAINER_VENV}/bin/activate\"
         python -m torch.distributed.run \
             --nproc_per_node=8 \
             --standalone \
-        task1/scripts/02_train_model_lora.py \
-            --model-name '${MODEL_NAME}' \
-            --num-epochs ${NUM_EPOCHS} \
-            --batch-size ${BATCH_SIZE} \
-            --gradient-accumulation-steps ${GRAD_ACCUM}
+        task1/scripts/03_train_model_full_finetune.py \
+            --model-name 'Qwen/Qwen2.5-3B-Instruct' \
+            --num-epochs 3 \
+            --batch-size 1 \
+            --gradient-accumulation-steps 8
     "
 
 kill $GPU_MONITOR_PID 2>/dev/null || true
-echo "Training complete."
+echo "Full finetune training complete."
+
