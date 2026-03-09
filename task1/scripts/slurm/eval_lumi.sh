@@ -46,8 +46,9 @@ echo "MLflow tracking URI: $MLFLOW_TRACKING_URI"
 srun singularity run "$SIF" \
     bash -c "
         [ -n \"${CONTAINER_VENV}\" ] && source \"${CONTAINER_VENV}/bin/activate\"
+        cd ${REPO_DIR}
         python task1/scripts/05_model_evaluation.py \
-            --models 'task1/outputs/Qwen_Qwen2.5-3B-Instruct_lora-final,Qwen2.5-3B-Instruct-lora,lora,32' \
+            --models '${REPO_DIR}/task1/outputs/Qwen_Qwen2.5-3B-Instruct-lora-final,Qwen2.5-3B-Instruct-lora,lora,32' \
             --models 'Qwen/Qwen2.5-3B-Instruct,Qwen2.5-3B-Instruct-base,base,32'
     "
 

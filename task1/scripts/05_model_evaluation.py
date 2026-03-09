@@ -227,7 +227,7 @@ def load_model_and_tokenizer(model_path: str, is_lora: bool = False):
         tokenizer = AutoTokenizer.from_pretrained(base_model_name, trust_remote_code=True)
         base_model = AutoModelForCausalLM.from_pretrained(
             base_model_name,
-            torch_dtype=torch.bfloat16,
+            dtype=torch.bfloat16,
             trust_remote_code=True,
             device_map="auto"
         )
@@ -237,7 +237,7 @@ def load_model_and_tokenizer(model_path: str, is_lora: bool = False):
         tokenizer = AutoTokenizer.from_pretrained(model_path, trust_remote_code=True)
         model = AutoModelForCausalLM.from_pretrained(
             model_path,
-            torch_dtype=torch.bfloat16,
+            dtype=torch.bfloat16,
             trust_remote_code=True,
             device_map="auto"
         )

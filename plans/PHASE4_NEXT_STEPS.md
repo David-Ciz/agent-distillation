@@ -106,13 +106,13 @@ tail -f logs/train_lora_<JOB_ID>.out
 ```
 
 **Expected output:**
-- `task1/outputs/Qwen_Qwen2.5-3B-Instruct_lora-final/` — saved LoRA adapter
+- `task1/outputs/Qwen_Qwen2.5-3B-Instruct-lora-final/` — saved LoRA adapter
 - MLflow run in `~/mlflow/mlflow.db` with train loss curve
 - Estimated wall time: ~2–3 hours (3 epochs × ~45 min/epoch for 3B on 8 GPUs)
 
 **Success criteria:**
 - Job exits with code 0
-- `task1/outputs/Qwen_Qwen2.5-3B-Instruct_lora-final/adapter_config.json` exists
+- `task1/outputs/Qwen_Qwen2.5-3B-Instruct-lora-final/adapter_config.json` exists
 - MLflow shows `status=FINISHED`
 
 ---
@@ -200,7 +200,7 @@ srun singularity run "$SIF" \
     bash -c "
         [ -n \"${CONTAINER_VENV}\" ] && source \"${CONTAINER_VENV}/bin/activate\"
         python task1/scripts/05_model_evaluation.py \
-            --models 'task1/outputs/Qwen_Qwen2.5-3B-Instruct_lora-final,Qwen2.5-3B-lora,lora,32' \
+            --models 'task1/outputs/Qwen_Qwen2.5-3B-Instruct-lora-final,Qwen2.5-3B-lora,lora,32' \
             --models 'Qwen/Qwen2.5-3B-Instruct,Qwen2.5-3B-base,base,32'
     "
 ```
@@ -270,7 +270,7 @@ Once steps 4.1–4.5 are complete, run a single evaluation job covering all 4 mo
 
 ```bash
 python task1/scripts/05_model_evaluation.py \
-    --models 'task1/outputs/Qwen_Qwen2.5-3B-Instruct_lora-final,Qwen2.5-3B-Instruct-lora,lora,32' \
+            --models 'task1/outputs/Qwen_Qwen2.5-3B-Instruct-lora-final,Qwen2.5-3B-Instruct-lora,lora,32' \
     --models 'task1/outputs/Qwen_Qwen2.5-3B-Instruct_full-finetune-final,Qwen2.5-3B-Instruct-full-finetune,full_finetune,32' \
     --models 'task1/outputs/Qwen_Qwen2.5-0.5B-Instruct_lora-final,Qwen2.5-0.5B-Instruct-lora,lora,32' \
     --models 'Qwen/Qwen2.5-3B-Instruct,Qwen2.5-3B-Instruct-base,base,32' \
