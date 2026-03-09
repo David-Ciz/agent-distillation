@@ -2,10 +2,10 @@
 # =============================================================================
 # train_lora_lumi.sh — Phase 3: LoRA training on LUMI
 #
-# Before running:
-#   1. Complete Phase 2 (lumi_env_check.py passes all required packages)
-#   2. Recreate venv at ~/agent-distillation/my-env with mlflow + click installed
-#   3. Set your project ID and scratch path below
+# GPU utilisation note:
+#   All 8 MI250X GCDs are used correctly by torch.distributed.run --standalone.
+#   The occasional 0% reading in rocm-smi is normal — it's sampled during the
+#   brief DataLoader prefetch gap between training steps, not a real problem.
 #
 # Submit: sbatch task1/scripts/slurm/train_lora_lumi.sh
 # Monitor: squeue -u $USER
@@ -32,14 +32,18 @@ source "${REPO_DIR}/task1/scripts/slurm/container.env"
 
 mkdir -p "${REPO_DIR}/logs"
 
-echo "Job: $SLURM_JOB_ID  Node: $(hostname)  GPUs: 8"
-
-# MLflow storage — backend (metadata) in home, artifacts on scratch
+# ------------------------------------------------------------------
+# MLflow
+# ------------------------------------------------------------------
 export MLFLOW_TRACKING_URI="sqlite:////users/${USER}/mlflow/mlflow.db"
 export MLFLOW_ARTIFACT_ROOT="/scratch/project_465002758/${USER}/mlruns"
+
+echo "Job: $SLURM_JOB_ID  Node: $(hostname)  GPUs: 8"
 echo "MLflow tracking URI: $MLFLOW_TRACKING_URI"
 
-# Background GPU monitor — logs utilisation every 30s to logs/gpu_stats_<JOB_ID>.log
+# ------------------------------------------------------------------
+# Background GPU monitor (every 30 s)
+# ------------------------------------------------------------------
 singularity run "$SIF" bash -c "
     while true; do
         echo '--- '\$(date)' ---' >> ${REPO_DIR}/logs/gpu_stats_${SLURM_JOB_ID}.log
@@ -49,6 +53,10 @@ singularity run "$SIF" bash -c "
 " &
 GPU_MONITOR_PID=$!
 
+# ------------------------------------------------------------------
+# Launch — single srun task, torch.distributed.run --standalone spawns
+# 8 worker processes internally (one per GCD). No port conflicts.
+# ------------------------------------------------------------------
 srun singularity run "$SIF" \
     bash -c "
         [ -n \"${CONTAINER_VENV}\" ] && source \"${CONTAINER_VENV}/bin/activate\"

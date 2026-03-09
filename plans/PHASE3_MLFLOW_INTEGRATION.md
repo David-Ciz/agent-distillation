@@ -12,6 +12,11 @@
 |------|--------|-------|--------|------|------------|--------|-------|
 | 2026-03-06 | 16513488 | Qwen2.5-0.5B-Instruct | 1 | 8× MI250X | ~27 min | ✅ Complete | First successful run. Slow due to `dataloader_num_workers=4`. Fixed. |
 | 2026-03-06 | 16519490 | Qwen2.5-3B-Instruct | 3 | 8× MI250X | — | ❌ Failed | `SFTTrainer` in container's TRL 0.27.1 does not support `dataset_kwargs`. Removed. |
+| 2026-03-06 | (next) | Qwen2.5-3B-Instruct | 3 | 8× MI250X | — | ⏳ Pending | Ready to submit. GPU utilisation was confirmed fine (100% across all 8 GCDs when sampled mid-step). Occasional 0% readings are normal rocm-smi sampling during DataLoader prefetch gaps. |
+
+### GPU utilisation — confirmed working
+
+The uneven readings (some GPUs at 0%) were a **sampling artefact**: `rocm-smi` happened to be called during the brief pause between training steps while the DataLoader prefetches the next batch. A second sample taken mid-step showed all 8 GCDs at 100%. The `ntasks-per-node=1` + `torch.distributed.run --standalone` pattern is correct and should not be changed.
 
 ### Performance notes — job 16513488
 

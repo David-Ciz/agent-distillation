@@ -20,21 +20,24 @@ Supports:
 
 import os
 import sys
-import argparse
 import json
 import logging
 import math
 import re
 from datetime import datetime, timezone
-from dataclasses import dataclass, asdict
 from pathlib import Path
 from typing import List, Dict, Optional, Tuple, Any
+
+import click
+import mlflow
 
 import pandas as pd
 import numpy as np
 import torch
 from torch.utils.data import DataLoader, Dataset
 from tqdm import tqdm
+
+from mlflow_utils import hash_file, setup_mlflow
 
 # Get script directory for relative paths
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -885,260 +888,275 @@ def parse_model_config(config_str: str) -> Dict:
     return config
 
 
-def main():
-    parser = argparse.ArgumentParser(
-        description="Evaluate fine-tuned models on the eval dataset",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  # Evaluate a single model (legacy mode)
-  python 05_model_evaluation.py --model_paths outputs/model-final
+@click.command()
+@click.option(
+    "--models",
+    multiple=True,
+    required=True,
+    help="Model config: 'path,name,type,gen_batch_size'. Repeat for multiple models. "
+         "Types: lora, full_finetune, base.",
+)
+@click.option(
+    "--eval-dataset",
+    default=os.path.join(DATA_DIR, "task1_eval_dataset.csv"),
+    show_default=True,
+    type=click.Path(exists=True, dir_okay=False),
+    help="Path to evaluation dataset CSV.",
+)
+@click.option(
+    "--output-dir",
+    default=EVAL_OUTPUT_DIR,
+    show_default=True,
+    help="Base directory for evaluation results.",
+)
+@click.option(
+    "--num-samples",
+    default=0,
+    show_default=True,
+    type=int,
+    help="Max samples to evaluate (0 = all).",
+)
+@click.option(
+    "--batch-size",
+    default=4,
+    show_default=True,
+    type=int,
+    help="Batch size for loss/perplexity computation.",
+)
+@click.option(
+    "--gen-batch-size",
+    default=8,
+    show_default=True,
+    type=int,
+    help="Default generation batch size (overridable per-model via the config string).",
+)
+@click.option(
+    "--embedding-model",
+    default="Qwen/Qwen3-Embedding-0.6B",
+    show_default=True,
+    help="Embedding model for semantic similarity.",
+)
+@click.option(
+    "--loss-only",
+    is_flag=True,
+    help="Only compute loss/perplexity — skip generation-based metrics.",
+)
+@click.option(
+    "--mlflow-experiment",
+    default="evaluation",
+    show_default=True,
+    help="MLflow experiment name.",
+)
+def main(
+    models,
+    eval_dataset,
+    output_dir,
+    num_samples,
+    batch_size,
+    gen_batch_size,
+    embedding_model,
+    loss_only,
+    mlflow_experiment,
+):
+    """Evaluate fine-tuned models on the agent-distillation eval dataset.
 
-  # Evaluate multiple models with different types (new mode)
-  python 05_model_evaluation.py --models "path1,name1,lora,16" "path2,name2,base,32"
-
-  # Mixed evaluation with per-model batch sizes
-  python 05_model_evaluation.py --models \\
-      "outputs/model-lora,my-lora,lora,16" \\
-      "outputs/model-full,my-full,full_finetune,32" \\
-      "Qwen/Qwen2.5-0.5B,qwen-base,base,32"
-
-  # Model config format: path,name,type[,gen_batch_size]
-  # Types: lora, full_finetune, base
-        """
-    )
-    
-    # New unified model config argument
-    parser.add_argument(
-        "--models",
-        type=str,
-        nargs='+',
-        default=None,
-        help="Model configs in format: path,name,type[,gen_batch_size]. Types: lora, full_finetune, base"
-    )
-    
-    # Legacy arguments (still supported)
-    parser.add_argument(
-        "--model_paths",
-        type=str,
-        nargs='+',
-        default=None,
-        help="(Legacy) Path(s) to model directories to evaluate"
-    )
-    parser.add_argument(
-        "--model_names",
-        type=str,
-        nargs='+',
-        default=None,
-        help="(Legacy) Custom names for models (must match number of model_paths)"
-    )
-    parser.add_argument(
-        "--model_types",
-        type=str,
-        nargs='+',
-        default=None,
-        help="(Legacy) Types per model: lora, full_finetune, base (must match number of model_paths)"
-    )
-    parser.add_argument(
-        "--lora",
-        action="store_true",
-        help="(Legacy) All models are LoRA adapters"
-    )
-    
-    # Common arguments
-    parser.add_argument(
-        "--eval_dataset",
-        type=str,
-        default=os.path.join(DATA_DIR, "task1_eval_dataset.csv"),
-        help="Path to evaluation dataset CSV"
-    )
-    parser.add_argument(
-        "--num_samples",
-        type=int,
-        default=-1,
-        help="Number of samples to evaluate (-1 for all)"
-    )
-    parser.add_argument(
-        "--batch_size",
-        type=int,
-        default=4,
-        help="Batch size for loss computation"
-    )
-    parser.add_argument(
-        "--gen_batch_size",
-        type=int,
-        default=8,
-        help="Default batch size for generation (can be overridden per model)"
-    )
-    parser.add_argument(
-        "--output_dir",
-        type=str,
-        default=EVAL_OUTPUT_DIR,
-        help="Directory to save evaluation results"
-    )
-    parser.add_argument(
-        "--loss_only",
-        action="store_true",
-        help="Only compute loss/perplexity (skip generation-based metrics)"
-    )
-    parser.add_argument(
-        "--embedding_model",
-        type=str,
-        default="Qwen/Qwen3-Embedding-0.6B",
-        help="Embedding model for semantic similarity (default: Qwen3-Embedding-0.6B)"
-    )
-    
-    args = parser.parse_args()
-    
-    # Parse model configurations
+    \b
+    Examples:
+      python 05_model_evaluation.py \\
+          --models 'outputs/Qwen_lora-final,Qwen2.5-3B-lora,lora,32' \\
+          --models 'Qwen/Qwen2.5-3B-Instruct,Qwen2.5-3B-base,base,32'
+    """
+    # ------------------------------------------------------------------
+    # Parse model configs
+    # ------------------------------------------------------------------
     model_configs = []
-    
-    if args.models:
-        # New mode: parse unified model configs
-        for config_str in args.models:
-            try:
-                config = parse_model_config(config_str)
-                if config['gen_batch_size'] is None:
-                    config['gen_batch_size'] = args.gen_batch_size
-                model_configs.append(config)
-            except ValueError as e:
-                print(f"Error: {e}")
-                sys.exit(1)
-    elif args.model_paths:
-        # Legacy mode: use separate arguments
-        model_names = args.model_names or [Path(p).name for p in args.model_paths]
-        model_types = args.model_types or (['lora'] * len(args.model_paths) if args.lora else ['base'] * len(args.model_paths))
-        
-        if len(model_names) != len(args.model_paths):
-            print("Error: Number of model_names must match number of model_paths")
-            sys.exit(1)
-        if len(model_types) != len(args.model_paths):
-            print("Error: Number of model_types must match number of model_paths")
-            sys.exit(1)
-        
-        for path, name, mtype in zip(args.model_paths, model_names, model_types):
-            model_configs.append({
-                'path': path,
-                'name': name,
-                'type': mtype.lower(),
-                'is_lora': mtype.lower() == 'lora',
-                'gen_batch_size': args.gen_batch_size
-            })
-    else:
-        print("Error: Must provide either --models or --model_paths")
-        sys.exit(1)
-    
-    # Create output directory
+    for config_str in models:
+        try:
+            config = parse_model_config(config_str)
+            if config['gen_batch_size'] is None:
+                config['gen_batch_size'] = gen_batch_size
+            model_configs.append(config)
+        except ValueError as e:
+            raise click.BadParameter(str(e), param_hint="--models")
+
+    # Translate num_samples=0 → -1 (internal convention)
+    max_samples = num_samples if num_samples > 0 else -1
+
+    # ------------------------------------------------------------------
+    # Output directory + logging
+    # ------------------------------------------------------------------
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    run_output_dir = os.path.join(args.output_dir, f"eval_run_{timestamp}")
+    run_output_dir = os.path.join(output_dir, f"eval_run_{timestamp}")
     os.makedirs(run_output_dir, exist_ok=True)
-    
-    # Setup logging
+
     setup_logging(os.path.join(run_output_dir, "evaluation.log"))
-    
-    logging.info("="*80)
+
+    logging.info("=" * 80)
     logging.info("MODEL EVALUATION")
-    logging.info("="*80)
-    logging.info(f"Number of models: {len(model_configs)}")
+    logging.info("=" * 80)
     for cfg in model_configs:
         logging.info(f"  - {cfg['name']}: {cfg['path']} (type={cfg['type']}, batch={cfg['gen_batch_size']})")
-    logging.info(f"Eval dataset: {args.eval_dataset}")
-    logging.info(f"Num samples: {args.num_samples if args.num_samples > 0 else 'all'}")
-    logging.info(f"Output directory: {run_output_dir}")
-    
-    # Load evaluation dataset
-    if not os.path.exists(args.eval_dataset):
-        logging.error(f"Evaluation dataset not found: {args.eval_dataset}")
-        logging.error("Run 04_create_eval_dataset.py first to create the eval dataset.")
-        sys.exit(1)
-    
-    eval_df = pd.read_csv(args.eval_dataset)
+    logging.info(f"Eval dataset:  {eval_dataset}")
+    logging.info(f"Num samples:   {max_samples if max_samples > 0 else 'all'}")
+    logging.info(f"Output dir:    {run_output_dir}")
+
+    # ------------------------------------------------------------------
+    # Load eval dataset
+    # ------------------------------------------------------------------
+    eval_df = pd.read_csv(eval_dataset)
     logging.info(f"Loaded {len(eval_df)} samples from eval dataset")
-    
-    # Evaluate each model
-    all_metrics = []
-    
-    for cfg in model_configs:
-        model_output_dir = os.path.join(run_output_dir, cfg['name'])
-        os.makedirs(model_output_dir, exist_ok=True)
-        
-        logging.info(f"\n{'='*80}")
-        logging.info(f"Evaluating: {cfg['name']} (type={cfg['type']}, batch_size={cfg['gen_batch_size']})")
-        logging.info(f"{'='*80}")
-        
-        try:
-            metrics = evaluate_model(
-                model_path=cfg['path'],
-                eval_df=eval_df,
-                output_dir=model_output_dir,
-                model_name=cfg['name'],
-                is_lora=cfg['is_lora'],
-                max_samples=args.num_samples,
-                batch_size=args.batch_size,
-                gen_batch_size=cfg['gen_batch_size'],
-                compute_generation=not args.loss_only,
-                embedding_model=args.embedding_model
-            )
-            # Add model type to metrics
-            metrics['model_type'] = cfg['type']
-            all_metrics.append(metrics)
-        except Exception as e:
-            logging.error(f"Error evaluating {cfg['name']}: {e}")
-            import traceback
-            traceback.print_exc()
-            continue
-    
-    # Create comparison summary - only on main process to avoid race conditions
-    # With accelerate, each process has its own all_metrics list, so we rebuild from summary.json files
-    is_main_process = True
-    try:
-        from accelerate import PartialState
-        state = PartialState()
-        is_main_process = state.is_main_process
-    except:
-        pass
-    
-    if is_main_process and len(all_metrics) > 0:
-        # Wait a moment for all processes to finish writing their summary.json files
+
+    eval_dataset_sha256 = hash_file(eval_dataset)
+
+    # ------------------------------------------------------------------
+    # MLflow: one parent run for the whole evaluation job
+    # ------------------------------------------------------------------
+    setup_mlflow(mlflow_experiment)
+
+    with mlflow.start_run(run_name=f"eval-job-{timestamp}") as parent_run:
+        mlflow.log_params({
+            "eval_dataset": eval_dataset,
+            "eval_dataset_sha256": eval_dataset_sha256,
+            "num_eval_samples_requested": num_samples,
+            "num_eval_samples_loaded": len(eval_df),
+            "embedding_model": embedding_model,
+            "loss_only": loss_only,
+            "models": "; ".join(models),
+        })
+
+        # --------------------------------------------------------------
+        # Evaluate each model in a nested MLflow run
+        # --------------------------------------------------------------
+        all_metrics = []
+
+        for cfg in model_configs:
+            model_output_dir = os.path.join(run_output_dir, cfg['name'])
+            os.makedirs(model_output_dir, exist_ok=True)
+
+            logging.info(f"\n{'='*80}")
+            logging.info(f"Evaluating: {cfg['name']} (type={cfg['type']}, batch_size={cfg['gen_batch_size']})")
+            logging.info(f"{'='*80}")
+
+            with mlflow.start_run(run_name=f"eval-{cfg['name']}", nested=True):
+                mlflow.log_params({
+                    "model_path": cfg['path'],
+                    "model_name": cfg['name'],
+                    "model_type": cfg['type'],
+                    "eval_dataset_sha256": eval_dataset_sha256,
+                    "num_eval_samples": len(eval_df) if max_samples <= 0 else min(max_samples, len(eval_df)),
+                    "embedding_model": embedding_model,
+                    "gen_batch_size": cfg['gen_batch_size'],
+                    "batch_size": batch_size,
+                })
+
+                try:
+                    metrics = evaluate_model(
+                        model_path=cfg['path'],
+                        eval_df=eval_df,
+                        output_dir=model_output_dir,
+                        model_name=cfg['name'],
+                        is_lora=cfg['is_lora'],
+                        max_samples=max_samples,
+                        batch_size=batch_size,
+                        gen_batch_size=cfg['gen_batch_size'],
+                        compute_generation=not loss_only,
+                        embedding_model=embedding_model,
+                    )
+                    metrics['model_type'] = cfg['type']
+                    all_metrics.append(metrics)
+
+                    # Log scalar metrics to MLflow
+                    mlflow_metrics = {}
+                    if metrics.get('loss') is not None:
+                        mlflow_metrics['loss'] = metrics['loss']
+                    if metrics.get('perplexity') is not None:
+                        mlflow_metrics['perplexity'] = metrics['perplexity']
+                    if not loss_only:
+                        for key in (
+                            'teacher_abstain_rate', 'student_abstain_rate',
+                            'abstain_agreement_rate', 'both_abstain_rate', 'both_answer_rate',
+                            'exact_match_avg', 'embedding_similarity_avg',
+                            'embedding_similarity_adjusted_avg', 'token_overlap_avg',
+                        ):
+                            if metrics.get(key) is not None:
+                                mlflow_metrics[key] = metrics[key]
+
+                    if mlflow_metrics:
+                        mlflow.log_metrics(mlflow_metrics)
+
+                    # Derive abstain precision/recall/F1/accuracy and log explicitly
+                    # (primary metrics referenced in PHASE4_NEXT_STEPS.md)
+                    ba = metrics.get('both_abstain_rate')       # both abstain  (TP / N)
+                    ta = metrics.get('teacher_abstain_rate')    # teacher abstain rate
+                    sa = metrics.get('student_abstain_rate')    # student abstain rate
+                    ba_answer = metrics.get('both_answer_rate') # both answer   (TN / N)
+                    if all(v is not None for v in (ba, ta, sa, ba_answer)):
+                        precision = ba / sa if sa > 0 else 0.0
+                        recall    = ba / ta if ta > 0 else 0.0
+                        f1 = (2 * precision * recall / (precision + recall)
+                              if (precision + recall) > 0 else 0.0)
+                        accuracy  = ba + ba_answer  # (TP + TN) / N
+                        abstain_extra = {
+                            "abstain_precision": precision,
+                            "abstain_recall":    recall,
+                            "abstain_f1":        f1,
+                            "abstain_accuracy":  accuracy,
+                        }
+                        mlflow.log_metrics(abstain_extra)
+
+                    # Log output artifacts
+                    for fname in Path(model_output_dir).glob("*.csv"):
+                        mlflow.log_artifact(str(fname), artifact_path=cfg['name'])
+                    for fname in Path(model_output_dir).glob("*.json"):
+                        mlflow.log_artifact(str(fname), artifact_path=cfg['name'])
+
+                except Exception as e:
+                    logging.error(f"Error evaluating {cfg['name']}: {e}")
+                    import traceback
+                    traceback.print_exc()
+                    mlflow.set_tag("status", "FAILED")
+                    mlflow.set_tag("error", str(e))
+                    continue
+
+        # --------------------------------------------------------------
+        # Comparison summary (rebuild from summary.json files for safety)
+        # --------------------------------------------------------------
         import time
         time.sleep(2)
-        
-        # Rebuild comparison from all summary.json files to avoid race conditions
-        from pathlib import Path
+
         all_summaries = []
         for model_dir in Path(run_output_dir).iterdir():
             if model_dir.is_dir():
-                summary_files = list(model_dir.glob("*_summary.json"))
-                for sf in summary_files:
+                for sf in model_dir.glob("*_summary.json"):
                     try:
                         with open(sf, 'r') as f:
                             summary = json.load(f)
-                        metrics = {
+                        all_summaries.append({
                             'model_name': summary.get('model_name', ''),
                             'num_samples': summary.get('num_samples', 0),
-                            'loss': summary.get('loss_perplexity', {}).get('loss', None),
-                            'perplexity': summary.get('loss_perplexity', {}).get('perplexity', None),
-                            'teacher_abstain_rate': summary.get('teacher_stats', {}).get('abstain_rate', None),
-                            'student_abstain_rate': summary.get('student_stats', {}).get('abstain_rate', None),
-                            'abstain_agreement_rate': summary.get('agreement', {}).get('abstain_agreement_rate', None),
-                            'both_abstain_rate': summary.get('agreement', {}).get('both_abstain_rate', None),
-                            'both_answer_rate': summary.get('agreement', {}).get('both_answer_rate', None),
-                            'exact_match_avg': summary.get('exact_match', {}).get('avg_score', None),
-                            'embedding_similarity_avg': summary.get('embedding_similarity', {}).get('all_pairs', {}).get('mean', None),
-                            'embedding_similarity_adjusted_avg': summary.get('embedding_similarity', {}).get('adjusted_for_abstain', {}).get('mean', None),
-                            'token_overlap_avg': summary.get('token_overlap', {}).get('mean', None),
+                            'loss': summary.get('loss_perplexity', {}).get('loss'),
+                            'perplexity': summary.get('loss_perplexity', {}).get('perplexity'),
+                            'teacher_abstain_rate': summary.get('teacher_stats', {}).get('abstain_rate'),
+                            'student_abstain_rate': summary.get('student_stats', {}).get('abstain_rate'),
+                            'abstain_agreement_rate': summary.get('agreement', {}).get('abstain_agreement_rate'),
+                            'both_abstain_rate': summary.get('agreement', {}).get('both_abstain_rate'),
+                            'both_answer_rate': summary.get('agreement', {}).get('both_answer_rate'),
+                            'exact_match_avg': summary.get('exact_match', {}).get('avg_score'),
+                            'embedding_similarity_avg': summary.get('embedding_similarity', {}).get('all_pairs', {}).get('mean'),
+                            'embedding_similarity_adjusted_avg': summary.get('embedding_similarity', {}).get('adjusted_for_abstain', {}).get('mean'),
+                            'token_overlap_avg': summary.get('token_overlap', {}).get('mean'),
                             'model_path': summary.get('model_path', ''),
                             'timestamp': summary.get('timestamp_utc', ''),
                             'model_type': summary.get('model_type', ''),
-                        }
-                        all_summaries.append(metrics)
+                        })
                     except Exception as e:
                         logging.warning(f"Could not read {sf}: {e}")
-        
+
         if all_summaries:
             summary_path = os.path.join(run_output_dir, "model_comparison_summary.csv")
             create_comparison_summary(all_summaries, summary_path)
-    
+            mlflow.log_artifact(summary_path, artifact_path="summary")
+
     logging.info("\nEvaluation complete!")
     logging.info(f"Results saved to: {run_output_dir}")
 
