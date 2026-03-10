@@ -26,6 +26,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "${SCRIPT_DIR}/../../../" && pwd)"
 TTA_SCRIPT="${SCRIPT_DIR}/tta_lumi.sh"
 
+# Model weights live on scratch, not home
+SCRATCH_DIR="/scratch/project_465002758/${USER:-daciz}/agent-distillation/task1/outputs"
+
 DRY_RUN=false
 PHASE="a"
 
@@ -50,8 +53,8 @@ case "${PHASE,,}" in
         WALL_TIME="04:00:00"
 
         declare -a MODELS=(
-            "${REPO_DIR}/task1/outputs/Qwen_Qwen2.5-0.5B-Instruct-lora-final,Qwen2.5-0.5B-Instruct-lora,lora,32"
-            "${REPO_DIR}/task1/outputs/google_gemma-3-1b-it-lora-final,gemma-3-1b-it-lora,lora,32"
+            "${SCRATCH_DIR}/Qwen_Qwen2.5-0.5B-Instruct-lora-final,Qwen2.5-0.5B-Instruct-lora,lora,32"
+            "${SCRATCH_DIR}/google_gemma-3-1b-it-lora-final,gemma-3-1b-it-lora,lora,32"
         )
         ;;
     b)
@@ -62,7 +65,7 @@ case "${PHASE,,}" in
         WALL_TIME="06:00:00"
 
         declare -a MODELS=(
-            "${REPO_DIR}/task1/outputs/Qwen_Qwen2.5-0.5B-Instruct-lora-final,Qwen2.5-0.5B-Instruct-lora,lora,32"
+            "${SCRATCH_DIR}/Qwen_Qwen2.5-0.5B-Instruct-lora-final,Qwen2.5-0.5B-Instruct-lora,lora,32"
         )
         ;;
     c)
@@ -73,7 +76,7 @@ case "${PHASE,,}" in
         WALL_TIME="04:00:00"
 
         declare -a MODELS=(
-            "${REPO_DIR}/task1/outputs/Qwen_Qwen2.5-1.5B-Instruct-lora-final,Qwen2.5-1.5B-Instruct-lora,lora,32"
+            "${SCRATCH_DIR}/Qwen_Qwen2.5-1.5B-Instruct-lora-final,Qwen2.5-1.5B-Instruct-lora,lora,32"
         )
         ;;
     sanity)
@@ -84,7 +87,7 @@ case "${PHASE,,}" in
         WALL_TIME="02:00:00"
 
         declare -a MODELS=(
-            "${REPO_DIR}/task1/outputs/Qwen_Qwen2.5-0.5B-Instruct-lora-final,Qwen2.5-0.5B-Instruct-lora,lora,32"
+            "${SCRATCH_DIR}/Qwen_Qwen2.5-0.5B-Instruct-lora-final,Qwen2.5-0.5B-Instruct-lora,lora,32"
         )
         ;;
     *)

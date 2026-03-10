@@ -30,7 +30,14 @@ TASK1_DIR = os.path.dirname(SCRIPT_DIR)
 DATA_DIR = os.path.join(TASK1_DIR, "data")
 OUTPUT_DIR = os.path.join(TASK1_DIR, "outputs")
 
+# On LUMI, model checkpoints and final weights go to scratch (large, not home-quota-safe).
+# Set SCRATCH_OUTPUT_DIR in the SLURM job to override, e.g.:
+#   /scratch/project_465002758/$USER/agent-distillation/task1/outputs
+# Falls back to the repo outputs/ dir for local runs.
+SCRATCH_OUTPUT_DIR = os.environ.get("SCRATCH_OUTPUT_DIR", OUTPUT_DIR)
+
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+os.makedirs(SCRATCH_OUTPUT_DIR, exist_ok=True)
 
 
 # ---------------------------------------------------------------------------
@@ -238,8 +245,8 @@ def main(
     # TrainingArguments
     # ------------------------------------------------------------------
     model_name_safe = model_name.replace("/", "_")
-    checkpoint_dir = output_dir or os.path.join(OUTPUT_DIR, f"{model_name_safe}-lora-checkpoints")
-    final_model_dir = os.path.join(OUTPUT_DIR, f"{model_name_safe}-lora-final")
+    checkpoint_dir = output_dir or os.path.join(SCRATCH_OUTPUT_DIR, f"{model_name_safe}-lora-checkpoints")
+    final_model_dir = os.path.join(SCRATCH_OUTPUT_DIR, f"{model_name_safe}-lora-final")
 
     training_args = TrainingArguments(
         output_dir=checkpoint_dir,

@@ -36,8 +36,14 @@ mkdir -p "${REPO_DIR}/logs"
 export MLFLOW_TRACKING_URI="sqlite:////users/${USER}/mlflow/mlflow.db"
 export MLFLOW_ARTIFACT_ROOT="/scratch/project_465002758/${USER}/mlruns"
 
+# Model checkpoints and final weights go to scratch — NOT home dir.
+# Home quota is 20 GB; a single 7B checkpoint can be >14 GB.
+export SCRATCH_OUTPUT_DIR="/scratch/project_465002758/${USER}/agent-distillation/task1/outputs"
+mkdir -p "${SCRATCH_OUTPUT_DIR}"
+
 echo "Job: $SLURM_JOB_ID  Node: $(hostname)  GPUs: 8"
 echo "MLflow tracking URI: $MLFLOW_TRACKING_URI"
+echo "Model output dir:    $SCRATCH_OUTPUT_DIR"
 
 # ------------------------------------------------------------------
 # Background GPU monitor (every 30 s)

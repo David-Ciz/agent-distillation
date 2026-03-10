@@ -33,18 +33,21 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "${SCRIPT_DIR}/../../../" && pwd)"
 EVAL_SCRIPT="${SCRIPT_DIR}/eval_lumi.sh"
 
+# Model weights live on scratch, not home
+SCRATCH_DIR="/scratch/project_465002758/${USER:-daciz}/agent-distillation/task1/outputs"
+
 # ---------------------------------------------------------------------------
 # Models to evaluate — add --models lines here for each trained model
 # Format per entry: 'ADAPTER_PATH_OR_HF_ID,NAME,TYPE,GEN_BATCH'
 # TYPE: lora | full_finetune | base
 # ---------------------------------------------------------------------------
 MODELS_ARGS=(
-    # LoRA adapters (trained)
-    "--models '${REPO_DIR}/task1/outputs/Qwen_Qwen2.5-0.5B-Instruct-lora-final,Qwen2.5-0.5B-Instruct-lora,lora,32'"
-    "--models '${REPO_DIR}/task1/outputs/Qwen_Qwen2.5-1.5B-Instruct-lora-final,Qwen2.5-1.5B-Instruct-lora,lora,32'"
-    "--models '${REPO_DIR}/task1/outputs/Qwen_Qwen2.5-3B-Instruct-lora-final,Qwen2.5-3B-Instruct-lora,lora,32'"
-    "--models '${REPO_DIR}/task1/outputs/Qwen_Qwen2.5-7B-Instruct-lora-final,Qwen2.5-7B-Instruct-lora,lora,16'"
-    # Base models (sanity check — no adapter)
+    # LoRA adapters (trained) — weights on scratch
+    "--models '${SCRATCH_DIR}/Qwen_Qwen2.5-0.5B-Instruct-lora-final,Qwen2.5-0.5B-Instruct-lora,lora,32'"
+    "--models '${SCRATCH_DIR}/Qwen_Qwen2.5-1.5B-Instruct-lora-final,Qwen2.5-1.5B-Instruct-lora,lora,32'"
+    "--models '${SCRATCH_DIR}/Qwen_Qwen2.5-3B-Instruct-lora-final,Qwen2.5-3B-Instruct-lora,lora,32'"
+    "--models '${SCRATCH_DIR}/Qwen_Qwen2.5-7B-Instruct-lora-final,Qwen2.5-7B-Instruct-lora,lora,16'"
+    # Base models (sanity check — HuggingFace, no local path)
     "--models 'Qwen/Qwen2.5-0.5B-Instruct,Qwen2.5-0.5B-Instruct-base,base,32'"
     "--models 'Qwen/Qwen2.5-3B-Instruct,Qwen2.5-3B-Instruct-base,base,32'"
     "--models 'Qwen/Qwen2.5-7B-Instruct,Qwen2.5-7B-Instruct-base,base,16'"
@@ -72,6 +75,7 @@ JOB_ID=$(sbatch --parsable \
         source ${SCRIPT_DIR}/container.env
         export MLFLOW_TRACKING_URI=\"sqlite:////users/\${USER}/mlflow/mlflow.db\"
         export MLFLOW_ARTIFACT_ROOT=\"/scratch/project_465002758/\${USER}/mlruns\"
+        export SCRATCH_OUTPUT_DIR=\"/scratch/project_465002758/\${USER}/agent-distillation/task1/outputs\"
         [ -n \"\${CONTAINER_VENV}\" ] && VENV_CMD=\"source \${CONTAINER_VENV}/bin/activate &&\" || VENV_CMD=\"\"
         srun singularity run \"\$SIF\" bash -c \"
             \${VENV_CMD}

@@ -48,11 +48,14 @@ export MLFLOW_TRACKING_URI="sqlite:////users/${USER}/mlflow/mlflow.db"
 export MLFLOW_ARTIFACT_ROOT="/scratch/project_465002758/${USER}/mlruns"
 echo "MLflow tracking URI: $MLFLOW_TRACKING_URI"
 
+# Model weights live on scratch, not home
+SCRATCH_OUTPUT_DIR="/scratch/project_465002758/${USER}/agent-distillation/task1/outputs"
+
 # ---------------------------------------------------------------------------
 # TTA parameters — all overridable via env vars before sbatch
 # ---------------------------------------------------------------------------
 # Default: Qwen 0.5B LoRA (smallest/most-over-abstaining model — Phase A)
-TTA_MODELS="${TTA_MODELS:---models '${REPO_DIR}/task1/outputs/Qwen_Qwen2.5-0.5B-Instruct-lora-final,Qwen2.5-0.5B-Instruct-lora,lora,32'}"
+TTA_MODELS="${TTA_MODELS:---models '${SCRATCH_OUTPUT_DIR}/Qwen_Qwen2.5-0.5B-Instruct-lora-final,Qwen2.5-0.5B-Instruct-lora,lora,32'}"
 
 TTA_N_VALUES="${TTA_N_VALUES:-1,3,5}"
 TTA_TEMPS="${TTA_TEMPS:-0.7}"
