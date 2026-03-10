@@ -1,6 +1,6 @@
 # Agent Distillation — Project Plan
 
-> **Last updated**: March 9, 2026  
+> **Last updated**: March 10, 2026  
 > **Status**: Active  
 > **Goal**: Distill GPT-4o behavior into a model small enough to run in-browser (target: ≤ 500M params), and investigate Test-Time Augmentation (TTA/self-consistency) as a way to boost inference-time performance without additional training.
 
@@ -8,7 +8,8 @@
 > - [`plans/PLAN.md`](plans/PLAN.md) — full archived project plan
 > - [`plans/PHASE3_MLFLOW_INTEGRATION.md`](plans/PHASE3_MLFLOW_INTEGRATION.md) — MLflow + Click + LUMI setup ✅
 > - [`plans/PHASE4_NEXT_STEPS.md`](plans/PHASE4_NEXT_STEPS.md) — reproduce baseline, evaluate, analyse ✅ mostly done
-> - [`plans/PHASE5_TTA.md`](plans/PHASE5_TTA.md) — TTA / Self-Consistency experiment ← **current**
+> - [`plans/PHASE5_TTA.md`](plans/PHASE5_TTA.md) — TTA / Self-Consistency experiment ⏳ Phase A pending
+> - [`plans/PHASE6_NEW_DIRECTIONS.md`](plans/PHASE6_NEW_DIRECTIONS.md) — **next**: Qwen3 models, collapse detection, TTA results, new datasets ← **up next**
 
 ---
 
