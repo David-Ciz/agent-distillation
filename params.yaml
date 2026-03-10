@@ -1,33 +1,4 @@
 # DVC pipeline parameters
-# Edit these to change experiment hyperparameters.
-# Reference with ${section.key} inside dvc.yaml.
-#
-# Run a sweep: dvc exp run --set-param train_lora.model_name=Qwen/Qwen2.5-3B-Instruct
-
-train_lora:
-  model_name: "Qwen/Qwen2.5-0.5B-Instruct"
-  output_name: "Qwen2.5-0.5B-Instruct-lora-final"
-  num_epochs: 3
-  batch_size: 2
-  learning_rate: 2.0e-5
-  gradient_accumulation_steps: 4
-
-train_full:
-  model_name: "Qwen/Qwen2.5-0.5B-Instruct"
-  output_name: "Qwen2.5-0.5B-Instruct-full-finetune-final"
-  num_epochs: 3
-  batch_size: 2
-  learning_rate: 2.0e-5
-  gradient_accumulation_steps: 4
-
-evaluate:
-  batch_size: 32
-  gen_batch_size: 8
-  num_samples: -1   # -1 = all samples
-  embedding_model: "Qwen/Qwen3-Embedding-0.6B"
-
-tta:
-  n_passes: 5
-  temperature: 0.7
-  aggregation: "majority_vote"   # majority_vote | centroid | oracle
-
+# Used only by the dataset creation stages (create_train_dataset, create_eval_dataset).
+# Training and evaluation hyperparameters are passed directly to the SLURM scripts
+# via environment variables — see task1/scripts/slurm/train_lora_lumi.sh.

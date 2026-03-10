@@ -1,21 +1,18 @@
 # DVC Pipeline Definition
-# Run stages with: dvc repro
-# Run a single stage: dvc repro <stage_name>
 #
-# LUMI / Lustre notes:
-#   - Always run `dvc repro` inside an sbatch job, never on a login node.
-#   - Set cache to symlinks to avoid Lustre metadata pressure:
-#       dvc config cache.type symlink
-#       dvc config cache.protected true
-#   - Point the DVC remote and cache to a /scratch path with high quota:
-#       dvc remote add lumi /scratch/<project>/dvc-store
-#       dvc config cache.dir /scratch/<project>/.dvc/cache
+# DVC is used ONLY for dataset versioning and reproducibility.
+# Training, evaluation and analysis run on LUMI via SLURM — they cannot
+# be expressed as `dvc repro` stages because they require sbatch + Singularity.
 #
-# Metric comparison is handled by MLflow (see PLAN.md §3.2).
-# DVC metrics/plots blocks below are lightweight pointers only —
-# they let `dvc metrics diff` work on the CLI without replacing MLflow.
+# What DVC does here:
+#   - Tracks raw trace inputs and derived datasets with content hashes
+#   - `dvc repro` regenerates the CSVs if the raw traces change
+#   - `dvc push / pull` syncs datasets to/from remote storage
 #
-# See PLAN.md for the full step-by-step guide.
+# Everything else (training, eval, analysis) is handled by:
+#   - SLURM scripts in task1/scripts/slurm/
+#   - MLflow for experiment tracking (metrics, params, artifacts)
+#   - 06_analyse_visualize_results.py run locally after rsyncing CSVs
 
 stages:
 
@@ -23,8 +20,7 @@ stages:
   # Stage 1: Create training dataset from raw traces
   # ---------------------------------------------------------------------------
   create_train_dataset:
-    cmd: >
-      python task1/scripts/01_create_train_dataset.py
+    cmd: python task1/scripts/01_create_train_dataset.py
     deps:
       - task1/scripts/01_create_train_dataset.py
       - task1/data/synthetic_traces/
@@ -32,118 +28,13 @@ stages:
       - task1/data/task1_dataset.csv
 
   # ---------------------------------------------------------------------------
-  # Stage 4: Create evaluation dataset from raw eval traces
+  # Stage 2: Create evaluation dataset from raw eval traces
   # ---------------------------------------------------------------------------
   create_eval_dataset:
-    cmd: >
-      python task1/scripts/04_create_eval_dataset.py
+    cmd: python task1/scripts/04_create_eval_dataset.py
     deps:
       - task1/scripts/04_create_eval_dataset.py
       - task1/data/synthetic_traces/eval/
     outs:
       - task1/data/task1_eval_dataset.csv
 
-  # ---------------------------------------------------------------------------
-  # Stage 2: LoRA fine-tuning
-  # Override params on the CLI:
-  #   dvc exp run --set-param train_lora.model_name=Qwen/Qwen2.5-3B-Instruct
-  #
-  # persist: false (default) — DVC wipes the output dir before each run so
-  # stale checkpoints from a previous experiment never bleed through.
-  # ---------------------------------------------------------------------------
-  train_lora:
-    cmd: >
-      python task1/scripts/02_train_model_lora.py
-        --model_name ${train_lora.model_name}
-        --num_epochs ${train_lora.num_epochs}
-        --batch_size ${train_lora.batch_size}
-        --learning_rate ${train_lora.learning_rate}
-    deps:
-      - task1/scripts/02_train_model_lora.py
-      - task1/data/task1_dataset.csv
-    params:
-      - params.yaml:
-          - train_lora
-    outs:
-      - task1/outputs/models/${train_lora.output_name}:
-          cache: true
-          # persist: false is the default — clean output every run
-
-  # ---------------------------------------------------------------------------
-  # Stage 3: Full fine-tuning
-  # ---------------------------------------------------------------------------
-  train_full:
-    cmd: >
-      python task1/scripts/03_train_model_full_finetune.py
-        --model_name ${train_full.model_name}
-        --num_epochs ${train_full.num_epochs}
-        --batch_size ${train_full.batch_size}
-        --learning_rate ${train_full.learning_rate}
-    deps:
-      - task1/scripts/03_train_model_full_finetune.py
-      - task1/data/task1_dataset.csv
-    params:
-      - params.yaml:
-          - train_full
-    outs:
-      - task1/outputs/models/${train_full.output_name}:
-          cache: true
-          # persist: false is the default — clean output every run
-
-  # ---------------------------------------------------------------------------
-  # Stage 5: Evaluation
-  #
-  # Both trained model outputs are listed as deps so DVC knows to re-evaluate
-  # whenever a new checkpoint is produced by train_lora or train_full.
-  # Full metric tracking (plots, run comparison) is done in MLflow;
-  # the metrics block here just exposes the summary JSON to `dvc metrics diff`.
-  # ---------------------------------------------------------------------------
-  evaluate:
-    cmd: >
-      python task1/scripts/05_model_evaluation.py
-        --eval_dataset task1/data/task1_eval_dataset.csv
-        --output_dir task1/outputs/evaluations
-    deps:
-      - task1/scripts/05_model_evaluation.py
-      - task1/data/task1_eval_dataset.csv
-      - task1/outputs/models/${train_lora.output_name}
-      - task1/outputs/models/${train_full.output_name}
-    params:
-      - params.yaml:
-          - evaluate
-    outs:
-      - task1/outputs/evaluations/:
-          cache: true
-    metrics:
-      # Lightweight pointer for `dvc metrics diff` — MLflow holds the full history
-      - task1/outputs/evaluations/metrics_summary.json:
-          cache: false
-
-  # ---------------------------------------------------------------------------
-  # Stage 6: Analysis & visualisation
-  #
-  # plots block lets `dvc plots diff` render PNGs inline in VS Code / JetBrains,
-  # but MLflow remains the primary place to compare runs.
-  # ---------------------------------------------------------------------------
-  analyze:
-    cmd: >
-      python task1/scripts/06_analyse_visualize_results.py
-        --eval_run_dir task1/outputs/evaluations
-        --output_dir task1/outputs/analysis
-    deps:
-      - task1/scripts/06_analyse_visualize_results.py
-      - task1/outputs/evaluations/
-    params:
-      - params.yaml:
-          - evaluate
-    outs:
-      - task1/outputs/analysis/:
-          cache: false   # small files, tracked directly in git
-    plots:
-      # Pointers for `dvc plots diff` — not a replacement for MLflow artifacts
-      - task1/outputs/analysis/metrics_heatmap.png:
-          cache: false
-      - task1/outputs/analysis/abstain_metrics_comparison.png:
-          cache: false
-      - task1/outputs/analysis/answer_state_distribution.png:
-          cache: false

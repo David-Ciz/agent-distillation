@@ -7,6 +7,31 @@
 
 ---
 
+## Workflow (How Experiments Are Run)
+
+```
+On LUMI:
+  1. bash submit_train_sweep.sh      # submits one sbatch job per model, all in parallel
+  2. [wait for all training jobs]
+  3. bash submit_eval_sweep.sh       # submits one eval job covering all models at once
+  4. [wait for eval job]
+
+Locally:
+  5. bash sync_results.sh            # rsync CSVs + mlflow.db from LUMI
+  6. .venv/bin/python 06_analyse_visualize_results.py --eval-run-dir ... --output-dir ...
+  7. mlflow ui --backend-store-uri sqlite:///mlflow/mlflow.db
+```
+
+**Tool responsibilities:**
+| Tool | Does |
+|------|------|
+| SLURM scripts | Run training/eval on LUMI GPUs |
+| MLflow | Track all params, metrics, artifacts per run |
+| DVC | Version `task1_dataset.csv` + `task1_eval_dataset.csv` only |
+| `06` script | Publication-quality comparison plots, run locally after rsync |
+
+---
+
 ## Context & Current State
 
 ### What we have

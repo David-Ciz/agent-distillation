@@ -2,16 +2,19 @@
 # =============================================================================
 # eval_lumi.sh — Evaluate fine-tuned models on LUMI
 #
-# Runs 05_model_evaluation.py for one or more model configs and logs all
-# metrics to MLflow (nested runs under a single parent eval job run).
+# Can be used in two ways:
 #
-# Requires only 1 GPU — uses small-g partition.
+# 1. Direct submit (quick single eval):
+#      sbatch task1/scripts/slurm/eval_lumi.sh
+#    Uses the EVAL_MODELS default below.
 #
-# Before running:
-#   1. Training jobs must be complete (adapter_config.json must exist)
-#   2. task1_eval_dataset.csv must be present in task1/data/
+# 2. Driven by submit_eval_sweep.sh (full sweep):
+#    The sweep script passes --models args via the EVAL_MODELS env var.
 #
-# Submit: sbatch task1/scripts/slurm/eval_lumi.sh
+# Override models on the command line:
+#   EVAL_MODELS="--models 'path,name,type,batch' --models '...'" \
+#       sbatch task1/scripts/slurm/eval_lumi.sh
+#
 # Monitor: squeue -u $USER
 # Logs:    tail -f logs/eval_<JOB_ID>.out
 # =============================================================================
@@ -43,13 +46,16 @@ export MLFLOW_TRACKING_URI="sqlite:////users/${USER}/mlflow/mlflow.db"
 export MLFLOW_ARTIFACT_ROOT="/scratch/project_465002758/${USER}/mlruns"
 echo "MLflow tracking URI: $MLFLOW_TRACKING_URI"
 
+# Default model list — override by setting EVAL_MODELS before sbatch
+EVAL_MODELS="${EVAL_MODELS:---models '${REPO_DIR}/task1/outputs/Qwen_Qwen2.5-3B-Instruct-lora-final,Qwen2.5-3B-Instruct-lora,lora,32' --models 'Qwen/Qwen2.5-3B-Instruct,Qwen2.5-3B-Instruct-base,base,32'}"
+
+echo "Evaluating: ${EVAL_MODELS}"
+
 srun singularity run "$SIF" \
     bash -c "
         [ -n \"${CONTAINER_VENV}\" ] && source \"${CONTAINER_VENV}/bin/activate\"
         cd ${REPO_DIR}
-        python task1/scripts/05_model_evaluation.py \
-            --models '${REPO_DIR}/task1/outputs/Qwen_Qwen2.5-3B-Instruct-lora-final,Qwen2.5-3B-Instruct-lora,lora,32' \
-            --models 'Qwen/Qwen2.5-3B-Instruct,Qwen2.5-3B-Instruct-base,base,32'
+        python task1/scripts/05_model_evaluation.py ${EVAL_MODELS}
     "
 
 echo "Evaluation complete."

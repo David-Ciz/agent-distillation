@@ -1,13 +1,14 @@
 # Agent Distillation — Project Plan
 
-> **Last updated**: March 6, 2026  
+> **Last updated**: March 9, 2026  
 > **Status**: Active  
 > **Goal**: Distill GPT-4o behavior into a model small enough to run in-browser (target: ≤ 500M params), and investigate Test-Time Augmentation (TTA/self-consistency) as a way to boost inference-time performance without additional training.
 
 > 📁 **Detailed phase plans live in [`plans/`](plans/):**
 > - [`plans/PLAN.md`](plans/PLAN.md) — full archived project plan
 > - [`plans/PHASE3_MLFLOW_INTEGRATION.md`](plans/PHASE3_MLFLOW_INTEGRATION.md) — MLflow + Click + LUMI setup ✅
-> - [`plans/PHASE4_NEXT_STEPS.md`](plans/PHASE4_NEXT_STEPS.md) — reproduce baseline, evaluate, analyse, full finetune ← **current**
+> - [`plans/PHASE4_NEXT_STEPS.md`](plans/PHASE4_NEXT_STEPS.md) — reproduce baseline, evaluate, analyse ✅ mostly done
+> - [`plans/PHASE5_TTA.md`](plans/PHASE5_TTA.md) — TTA / Self-Consistency experiment ← **current**
 
 ---
 
@@ -43,18 +44,28 @@ Per-sample CSV + summary JSON
 Plots + metrics_summary.csv
 ```
 
-### Current results snapshot (baseline, already run)
+### Current results snapshot
+
+**Original baseline** (from colleague, already in `eval_run_20260124_052629/`, trusted as-is):
 
 | Model | Params | Method | Abstain F1 | Embed Sim |
 |-------|--------|--------|-----------|-----------|
-| Gemma 3 270M | 270M | LoRA | 0.814 | — |
-| Qwen 2.5 0.5B | 0.5B | LoRA | 0.815 | — |
-| Qwen 2.5 0.5B | 0.5B | Full FT | 0.802 | — |
-| Qwen 2.5 1.5B | 1.5B | LoRA | 0.845 | — |
-| Qwen 2.5 3B | 3B | LoRA | 0.881 | — |
+| Gemma 3 270M | 270M | LoRA | 0.814 | 0.692 |
+| Qwen 2.5 0.5B | 0.5B | LoRA | 0.815 | 0.701 |
+| Qwen 2.5 0.5B | 0.5B | Full FT | 0.802 | 0.685 |
+| Qwen 2.5 1.5B | 1.5B | LoRA | 0.845 | 0.757 |
+| Qwen 2.5 3B | 3B | LoRA | 0.881 | 0.810 |
+| Qwen 2.5 3B | 3B | Full FT | 0.862 | 0.779 |
 | Qwen 2.5 7B | 7B | LoRA | **0.907** | **0.851** |
 
-Teacher abstain rate: **70 %**. All models evaluated on **1 886 samples**.
+**LUMI reproduction** (March 2026, MLflow-tracked, `eval_run_20260309_114742`):
+
+| Model | Method | Abstain F1 | Embed Sim | Delta vs baseline |
+|-------|--------|-----------|-----------|-------------------|
+| Qwen 2.5 3B | LoRA | 0.875 | 0.802 | −0.006, −0.008 ✅ |
+| Qwen 2.5 3B | Full FT | ⏳ training | — | — |
+
+Teacher abstain rate: **70.0%**. All models evaluated on **1 886 samples**.
 
 ---
 
@@ -497,28 +508,25 @@ export SIF=/appl/local/laifs/containers/lumi-multitorch-u24r64f21m43t29-20260124
 
 ### High Priority
 
-- [ ] **LUMI Phase 1** — Hello-world Singularity job: verify GPU visible (Section 5.2)
-- [ ] **LUMI Phase 2** — Environment compatibility check: run `lumi_env_check.py` (Section 5.2)
-- [ ] **MLflow integration** — Add to training + eval scripts before first LUMI training run (Section 3.2)
-- [ ] **LUMI Phase 3** — First real training job with MLflow tracking (Section 5.2)
-- [ ] **Reproduce baseline** — Section 2.4 — run locally first to confirm eval script works
-- [ ] **DVC remote setup** — pick storage backend, configure, push existing data
+- [x] LUMI phases 1–4 — all complete, pipeline working
+- [x] MLflow integration — all scripts converted, tracking live
+- [x] Click CLI migration — all scripts converted
+- [x] Reproduce baseline on LUMI — Qwen 3B LoRA within ±0.01 of original ✅
+- [ ] **3B full finetune evaluation** — job submitted, wait + run eval sweep
+- [ ] **TTA experiment** — write `07_tta_experiment.py` ← **next implementation task**
+- [ ] DVC remote setup — datasets not yet pushed to a shared remote
 
 ### Medium Priority
 
-- [ ] **LUMI Phase 4** — Full training runs on LUMI (3B, 7B models)
-- [ ] **TTA experiment** — write `07_tta_experiment.py`, run on Gemma 270M + Qwen 0.5B
-- [ ] **Click CLI migration** — migrate scripts one by one, after LUMI bring-up is stable
-- [ ] **ONNX/GGUF export** — for browser deployment candidates (Gemma 270M, Qwen 0.5B)
-- [ ] **Calibration analysis** — is the model's abstain decision well-calibrated? (Bayesian framing)
+- [ ] ONNX/GGUF export for browser candidates (Gemma 270M, Qwen 0.5B)
+- [ ] Cross-dataset generalisation — does the model generalise to new domains?
+- [ ] DeepSeek teacher traces — mix GPT-4o and DeepSeek traces (data exists in `agentic_teacher_*_deepseek/`)
+- [ ] Calibration analysis — is the abstain decision well-calibrated?
 
 ### Low Priority / Research
 
-- [ ] **Task 2: Agentic loop** — multi-step retrieval with learned stopping criterion
-- [ ] **Posterior confidence** — replace hard abstain threshold with a learnable confidence head
-- [ ] **Cross-dataset generalisation** — does the model trained on causalqa+msmarco+quasart generalise to new domains?
-- [ ] **Teacher diversity** — what happens if we mix GPT-4o and DeepSeek traces? (traces exist in `agentic_teacher_*_deepseek/`)
-- [ ] **Custom container build** — if pip venv approach becomes unwieldy, build a custom `.sif` on top of the LUMI AI Factory base
+- [ ] Task 2: Agentic loop — multi-step retrieval with learned stopping criterion
+- [ ] Custom container build — if venv approach becomes unwieldy
 
 ---
 
