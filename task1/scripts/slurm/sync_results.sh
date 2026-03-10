@@ -76,9 +76,12 @@ if $SYNC_RESULTS; then
     rsync -av --progress \
         --include="*/" \
         --include="*_detailed_results.csv" \
+        --include="*_N*_detailed_results.csv" \
         --include="*_summary.json" \
         --include="model_comparison_summary.csv" \
+        --include="tta_comparison_summary.csv" \
         --include="evaluation.log" \
+        --include="tta_run.log" \
         --exclude="*" \
         "${LUMI_USER}@${LUMI_HOST}:${LUMI_REPO}/task1/outputs/evaluations/" \
         "${LOCAL_REPO}/task1/outputs/evaluations/"
@@ -90,15 +93,18 @@ echo "=================================================="
 echo "Sync complete."
 echo ""
 echo "Next steps:"
-echo "  1. Check new eval runs:"
+echo "  1. Check new eval / TTA runs:"
 echo "     ls task1/outputs/evaluations/"
 echo ""
-echo "  2. Run analysis (point at one or more eval_run dirs):"
+echo "  2. Run analysis on a standard eval run:"
 echo "     .venv/bin/python task1/scripts/06_analyse_visualize_results.py \\"
 echo "         --eval-run-dir task1/outputs/evaluations/<eval_run_dir> \\"
 echo "         --output-dir task1/outputs/analysis/<run_name>/"
 echo ""
-echo "  3. View MLflow:"
+echo "  3. Inspect TTA comparison table:"
+echo "     open task1/outputs/evaluations/tta_run_<timestamp>/tta_comparison_summary.csv"
+echo ""
+echo "  4. View MLflow:"
 echo "     mlflow ui --backend-store-uri sqlite:///mlflow/mlflow.db --port 5000"
 echo "=================================================="
 

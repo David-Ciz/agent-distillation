@@ -57,6 +57,13 @@ lumi = [
     "accelerate>=0.28.0",
 ]
 
+# Documentation (install with: pip install -e ".[docs]")
+docs = [
+    "mkdocs>=1.6.0",
+    "mkdocs-material>=9.5.0",
+    "mkdocstrings[python]>=0.25.0",
+]
+
 # Developer tooling  (install with: pip install -e ".[dev]")
 dev = [
     # train
@@ -101,6 +108,10 @@ all = [
     "pre-commit>=3.7.0",
     "ipykernel>=6.29.0",
     "ipywidgets>=8.0.0",
+    # docs
+    "mkdocs>=1.6.0",
+    "mkdocs-material>=9.5.0",
+    "mkdocstrings[python]>=0.25.0",
 ]
 
 # ---------------------------------------------------------------------------

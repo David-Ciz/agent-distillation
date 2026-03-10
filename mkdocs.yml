@@ -1,0 +1,97 @@
+site_name: Agent Distillation
+site_description: Distilling knowledge from large LLM agents into smaller, efficient student models
+site_author: David Ciz
+repo_url: https://github.com/your-org/agent-distillation
+repo_name: agent-distillation
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  font:
+    text: Roboto
+    code: Roboto Mono
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - toc.follow
+
+nav:
+  - Home: index.md
+  - Task 1 — Answer-Abstain QA:
+    - Overview: task1/overview.md
+    - Pipeline: task1/pipeline.md
+    - Results: task1/results.md
+    - Evaluation Metrics: task1/evaluation_metrics.md
+  - TTA Experiment:
+    - What is TTA?: tta/what_is_tta.md
+    - How It Works: tta/how_it_works.md
+    - Running the Experiment: tta/running.md
+    - Output Reference: tta/outputs.md
+    - Interpreting Results: tta/interpreting_results.md
+  - LUMI / HPC:
+    - Overview: lumi/overview.md
+    - Running Jobs: lumi/running_jobs.md
+    - Syncing Results: lumi/syncing_results.md
+  - API Reference:
+    - eval_utils: api/eval_utils.md
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - tables
+  - toc:
+      permalink: true
+  - attr_list
+  - md_in_html
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [task1/scripts]
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/your-org/agent-distillation
+

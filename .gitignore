@@ -44,3 +44,5 @@ dist/
 build/
 *.egg-info/
 
+# MkDocs build output
+site/
