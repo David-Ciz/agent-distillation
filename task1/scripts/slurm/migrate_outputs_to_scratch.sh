@@ -46,11 +46,13 @@ fi
 
 moved=0
 skipped=0
+relinked=0
 
 for dir in "${HOME_OUTPUTS}"/*/; do
     [[ -d "$dir" ]] || continue
 
-    name="$(basename "$dir")"
+    link_path="${dir%/}"
+    name="$(basename "$link_path")"
 
     # Only move model directories — leave logs, evaluations, analysis in place
     case "$name" in
@@ -72,22 +74,47 @@ for dir in "${HOME_OUTPUTS}"/*/; do
         continue
     fi
 
-    size=$(du -sh "$dir" 2>/dev/null | cut -f1)
-    echo "  MOVE [$size]  $dir  →  $dest"
+    size=$(du -sh "$link_path" 2>/dev/null | cut -f1)
+    echo "  MOVE [$size]  ${link_path}/  →  $dest"
 
     if ! $DRY_RUN; then
-        mv "$dir" "$dest"
-        # Leave a symlink so any hardcoded paths still resolve
-        ln -s "$dest" "$dir"
-        echo "        ↳ symlink left at $dir"
+        mv "$link_path" "$dest"
+        ln -s "$dest" "$link_path"
+        echo "        ↳ symlink left at $link_path"
     fi
 
     moved=$((moved + 1))
 done
 
+for dir in "${SCRATCH_OUTPUTS}"/*/; do
+    [[ -d "$dir" ]] || continue
+
+    scratch_path="${dir%/}"
+    name="$(basename "$scratch_path")"
+
+    case "$name" in
+        *-lora-checkpoints|*-full-finetune-checkpoints|\
+        *-lora-final|*-full-finetune-final)
+            ;;
+        *)
+            continue
+            ;;
+    esac
+
+    link_path="${HOME_OUTPUTS}/${name}"
+
+    if [[ ! -e "$link_path" ]]; then
+        echo "  RELINK      $link_path  →  $scratch_path"
+        if ! $DRY_RUN; then
+            ln -s "$scratch_path" "$link_path"
+        fi
+        relinked=$((relinked + 1))
+    fi
+done
+
 echo ""
 echo "=================================================="
-echo "Done.  Moved: $moved   Skipped: $skipped"
+echo "Done.  Moved: $moved   Relinked: $relinked   Skipped: $skipped"
 if $DRY_RUN; then
     echo "(dry run — nothing actually moved)"
 else
@@ -99,4 +126,3 @@ else
     du -sh "${SCRATCH_OUTPUTS}" 2>/dev/null || true
 fi
 echo "=================================================="
-

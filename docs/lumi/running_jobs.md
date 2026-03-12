@@ -13,6 +13,15 @@ bash task1/scripts/slurm/submit_train_sweep.sh --dry-run   # preview
 
 This submits one `train_lora_lumi.sh` job per model in the configured list.
 
+### Submit the Qwen3.5 training sweep
+
+```bash
+bash task1/scripts/slurm/submit_qwen35_train_sweep.sh
+bash task1/scripts/slurm/submit_qwen35_train_sweep.sh --dry-run
+```
+
+This runs the selected Qwen3.5 checkpoints: `Qwen3.5-0.8B`, `Qwen3.5-2B`, and `Qwen3.5-4B`.
+
 ### Single LoRA job
 
 ```bash
@@ -34,6 +43,13 @@ TRAIN_MODEL="Qwen/Qwen2.5-1.5B-Instruct" sbatch task1/scripts/slurm/train_lora_l
 ```bash
 bash task1/scripts/slurm/submit_eval_sweep.sh
 bash task1/scripts/slurm/submit_eval_sweep.sh --dry-run
+```
+
+### Submit the Qwen3.5 evaluation sweep
+
+```bash
+bash task1/scripts/slurm/submit_qwen35_eval_sweep.sh
+bash task1/scripts/slurm/submit_qwen35_eval_sweep.sh --dry-run
 ```
 
 ### Single eval job
@@ -86,10 +102,11 @@ scancel <JOB_ID>
 | `train_lora_lumi.sh` | Single LoRA training job |
 | `train_full_finetune_lumi.sh` | Single full fine-tune job |
 | `submit_train_sweep.sh` | Submit all training jobs |
+| `submit_qwen35_train_sweep.sh` | Submit the Qwen3.5 LoRA training sweep |
 | `eval_lumi.sh` | Single evaluation job |
 | `submit_eval_sweep.sh` | Submit eval job covering all models |
+| `submit_qwen35_eval_sweep.sh` | Submit the Qwen3.5 evaluation sweep |
 | `tta_lumi.sh` | Single TTA job |
 | `submit_tta_sweep.sh` | Submit one TTA job per model (phases A–D) |
 | `sync_results.sh` | Pull results from LUMI to local machine |
 | `container.env` | Container image path and venv config |
-

@@ -10,20 +10,19 @@
 
 ## Direction 1 — Newest Qwen Models
 
-**Goal**: Evaluate whether the latest Qwen model generations (Qwen3 series) deliver better distillation performance than the Qwen 2.5 baseline, and at what parameter count the gains plateau.
+**Goal**: Evaluate whether the latest Qwen model generations (Qwen3/Qwen3.5 series) deliver better distillation performance than the Qwen 2.5 baseline, and at what parameter count the gains plateau.
 
 ### Context
 
-The baseline uses Qwen **2.5** (0.5B, 1.5B, 3B, 7B). Qwen3 models are now available on HuggingFace. The key question is whether a Qwen3-0.6B outperforms Qwen2.5-3B at a fraction of the compute cost — which would directly lower the inference cost of the deployed student.
+The baseline uses Qwen **2.5** (0.5B, 1.5B, 3B, 7B). Newer Qwen3-family models are now available on HuggingFace. The key question is whether a Qwen3.5-0.8B outperforms Qwen2.5-3B at a fraction of the compute cost — which would directly lower the inference cost of the deployed student.
 
 ### What to do
 
-1. **Identify the relevant Qwen3 models** — check HuggingFace for the latest instruct-tuned Qwen3 checkpoints. Likely candidates at time of writing:
-   - `Qwen/Qwen3-0.6B-Instruct` (or equivalent)
-   - `Qwen/Qwen3-1.7B-Instruct`
-   - `Qwen/Qwen3-4B-Instruct`
-   - `Qwen/Qwen3-8B-Instruct`
-   - Verify exact model IDs on HuggingFace before running.
+1. **Identify the relevant Qwen3-family models** — check HuggingFace for the latest checkpoints that fit the existing text pipeline. Selected candidates as of 2026-03-12:
+   - `Qwen/Qwen3.5-0.8B`
+   - `Qwen/Qwen3.5-2B`
+   - `Qwen/Qwen3.5-4B`
+   - Defer `Qwen/Qwen3.5-9B` until after the first pass; it is better used as a later ceiling model.
 
 2. **Training**: Use the existing LoRA pipeline (`02_train_model_lora.py` + `train_lora_lumi.sh`). Training config should be identical to the Qwen 2.5 runs — 3 epochs, same hyperparameters — so results are directly comparable.
 
@@ -31,7 +30,9 @@ The baseline uses Qwen **2.5** (0.5B, 1.5B, 3B, 7B). Qwen3 models are now availa
 
 4. **Comparison**: Add Qwen3 rows to the comparison table in `task1/RESULTS.md`, alongside Qwen 2.5 equivalents at similar parameter counts. Plot `Abstain F1 vs parameter count` for both generations to visualise the efficiency gain (or lack thereof).
 
-5. **SLURM**: Add new model entries to `submit_train_sweep.sh` and `submit_eval_sweep.sh`. Consider a new `submit_qwen3_sweep.sh` to keep the existing sweep scripts stable.
+5. **SLURM**: Use dedicated Qwen3.5 sweep scripts to keep the baseline sweep stable:
+   - `task1/scripts/slurm/submit_qwen35_train_sweep.sh`
+   - `task1/scripts/slurm/submit_qwen35_eval_sweep.sh`
 
 ### Success Criteria
 
@@ -223,4 +224,3 @@ Directions 1, 2, and 4 can proceed in parallel on LUMI once the collapse check i
 - Should Qwen3 evaluation (Direction 1) also include TTA, or single-pass only first?
 - Is model collapse defined as an absolute threshold or relative to the teacher abstain rate?
 - What cadence will new trace batches arrive on, and which domains are planned?
-
