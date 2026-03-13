@@ -46,6 +46,9 @@ mkdir -p "${SCRATCH_OUTPUT_DIR}"
 echo "Job: $SLURM_JOB_ID  Node: $(hostname)  GPUs: 8"
 echo "MLflow tracking URI: $MLFLOW_TRACKING_URI"
 echo "Model output dir:    $SCRATCH_OUTPUT_DIR"
+if [[ -n "${CONTAINER_PYTHON_OVERRIDES:-}" && -d "${CONTAINER_PYTHON_OVERRIDES}" ]]; then
+    echo "Python overrides:    $CONTAINER_PYTHON_OVERRIDES"
+fi
 
 # ------------------------------------------------------------------
 # Background GPU monitor (every 30 s)

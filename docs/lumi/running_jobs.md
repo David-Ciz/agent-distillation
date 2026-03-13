@@ -4,6 +4,12 @@
 
 ## Training
 
+If you need a newer Hugging Face stack than the container provides, install it
+into `~/agent-distillation/py-overrides` and keep `CONTAINER_PYTHON_OVERRIDES`
+set in [container.env](/Users/davidciz/Work/agent-distillation/task1/scripts/slurm/container.env).
+The train, eval, and TTA wrappers will prepend that directory to `PYTHONPATH`
+automatically.
+
 ### Submit all model training jobs in parallel
 
 ```bash

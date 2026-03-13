@@ -47,6 +47,9 @@ echo "Job: $SLURM_JOB_ID  Node: $(hostname)  GPUs: 1"
 export MLFLOW_TRACKING_URI="sqlite:////users/${USER}/mlflow/mlflow.db"
 export MLFLOW_ARTIFACT_ROOT="/scratch/project_465002758/${USER}/mlruns"
 echo "MLflow tracking URI: $MLFLOW_TRACKING_URI"
+if [[ -n "${CONTAINER_PYTHON_OVERRIDES:-}" && -d "${CONTAINER_PYTHON_OVERRIDES}" ]]; then
+    echo "Python overrides:    $CONTAINER_PYTHON_OVERRIDES"
+fi
 
 # Model weights live on scratch, not home
 SCRATCH_OUTPUT_DIR="/scratch/project_465002758/${USER}/agent-distillation/task1/outputs"
@@ -83,4 +86,3 @@ srun singularity run "$SIF" \
     "
 
 echo "TTA experiment complete."
-
