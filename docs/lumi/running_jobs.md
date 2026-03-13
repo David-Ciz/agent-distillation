@@ -9,6 +9,8 @@ into `~/agent-distillation/py-overrides` and keep `CONTAINER_PYTHON_OVERRIDES`
 set in [container.env](/Users/davidciz/Work/agent-distillation/task1/scripts/slurm/container.env).
 The train, eval, and TTA wrappers will prepend that directory to `PYTHONPATH`
 automatically.
+For this setup, leave `CONTAINER_VENV` empty unless you have explicitly verified
+that the venv can still import the container's `torch` stack.
 
 ### Submit all model training jobs in parallel
 
