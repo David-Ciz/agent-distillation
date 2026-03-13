@@ -68,6 +68,7 @@ GPU_MONITOR_PID=$!
 srun singularity run "$SIF" \
     bash -c "
         [ -n \"${CONTAINER_VENV}\" ] && source \"${CONTAINER_VENV}/bin/activate\"
+        [ -n \"${CONTAINER_PYTHON_OVERRIDES:-}\" ] && [ -d \"${CONTAINER_PYTHON_OVERRIDES}\" ] && export PYTHONPATH=\"${CONTAINER_PYTHON_OVERRIDES}\${PYTHONPATH:+:\${PYTHONPATH}}\"
         python -m torch.distributed.run \
             --nproc_per_node=8 \
             --standalone \

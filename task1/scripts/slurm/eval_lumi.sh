@@ -60,6 +60,7 @@ echo "Evaluating: ${EVAL_MODELS}"
 srun singularity run "$SIF" \
     bash -c "
         [ -n \"${CONTAINER_VENV}\" ] && source \"${CONTAINER_VENV}/bin/activate\"
+        [ -n \"${CONTAINER_PYTHON_OVERRIDES:-}\" ] && [ -d \"${CONTAINER_PYTHON_OVERRIDES}\" ] && export PYTHONPATH=\"${CONTAINER_PYTHON_OVERRIDES}\${PYTHONPATH:+:\${PYTHONPATH}}\"
         cd ${REPO_DIR}
         python task1/scripts/05_model_evaluation.py ${EVAL_MODELS}
     "
