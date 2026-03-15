@@ -13,7 +13,6 @@ from peft import LoraConfig, TaskType
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
-    TrainingArguments,
     TrainerCallback,
     TrainerControl,
     TrainerState,
@@ -21,6 +20,7 @@ from transformers import (
 from trl import SFTTrainer
 
 from mlflow_utils import hash_file, setup_mlflow
+from training_args_compat import make_training_arguments
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -248,7 +248,7 @@ def main(
     checkpoint_dir = output_dir or os.path.join(SCRATCH_OUTPUT_DIR, f"{model_name_safe}-lora-checkpoints")
     final_model_dir = os.path.join(SCRATCH_OUTPUT_DIR, f"{model_name_safe}-lora-final")
 
-    training_args = TrainingArguments(
+    training_args = make_training_arguments(
         output_dir=checkpoint_dir,
         per_device_train_batch_size=batch_size,
         gradient_accumulation_steps=gradient_accumulation_steps,
