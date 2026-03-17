@@ -2,6 +2,8 @@ import os
 import sys
 import logging
 import time
+from dataclasses import dataclass, field
+from typing import Optional
 
 import click
 import numpy as np
@@ -12,6 +14,7 @@ from datasets import Dataset
 from transformers import (
     AutoModelForCausalLM,
     AutoTokenizer,
+    TrainingArguments,
     TrainerCallback,
     TrainerControl,
     TrainerState,
@@ -19,7 +22,6 @@ from transformers import (
 from trl import SFTTrainer
 
 from mlflow_utils import hash_file, setup_mlflow
-from training_args_compat import make_training_arguments
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -44,6 +46,25 @@ os.makedirs(SCRATCH_OUTPUT_DIR, exist_ok=True)
 # ---------------------------------------------------------------------------
 def is_main_process() -> bool:
     return int(os.environ.get("LOCAL_RANK", 0)) == 0
+
+
+_TRAINING_ARGUMENT_FIELDS = getattr(TrainingArguments, "__dataclass_fields__", {})
+
+
+if "push_to_hub_token" in _TRAINING_ARGUMENT_FIELDS:
+    CompatTrainingArguments = TrainingArguments
+else:
+    @dataclass
+    class CompatTrainingArguments(TrainingArguments):
+        # TRL releases used on LUMI still expect this legacy field to exist when
+        # they convert TrainingArguments into an SFTConfig.
+        push_to_hub_token: Optional[str] = field(default=None, repr=False)
+
+
+def make_training_arguments(**kwargs) -> TrainingArguments:
+    if "push_to_hub_token" in getattr(CompatTrainingArguments, "__dataclass_fields__", {}):
+        kwargs.setdefault("push_to_hub_token", None)
+    return CompatTrainingArguments(**kwargs)
 
 
 def get_rocm_safe_attn_impl() -> str:
