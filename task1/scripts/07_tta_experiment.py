@@ -40,6 +40,7 @@ python 07_tta_experiment.py \\
 import json
 import logging
 import os
+import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
@@ -87,6 +88,73 @@ _CANONICAL_ABSTAIN = "I cannot answer based on the provided evidence."
 # ---------------------------------------------------------------------------
 
 
+def _build_generation_kwargs(
+    tokenizer,
+    n: int,
+    temperature: float,
+    max_new_tokens: int,
+) -> Dict[str, Any]:
+    do_sample = temperature > 0
+    gen_kwargs: Dict[str, Any] = dict(
+        max_new_tokens=max_new_tokens,
+        do_sample=do_sample,
+        pad_token_id=tokenizer.pad_token_id or tokenizer.eos_token_id,
+        use_cache=True,
+    )
+    if do_sample:
+        gen_kwargs["temperature"] = temperature
+    return gen_kwargs
+
+
+def _format_prompt(tokenizer, llm_input: str) -> str:
+    msgs = [{"role": "user", "content": llm_input}]
+    return tokenizer.apply_chat_template(
+        msgs, tokenize=False, add_generation_prompt=True
+    )
+
+
+def generate_n_answers_for_prompt(
+    model,
+    tokenizer,
+    llm_input: str,
+    device,
+    n: int,
+    temperature: float,
+    max_new_tokens: int = 256,
+) -> List[str]:
+    """Generate N raw outputs for a single prompt (batch size = 1)."""
+    gen_kwargs = _build_generation_kwargs(
+        tokenizer, n=n, temperature=temperature, max_new_tokens=max_new_tokens
+    )
+
+    tokenizer.padding_side = "left"
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token = tokenizer.eos_token
+
+    prompt = _format_prompt(tokenizer, llm_input)
+    raw_outputs: List[str] = []
+
+    with torch.no_grad():
+        for _ in range(n):
+            inputs = tokenizer(
+                [prompt],
+                return_tensors="pt",
+                padding=True,
+                truncation=True,
+                max_length=2048,
+            )
+            inputs = {k: v.to(device) for k, v in inputs.items()}
+            input_length = int(inputs["attention_mask"].sum(dim=1)[0].item())
+
+            output = model.generate(**inputs, **gen_kwargs)[0]
+            generated_ids = output[input_length:]
+            text_out = tokenizer.decode(generated_ids, skip_special_tokens=True)
+            raw_outputs.append(text_out)
+
+    tokenizer.padding_side = "right"
+    return raw_outputs
+
+
 def generate_n_answers(
     model,
     tokenizer,
@@ -109,15 +177,10 @@ def generate_n_answers(
     """
     total = len(dataset) if max_samples <= 0 else min(max_samples, len(dataset))
 
-    do_sample = (temperature > 0) or (n > 1)
-    gen_kwargs: Dict[str, Any] = dict(
-        max_new_tokens=max_new_tokens,
-        do_sample=do_sample,
-        pad_token_id=tokenizer.pad_token_id or tokenizer.eos_token_id,
-        use_cache=True,
+    do_sample = gen_kwargs["do_sample"]
+    gen_kwargs = _build_generation_kwargs(
+        tokenizer, n=n, temperature=temperature, max_new_tokens=max_new_tokens
     )
-    if do_sample:
-        gen_kwargs["temperature"] = temperature
 
     tokenizer.padding_side = "left"
     if tokenizer.pad_token is None:
@@ -140,11 +203,7 @@ def generate_n_answers(
                 batch_prompts = []
                 for idx in range(start, end):
                     item = dataset[idx]
-                    msgs = [{"role": "user", "content": item["llm_input"]}]
-                    text = tokenizer.apply_chat_template(
-                        msgs, tokenize=False, add_generation_prompt=True
-                    )
-                    batch_prompts.append(text)
+                    batch_prompts.append(_format_prompt(tokenizer, item["llm_input"]))
 
                 inputs = tokenizer(
                     batch_prompts,
@@ -167,6 +226,98 @@ def generate_n_answers(
 
     tokenizer.padding_side = "right"
     return raw_outputs
+
+
+def benchmark_tta_latency(
+    model,
+    tokenizer,
+    dataset: EvalDataset,
+    device,
+    n: int,
+    temperature: float,
+    aggregation: str,
+    embedding_model_tuple: Tuple,
+    max_new_tokens: int = 256,
+    num_samples: int = 10,
+    warmup_samples: int = 1,
+) -> Dict[str, Any]:
+    """
+    Measure end-to-end single-query latency for a deploy-like TTA path.
+
+    The generation model and embedding model are assumed to already be loaded.
+    Loading time is excluded. Warmup samples are executed but excluded from stats.
+    """
+    total = min(num_samples, len(dataset))
+    warmup = min(warmup_samples, total)
+
+    generation_times_ms: List[float] = []
+    aggregation_times_ms: List[float] = []
+    total_times_ms: List[float] = []
+
+    for idx in range(total):
+        item = dataset[idx]
+
+        t0 = time.perf_counter()
+        raw_outputs = generate_n_answers_for_prompt(
+            model,
+            tokenizer,
+            item["llm_input"],
+            device,
+            n=n,
+            temperature=temperature,
+            max_new_tokens=max_new_tokens,
+        )
+        t1 = time.perf_counter()
+
+        if aggregation == "majority_vote":
+            _ = aggregate_majority_vote([raw_outputs], embedding_model_tuple)
+        elif aggregation == "centroid":
+            _ = aggregate_centroid([raw_outputs], embedding_model_tuple)
+        elif aggregation == "oracle":
+            teacher_answer = extract_answer(item["llm_output"])
+            _ = aggregate_oracle([raw_outputs], [teacher_answer], embedding_model_tuple)
+        else:
+            raise ValueError(f"Unknown aggregation: {aggregation}")
+        t2 = time.perf_counter()
+
+        if idx < warmup:
+            continue
+
+        generation_times_ms.append((t1 - t0) * 1000.0)
+        aggregation_times_ms.append((t2 - t1) * 1000.0)
+        total_times_ms.append((t2 - t0) * 1000.0)
+
+    measured = len(total_times_ms)
+    if measured == 0:
+        return {
+            "latency_num_samples_measured": 0,
+            "latency_warmup_samples": warmup,
+            "latency_generation_mean_ms": None,
+            "latency_aggregation_mean_ms": None,
+            "latency_total_mean_ms": None,
+            "latency_total_p50_ms": None,
+            "latency_total_p95_ms": None,
+            "latency_total_min_ms": None,
+            "latency_total_max_ms": None,
+            "deployable": aggregation != "oracle",
+        }
+
+    total_arr = np.array(total_times_ms, dtype=np.float64)
+    gen_arr = np.array(generation_times_ms, dtype=np.float64)
+    agg_arr = np.array(aggregation_times_ms, dtype=np.float64)
+
+    return {
+        "latency_num_samples_measured": measured,
+        "latency_warmup_samples": warmup,
+        "latency_generation_mean_ms": float(gen_arr.mean()),
+        "latency_aggregation_mean_ms": float(agg_arr.mean()),
+        "latency_total_mean_ms": float(total_arr.mean()),
+        "latency_total_p50_ms": float(np.percentile(total_arr, 50)),
+        "latency_total_p95_ms": float(np.percentile(total_arr, 95)),
+        "latency_total_min_ms": float(total_arr.min()),
+        "latency_total_max_ms": float(total_arr.max()),
+        "deployable": aggregation != "oracle",
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -623,6 +774,26 @@ def parse_model_config(config_str: str) -> Dict:
     show_default=True,
     help="MLflow experiment name.",
 )
+@click.option(
+    "--latency-benchmark/--no-latency-benchmark",
+    default=False,
+    show_default=True,
+    help="Measure per-query end-to-end latency on a small prefix of the eval set.",
+)
+@click.option(
+    "--latency-num-samples",
+    default=10,
+    show_default=True,
+    type=int,
+    help="Number of samples to use for latency benchmarking.",
+)
+@click.option(
+    "--latency-warmup-samples",
+    default=1,
+    show_default=True,
+    type=int,
+    help="Warmup samples to exclude from latency stats.",
+)
 def main(
     models,
     eval_dataset,
@@ -635,6 +806,9 @@ def main(
     max_new_tokens,
     embedding_model,
     mlflow_experiment,
+    latency_benchmark,
+    latency_num_samples,
+    latency_warmup_samples,
 ):
     """TTA / Self-Consistency experiment for agent-distillation task1.
 
@@ -718,6 +892,9 @@ def main(
                 "num_samples_loaded": len(eval_df),
                 "embedding_model": embedding_model,
                 "models": "; ".join(models),
+                "latency_benchmark": latency_benchmark,
+                "latency_num_samples": latency_num_samples,
+                "latency_warmup_samples": latency_warmup_samples,
             }
         )
         mlflow.set_tag("oracle_is_upper_bound", "true")
@@ -834,6 +1011,23 @@ def main(
                         flat = compute_flat_metrics(
                             results, cfg["name"], n, temperature, agg
                         )
+
+                        if latency_benchmark:
+                            latency_metrics = benchmark_tta_latency(
+                                model,
+                                tokenizer,
+                                dataset,
+                                device,
+                                n=n,
+                                temperature=temperature,
+                                aggregation=agg,
+                                embedding_model_tuple=emb_tuple,
+                                max_new_tokens=max_new_tokens,
+                                num_samples=latency_num_samples,
+                                warmup_samples=latency_warmup_samples,
+                            )
+                            flat.update(latency_metrics)
+
                         all_flat_metrics.append(flat)
 
                         # Accumulate for MLflow child
@@ -902,6 +1096,58 @@ def main(
         # ------------------------------------------------------------------
         if all_flat_metrics:
             summary_df = pd.DataFrame(all_flat_metrics)
+
+            baseline_cols = [
+                "model_name",
+                "aggregation",
+                "abstain_f1",
+                "embedding_similarity_adjusted_avg",
+                "exact_match_avg",
+            ]
+            if "latency_total_mean_ms" in summary_df.columns:
+                baseline_cols.append("latency_total_mean_ms")
+
+            baseline_df = summary_df[
+                (summary_df["tta_n"] == 1)
+                & (summary_df["tta_temperature"] == 0.0)
+            ][baseline_cols].rename(
+                columns={
+                    "abstain_f1": "baseline_abstain_f1_n1_t0",
+                    "embedding_similarity_adjusted_avg": "baseline_embedding_similarity_adjusted_avg_n1_t0",
+                    "exact_match_avg": "baseline_exact_match_avg_n1_t0",
+                    "latency_total_mean_ms": "baseline_latency_total_mean_ms_n1_t0",
+                }
+            )
+
+            if not baseline_df.empty:
+                summary_df = summary_df.merge(
+                    baseline_df,
+                    on=["model_name", "aggregation"],
+                    how="left",
+                )
+                summary_df["delta_abstain_f1_vs_n1_t0"] = (
+                    summary_df["abstain_f1"] - summary_df["baseline_abstain_f1_n1_t0"]
+                )
+                summary_df["delta_embedding_similarity_adjusted_avg_vs_n1_t0"] = (
+                    summary_df["embedding_similarity_adjusted_avg"]
+                    - summary_df["baseline_embedding_similarity_adjusted_avg_n1_t0"]
+                )
+                summary_df["delta_exact_match_avg_vs_n1_t0"] = (
+                    summary_df["exact_match_avg"] - summary_df["baseline_exact_match_avg_n1_t0"]
+                )
+                if (
+                    "latency_total_mean_ms" in summary_df.columns
+                    and "baseline_latency_total_mean_ms_n1_t0" in summary_df.columns
+                ):
+                    summary_df["delta_latency_total_mean_ms_vs_n1_t0"] = (
+                        summary_df["latency_total_mean_ms"]
+                        - summary_df["baseline_latency_total_mean_ms_n1_t0"]
+                    )
+                    summary_df["latency_multiplier_vs_n1_t0"] = (
+                        summary_df["latency_total_mean_ms"]
+                        / summary_df["baseline_latency_total_mean_ms_n1_t0"]
+                    )
+
             summary_cols = [
                 "model_name", "tta_n", "tta_temperature", "aggregation",
                 "num_samples",
@@ -910,6 +1156,20 @@ def main(
                 "student_abstain_rate", "teacher_abstain_rate",
                 "both_abstain_rate", "both_answer_rate",
                 "abstain_agreement_rate", "vote_abstain_rate_mean",
+                "latency_num_samples_measured", "latency_warmup_samples",
+                "latency_generation_mean_ms", "latency_aggregation_mean_ms",
+                "latency_total_mean_ms", "latency_total_p50_ms", "latency_total_p95_ms",
+                "latency_total_min_ms", "latency_total_max_ms",
+                "deployable",
+                "baseline_abstain_f1_n1_t0",
+                "baseline_embedding_similarity_adjusted_avg_n1_t0",
+                "baseline_exact_match_avg_n1_t0",
+                "baseline_latency_total_mean_ms_n1_t0",
+                "delta_abstain_f1_vs_n1_t0",
+                "delta_embedding_similarity_adjusted_avg_vs_n1_t0",
+                "delta_exact_match_avg_vs_n1_t0",
+                "delta_latency_total_mean_ms_vs_n1_t0",
+                "latency_multiplier_vs_n1_t0",
             ]
             summary_df = summary_df[[c for c in summary_cols if c in summary_df.columns]]
             summary_path = os.path.join(run_dir, "tta_comparison_summary.csv")
@@ -929,4 +1189,3 @@ def main(
 
 if __name__ == "__main__":
     main()
-

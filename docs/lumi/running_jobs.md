@@ -30,6 +30,39 @@ bash task1/scripts/slurm/submit_qwen35_train_sweep.sh --dry-run
 
 This runs the selected Qwen3.5 checkpoints: `Qwen3.5-0.8B`, `Qwen3.5-2B`, and `Qwen3.5-4B`.
 
+### Qwen3.5 notes
+
+- The Qwen3.5 LoRA runs on LUMI are launched with 8 distributed ranks. Repeated
+  `Starting LoRA training script`, dataset load, and model load lines in the
+  SLURM log are usually one copy per rank, not eight independent jobs.
+- The logged `epoch` value during training is fractional progress through the
+  configured total epochs. With `--num-epochs 3`, training ends around
+  `epoch: 3.0`.
+- The periodic training dictionaries are emitted every `logging_steps=50`, so a
+  small number of rows does not mean only a small number of epochs.
+- Mid-training Hugging Face `config.json` HEAD requests can appear when
+  checkpoint saving triggers `save_pretrained`-related Hub metadata checks. This
+  is noisy, but it is not a full model re-download.
+- The Qwen3.5-2B run observed on 2026-03-17 was killed by the SLURM time limit,
+  not by a Python exception. At roughly `39 s/step`, a 3-epoch run is closer to
+  `8+ hours` than `3.5 hours`.
+- If the log says `The fast path is not available because one of the required
+  library is not installed`, the model is running a slower torch fallback. For
+  Qwen3.5 this likely points at the `flash-linear-attention` /
+  `causal-conv1d` kernel stack.
+
+### Qwen3.5 overrides
+
+When using `~/agent-distillation/py-overrides` for Qwen3.5:
+
+- It is safe to layer pure Python packages such as `transformers` or `mlflow`
+  there.
+- Be very careful with compiled packages. Do not allow pip to pull in a second
+  `torch`, `triton`, `nvidia_*`, or `cuda_*` stack into `py-overrides`, because
+  that can shadow the container's ROCm build and break imports.
+- If testing `flash-linear-attention`, prefer `--no-deps` first and inspect the
+  target directory before running jobs.
+
 ### Single LoRA job
 
 ```bash

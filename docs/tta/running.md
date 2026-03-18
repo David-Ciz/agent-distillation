@@ -24,6 +24,37 @@ python task1/scripts/07_tta_experiment.py \
 
 Compare the `abstain_f1` in `tta_comparison_summary.csv` against the `05` baseline. **Must be within ±0.002.**
 
+## Deployment-Style Latency Benchmark
+
+Use this when you want to answer the product question directly: how much
+quality do we gain for the extra wall-clock latency of `N=3` or `N=5`?
+
+```bash
+python task1/scripts/07_tta_experiment.py \
+    --models 'task1/outputs/Qwen_Qwen2.5-0.5B-Instruct-lora-final,Qwen2.5-0.5B-Instruct-lora,lora,32' \
+    --n-values 1,3,5 \
+    --temperatures 0.0,0.7 \
+    --aggregations majority_vote \
+    --latency-benchmark \
+    --latency-num-samples 10 \
+    --latency-warmup-samples 1
+```
+
+This adds per-query latency columns to `tta_comparison_summary.csv`, including:
+
+- `latency_total_mean_ms`
+- `latency_total_p50_ms`
+- `latency_total_p95_ms`
+- `latency_multiplier_vs_n1_t0`
+- `delta_abstain_f1_vs_n1_t0`
+
+Interpretation:
+
+- `N=1, T=0.0` is the real baseline row.
+- `delta_abstain_f1_vs_n1_t0` tells you the quality gain/loss.
+- `latency_total_mean_ms` tells you the average end-to-end per-query cost.
+- `latency_multiplier_vs_n1_t0` tells you how much slower the TTA variant is.
+
 ---
 
 ## CLI Reference
@@ -45,6 +76,9 @@ python task1/scripts/07_tta_experiment.py [OPTIONS]
 | `--max-new-tokens` | `256` | Max tokens per generation pass |
 | `--embedding-model` | `Qwen/Qwen3-Embedding-0.6B` | Embedding model |
 | `--mlflow-experiment` | `tta_experiment` | MLflow experiment name |
+| `--latency-benchmark` | `False` | Measure per-query latency on a small eval subset |
+| `--latency-num-samples` | `10` | Number of samples to use for latency benchmarking |
+| `--latency-warmup-samples` | `1` | Warmup samples excluded from latency stats |
 
 Model config format: `path,name,type[,gen_batch_size]`  
 Types: `lora` | `full_finetune` | `base`
@@ -149,4 +183,3 @@ Per-model generation time on 1× MI250X GCD (`gen_batch_size=32`):
 | Qwen 0.5B | ~6 min |
 | Qwen 1.5B | ~12 min |
 | Embedding (any) | ~1 min |
-
