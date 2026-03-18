@@ -27,9 +27,9 @@ TRAIN_SCRIPT="${SCRIPT_DIR}/train_lora_lumi.sh"
 # Conservative first-pass settings to minimize OOM risk on the first sweep.
 # ---------------------------------------------------------------------------
 MODELS=(
-    "Qwen/Qwen3.5-0.8B  4  2  02:30:00"
-    "Qwen/Qwen3.5-2B    2  4  03:30:00"
-    "Qwen/Qwen3.5-4B    1  8  05:00:00"
+    "Qwen/Qwen3.5-0.8B  4  2  06:00:00"
+    "Qwen/Qwen3.5-2B    2  4  12:00:00"
+    "Qwen/Qwen3.5-4B    1  8  20:00:00"
 )
 
 echo "=================================================="

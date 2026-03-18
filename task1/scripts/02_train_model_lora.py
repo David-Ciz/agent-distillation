@@ -1,4 +1,5 @@
 import os
+import re
 import sys
 import logging
 import time
@@ -41,12 +42,57 @@ SCRATCH_OUTPUT_DIR = os.environ.get("SCRATCH_OUTPUT_DIR", OUTPUT_DIR)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 os.makedirs(SCRATCH_OUTPUT_DIR, exist_ok=True)
 
+MAX_SEQ_LENGTH = 2048
+_TOKENIZER = None
+
 
 # ---------------------------------------------------------------------------
 # Distributed helpers
 # ---------------------------------------------------------------------------
 def is_main_process() -> bool:
     return int(os.environ.get("LOCAL_RANK", 0)) == 0
+
+
+def get_rocm_safe_attn_impl() -> str:
+    """Return flash_attention_2 if available, else fall back to sdpa (works on ROCm)."""
+    try:
+        import flash_attn  # noqa: F401
+        return "flash_attention_2"
+    except ImportError:
+        return "sdpa"
+
+
+def format_chat_example(llm_input: str, llm_output: str, tokenizer) -> str:
+    return tokenizer.apply_chat_template(
+        [
+            {"role": "user", "content": llm_input},
+            {"role": "assistant", "content": llm_output},
+        ],
+        tokenize=False,
+        add_generation_prompt=False,
+    )
+
+
+def tokenize_batch(examples):
+    encoded = _TOKENIZER(
+        examples["text"],
+        truncation=True,
+        max_length=MAX_SEQ_LENGTH,
+        padding=False,
+    )
+    encoded["labels"] = [ids[:] for ids in encoded["input_ids"]]
+    return encoded
+
+
+def make_tokenized_cache_path(csv_path: str, model_name: str, split_name: str) -> str:
+    dataset_hash = hash_file(csv_path)[:12]
+    model_safe = re.sub(r"[^A-Za-z0-9._-]+", "_", model_name)
+    cache_dir = os.path.join(SCRATCH_OUTPUT_DIR, "tokenized_datasets")
+    os.makedirs(cache_dir, exist_ok=True)
+    return os.path.join(
+        cache_dir,
+        f"{model_safe}-{dataset_hash}-{split_name}-msl{MAX_SEQ_LENGTH}.arrow",
+    )
 
 
 _TRAINING_ARGUMENT_FIELDS = getattr(TrainingArguments, "__dataclass_fields__", {})
@@ -170,7 +216,8 @@ def main(
         handlers=handlers,
     )
 
-    logging.info("Starting LoRA training script...")
+    if is_main_process():
+        logging.info("Starting LoRA training script...")
 
 
     # ------------------------------------------------------------------
@@ -185,12 +232,14 @@ def main(
     # ------------------------------------------------------------------
     csv_path = dataset_path
     df = pd.read_csv(csv_path, usecols=["llm_input", "llm_output"])
-    logging.info(f"Loaded {len(df)} rows from {csv_path}.")
+    if is_main_process():
+        logging.info(f"Loaded {len(df)} rows from {csv_path}.")
 
     df = df.dropna(subset=["llm_input", "llm_output"])
     df = df[df["llm_input"].apply(lambda x: isinstance(x, str) and len(x) > 5)]
     df = df[df["llm_output"].apply(lambda x: isinstance(x, str) and len(x) > 0)]
-    logging.info(f"Filtered to {len(df)} rows.")
+    if is_main_process():
+        logging.info(f"Filtered to {len(df)} rows.")
 
     if len(df) == 0:
         logging.error("No valid training data found after filtering.")
@@ -205,20 +254,25 @@ def main(
     train_df = df.iloc[indices[:split_idx]]
     val_df = df.iloc[indices[split_idx:]]
 
-    logging.info(f"Train: {len(train_df)} rows  |  Val: {len(val_df)} rows.")
+    if is_main_process():
+        logging.info(f"Train: {len(train_df)} rows  |  Val: {len(val_df)} rows.")
     if is_main_process():
         val_df.to_csv(os.path.join(DATA_DIR, "test_split.csv"), index=False)
-
-    dataset = Dataset.from_pandas(train_df, preserve_index=False)
 
     # ------------------------------------------------------------------
     # Model & tokenizer
     # ------------------------------------------------------------------
-    logging.info(f"Loading model: {model_name}")
+    if is_main_process():
+        logging.info(f"Loading model: {model_name}")
     tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+    attn_impl = get_rocm_safe_attn_impl()
+    if is_main_process():
+        logging.info(f"Using attention implementation: {attn_impl}")
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         dtype=torch.bfloat16,
+        attn_implementation=attn_impl,
+        low_cpu_mem_usage=True,
         trust_remote_code=True,
     )
 
@@ -236,31 +290,6 @@ def main(
     )
     # Note: do NOT call get_peft_model() here — SFTTrainer applies peft_config internally (TRL 0.15+).
     # Passing an already-wrapped PeftModel together with peft_config raises a ValueError.
-
-    # ------------------------------------------------------------------
-    # Formatting function
-    # ------------------------------------------------------------------
-    def formatting_prompts_func(example):
-        if isinstance(example["llm_input"], list):
-            return [
-                tokenizer.apply_chat_template(
-                    [
-                        {"role": "user", "content": inp},
-                        {"role": "assistant", "content": out},
-                    ],
-                    tokenize=False,
-                    add_generation_prompt=False,
-                )
-                for inp, out in zip(example["llm_input"], example["llm_output"])
-            ]
-        return tokenizer.apply_chat_template(
-            [
-                {"role": "user", "content": example["llm_input"]},
-                {"role": "assistant", "content": example["llm_output"]},
-            ],
-            tokenize=False,
-            add_generation_prompt=False,
-        )
 
     # ------------------------------------------------------------------
     # TrainingArguments
@@ -286,12 +315,41 @@ def main(
     )
 
     # ------------------------------------------------------------------
+    # Pre-tokenize once and reuse cached Arrow shards across ranks/reruns
+    # ------------------------------------------------------------------
+    global _TOKENIZER
+    _TOKENIZER = tokenizer
+
+    formatted_dataset = Dataset.from_dict(
+        {
+            "text": [
+                format_chat_example(llm_input, llm_output, tokenizer)
+                for llm_input, llm_output in zip(train_df["llm_input"], train_df["llm_output"])
+            ]
+        }
+    )
+    train_cache_file = make_tokenized_cache_path(csv_path, model_name, "train")
+
+    with training_args.main_process_first(desc="tokenize train dataset"):
+        if is_main_process():
+            logging.info(f"Tokenizing train dataset (cache: {train_cache_file})")
+        dataset = formatted_dataset.map(
+            tokenize_batch,
+            batched=True,
+            remove_columns=["text"],
+            load_from_cache_file=True,
+            cache_file_name=train_cache_file,
+            desc="Tokenizing train dataset",
+        )
+
+    # ------------------------------------------------------------------
     # Log params to MLflow (before training starts)
     # ------------------------------------------------------------------
     if is_main_process():
         mlflow.log_params({
             "model_name": model_name,
             "method": "lora",
+            "attn_implementation": attn_impl,
             "lora_rank": lora_rank,
             "lora_alpha": lora_alpha,
             "lora_dropout": lora_dropout,
@@ -307,6 +365,7 @@ def main(
             "train_samples": len(train_df),
             "val_samples": len(val_df),
             "val_split": val_split,
+            "max_seq_length": MAX_SEQ_LENGTH,
             "num_gpus": torch.cuda.device_count(),
             "gpu_type": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "cpu",
             "container_sif": os.environ.get("SIF", "local"),
@@ -320,13 +379,13 @@ def main(
         model=model,
         train_dataset=dataset,
         peft_config=peft_config,
-        formatting_func=formatting_prompts_func,
         args=training_args,
         processing_class=tokenizer,
         callbacks=[MLflowMetricsCallback()] if is_main_process() else [],
     )
 
-    logging.info("Starting training...")
+    if is_main_process():
+        logging.info("Starting training...")
     t0 = time.time()
     trainer.train()
     total_duration = time.time() - t0
