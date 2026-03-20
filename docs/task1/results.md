@@ -60,6 +60,72 @@ For both Qwen 0.5B and 3B, LoRA achieves higher Abstain F1 than full fine-tuning
 
 This is the key motivation for the [TTA experiment](../tta/what_is_tta.md) — majority voting across N passes should pull the abstain rate back towards 70%.
 
+### Failure-mode taxonomy is useful
+
+Using the archived pre-LUMI evaluation run, every sample can be placed into one of four categories:
+
+- `agreement_answer`
+- `agreement_abstain`
+- `false_abstention`
+- `false_confidence`
+
+This split is informative rather than cosmetic:
+
+- Small **base** models show much higher `false_confidence` than trained models.
+- Training sharply reduces `false_confidence`, especially for the Qwen 3B and 7B models.
+- The tradeoff is `false_abstention`: smaller trained models become more conservative and over-abstain.
+
+Examples from the pre-LUMI archive:
+
+| Model | False Confidence | False Abstention |
+|-------|------------------|------------------|
+| Qwen 2.5 0.5B Base | **53.5%** | 4.7% |
+| Qwen 2.5 0.5B LoRA | 5.9% | **23.1%** |
+| Qwen 2.5 3B Base | 16.3% | 9.2% |
+| Qwen 2.5 3B LoRA | **4.7%** | 13.0% |
+| Qwen 2.5 7B LoRA | **4.6%** | 8.9% |
+
+Interpretation:
+
+- `false_confidence` is the dangerous failure mode because it corresponds to answering when the teacher abstains.
+- `false_abstention` is a capacity/conservatism problem: the model refuses too often, but it is safer.
+- The strongest current balance is in the Qwen 3B LoRA and Qwen 7B LoRA models.
+
+### QA signal validation passes the sanity check
+
+We also joined the failure-mode labels with the per-sample evaluation metrics to test whether the categories track answer quality.
+
+What holds across all 12 archived pre-LUMI models:
+
+- `agreement_answer` has much higher quality than `false_confidence`
+- the separation is statistically overwhelming under a one-sided Mann-Whitney U test
+- this supports the core routing intuition: the failure-mode signal is not random noise
+
+This now holds not only for `embedding_similarity_adjusted`, but also for the more independent metrics:
+
+- raw embedding similarity
+- token overlap
+- exact match score
+
+Observed result:
+
+- `false_confidence` is worse than `agreement_answer` on raw embedding similarity for all 12 models
+- `false_confidence` is worse than `agreement_answer` on token overlap for all 12 models
+- `false_confidence` is worse on exact match for 11 of 12 models
+
+Important caveat:
+
+- the exact-match signal is weak for the weakest model (`gemma-3-270m-it-base`) because both categories are effectively at zero there
+- `embedding_similarity_adjusted` still should not be treated as the primary evidence, because abstain mismatches are built into that metric
+
+So the current evidence is materially stronger than the first sanity check: the failure-mode taxonomy appears to predict degraded answer quality even under metrics that do not directly encode abstain mismatches.
+
+The next refinement, if needed, is descriptive rather than foundational:
+
+- answer length by category
+- per-category plots for the strongest routing candidates
+- validation on the fresh LUMI runs as they arrive
+
 ---
 
 ## Visualisations
@@ -83,4 +149,3 @@ Percentage improvement from base model after LoRA / full fine-tune.
 ## TTA Results
 
 > Pending Phase A completion. See [Interpreting TTA Results](../tta/interpreting_results.md) for what to expect.
-

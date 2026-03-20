@@ -83,6 +83,68 @@ Larger models consistently achieve better performance:
 - Embedding Similarity: **0.851**
 - Exact Match Rate: **67.6%**
 
+### 5. Failure-Mode Taxonomy Exposes the Real Tradeoff
+
+The archived pre-LUMI evaluation run was relabelled with a four-way taxonomy:
+
+- `agreement_answer`
+- `agreement_abstain`
+- `false_abstention`
+- `false_confidence`
+
+This gives a better view of model behaviour than Abstain F1 alone.
+
+| Model | False Confidence | False Abstention | Reading |
+|-------|------------------|------------------|---------|
+| Qwen 2.5 0.5B Base | **53.5%** | 4.7% | Unacceptably over-confident |
+| Qwen 2.5 0.5B LoRA | 5.9% | **23.1%** | Safer, but heavily over-abstains |
+| Qwen 2.5 3B Base | 16.3% | 9.2% | Still too willing to answer |
+| Qwen 2.5 3B LoRA | **4.7%** | 13.0% | Strong balance |
+| Qwen 2.5 7B Base | **2.4%** | 15.7% | Very conservative |
+| Qwen 2.5 7B LoRA | **4.6%** | 8.9% | Strong balance, better answer agreement |
+
+What this means:
+
+- **Training reduces dangerous false confidence** very strongly, especially for 0.5B, 1.5B, and 3B models.
+- **Smaller trained models trade false confidence for false abstention** — they become safer but more conservative.
+- **Qwen 2.5 3B LoRA and Qwen 2.5 7B LoRA currently look like the best routing candidates** because they keep false confidence low without collapsing into excessive abstention.
+
+### 6. QA Signal Validation Passes, With an Important Caveat
+
+We joined the failure-mode labels with the archived per-sample evaluation metrics and compared quality by category for all 12 pre-LUMI models.
+
+Immediate result:
+
+- For every model, `agreement_answer` scores much higher than `false_confidence`
+- The separation is statistically overwhelming under a one-sided Mann-Whitney U test
+- This supports the routing hypothesis that the abstain/answer failure mode is a meaningful quality signal
+
+The stronger rerun shows that this separation is not limited to the adjusted metric:
+
+- On **raw `embedding_similarity`**, `false_confidence` is worse than `agreement_answer` for all 12 models
+- On **`token_overlap`**, `false_confidence` is worse than `agreement_answer` for all 12 models
+- On **`exact_match_score`**, `false_confidence` is worse for 11 of 12 models
+
+That substantially strengthens the argument that the failure-mode taxonomy is tracking real answer-quality degradation, not just the abstain mismatch itself.
+
+Important caveat:
+
+- The weakest model (`gemma-3-270m-it-base`) shows no useful exact-match separation because both categories are effectively at zero there
+- `embedding_similarity_adjusted` still should not be treated as the main evidence because it assigns:
+- `1.0` when both teacher and student abstain
+- `0.0` when exactly one side abstains
+
+That means all `false_confidence` rows have mean adjusted similarity `0.0` by construction. So:
+
+- **The adjusted metric remains a sanity check**
+- **The raw similarity / overlap / exact-match results are the more important independent evidence**
+
+The next refinement is now downstream rather than foundational:
+
+- answer length by category
+- per-category plots for the strongest routing candidates
+- validation on the fresh LUMI runs as they arrive
+
 ---
 
 ## Detailed Visualizations
