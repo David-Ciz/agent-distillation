@@ -78,8 +78,9 @@ MODEL_NAME="${MODEL_NAME:-Qwen/Qwen2.5-3B-Instruct}"
 NUM_EPOCHS="${NUM_EPOCHS:-3}"
 BATCH_SIZE="${BATCH_SIZE:-2}"
 GRAD_ACCUM="${GRAD_ACCUM:-4}"
+TRAIN_ATTN_IMPL="${TRAIN_ATTN_IMPL:-auto}"
 
-echo "Model: $MODEL_NAME  Epochs: $NUM_EPOCHS  Batch: $BATCH_SIZE  GradAccum: $GRAD_ACCUM"
+echo "Model: $MODEL_NAME  Epochs: $NUM_EPOCHS  Batch: $BATCH_SIZE  GradAccum: $GRAD_ACCUM  Attn: $TRAIN_ATTN_IMPL"
 
 srun singularity run "$SIF" \
     bash -c "
@@ -93,7 +94,8 @@ srun singularity run "$SIF" \
             --model-name '${MODEL_NAME}' \
             --num-epochs ${NUM_EPOCHS} \
             --batch-size ${BATCH_SIZE} \
-            --gradient-accumulation-steps ${GRAD_ACCUM}
+            --gradient-accumulation-steps ${GRAD_ACCUM} \
+            --attn-implementation ${TRAIN_ATTN_IMPL}
     "
 
 kill $GPU_MONITOR_PID 2>/dev/null || true

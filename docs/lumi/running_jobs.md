@@ -29,7 +29,7 @@ bash task1/scripts/slurm/submit_qwen35_train_sweep.sh --dry-run
 ```
 
 This runs the Qwen3.5 queue in the standard / slow-path environment in the
-requested order: `Qwen3.5-4B`, `Qwen3.5-9B`, `Qwen3.5-2B`, `Qwen3.5-35B-A3B`.
+requested order: `Qwen3.5-4B`, `Qwen3.5-9B`, `Qwen3.5-2B`.
 
 ### Qwen3.5 notes
 
@@ -98,6 +98,10 @@ Decision:
 - Keep the entire Qwen3.5 family on the standard / slow-path environment unless
   a future container or officially supported ROCm kernel stack makes the
   fast-path route straightforward and stable.
+- Do not queue `Qwen3.5-35B-A3B` with the current DDP-based training/eval
+  scripts. Models in this range need sharded training / inference
+  (FSDP/ZeRO/tensor parallel or equivalent). This is a low-priority future
+  experiment rather than part of the current sweep.
 
 ### Qwen3.5 overrides
 

@@ -20,15 +20,15 @@ Thumbs.db
 *.bin
 trained_models/
 task1/outputs/*
-!task1/outputs/analysis/
-!task1/outputs/evaluations
+!task1/outputs/pre-lumi/analysis/
+!task1/outputs/pre-lumi/evaluations
 task1/data/test_split.csv
 
 evaluate_model.py
 task1/data/eval/exploratory_causalqa_test/*
 task1/data/eval/exploratory_msmarco_test/*
 task1/data/eval/exploratory_quasart_test/*
-task1/outputs/evaluations/eval_run_20260124_052629/evaluation.log
+task1/outputs/pre-lumi/evaluations/eval_run_20260124_052629/evaluation.log
 
 # DVC
 /tmp/

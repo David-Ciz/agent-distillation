@@ -91,7 +91,7 @@ Larger models consistently achieve better performance:
 
 This visualization shows how student models agree or disagree with the teacher on answer vs abstain decisions.
 
-![Answer State Distribution](outputs/analysis/answer_state_distribution.png)
+![Answer State Distribution](outputs/pre-lumi/analysis/answer_state_distribution.png)
 
 **States explained**:
 - **Both Abstain** (green): Teacher and student both abstained — ideal agreement
@@ -110,7 +110,7 @@ This visualization shows how student models agree or disagree with the teacher o
 
 Classification metrics treating teacher abstain as ground truth.
 
-![Abstain Metrics Comparison](outputs/analysis/abstain_metrics_comparison.png)
+![Abstain Metrics Comparison](outputs/pre-lumi/analysis/abstain_metrics_comparison.png)
 
 **Metrics explained**:
 - **Accuracy**: Overall correctness of abstain/answer decisions
@@ -129,7 +129,7 @@ Classification metrics treating teacher abstain as ground truth.
 
 Comparison of abstain rates between student models and the teacher baseline.
 
-![Abstain Rates Comparison](outputs/analysis/abstain_rates_comparison.png)
+![Abstain Rates Comparison](outputs/pre-lumi/analysis/abstain_rates_comparison.png)
 
 **Teacher abstain rate**: 70.0% (purple dashed line)
 
@@ -146,11 +146,11 @@ Violin plots showing the distribution of semantic similarity between teacher and
 
 #### Grouped by Model Family
 
-![Embedding Similarity Grouped](outputs/analysis/violin_embedding-similarity-adjusted_grouped.png)
+![Embedding Similarity Grouped](outputs/pre-lumi/analysis/violin_embedding-similarity-adjusted_grouped.png)
 
 #### All Models
 
-![Embedding Similarity All](outputs/analysis/violin_embedding-similarity-adjusted_all.png)
+![Embedding Similarity All](outputs/pre-lumi/analysis/violin_embedding-similarity-adjusted_all.png)
 
 **Metric explained**:
 - Uses Qwen3-Embedding-0.6B for semantic similarity
@@ -167,7 +167,7 @@ Violin plots showing the distribution of semantic similarity between teacher and
 
 Comparison of embedding similarity, token overlap, and exact match rate.
 
-![Similarity Metrics Comparison](outputs/analysis/similarity_metrics_comparison.png)
+![Similarity Metrics Comparison](outputs/pre-lumi/analysis/similarity_metrics_comparison.png)
 
 **Metrics explained**:
 - **Embedding Similarity**: Semantic similarity using neural embeddings
@@ -185,7 +185,7 @@ Comparison of embedding similarity, token overlap, and exact match rate.
 
 Comprehensive comparison of all models across key metrics.
 
-![Metrics Heatmap](outputs/analysis/metrics_heatmap.png)
+![Metrics Heatmap](outputs/pre-lumi/analysis/metrics_heatmap.png)
 
 **Color scale**: Red (low) → Yellow (medium) → Green (high)
 
@@ -200,7 +200,7 @@ Comprehensive comparison of all models across key metrics.
 
 Comparison of Base, LoRA, and Full Finetune performance across model sizes.
 
-![Training Effect by Size](outputs/analysis/training_effect_by_size.png)
+![Training Effect by Size](outputs/pre-lumi/analysis/training_effect_by_size.png)
 
 **Key observations**:
 - LoRA (red) consistently outperforms or matches Full Finetune (purple)
@@ -213,7 +213,7 @@ Comparison of Base, LoRA, and Full Finetune performance across model sizes.
 
 Percentage improvement from base model after training.
 
-![Improvement Rate](outputs/analysis/improvement_rate_by_training.png)
+![Improvement Rate](outputs/pre-lumi/analysis/improvement_rate_by_training.png)
 
 **Note**: Models marked with `*` only have LoRA training (no Full Finetune data).
 

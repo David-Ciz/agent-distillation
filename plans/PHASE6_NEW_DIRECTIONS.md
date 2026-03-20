@@ -23,6 +23,8 @@ The baseline uses Qwen **2.5** (0.5B, 1.5B, 3B, 7B). Newer Qwen3-family models a
    - `Qwen/Qwen3.5-2B`
    - `Qwen/Qwen3.5-4B`
    - Defer `Qwen/Qwen3.5-9B` until after the first pass; it is better used as a later ceiling model.
+   - `Qwen/Qwen3.5-35B-A3B` is a low-priority future experiment because it
+     requires sharded training / inference rather than the current DDP pipeline.
 
 2. **Training**: Use the existing LoRA pipeline (`02_train_model_lora.py` + `train_lora_lumi.sh`). Training config should be identical to the Qwen 2.5 runs — 3 epochs, same hyperparameters — so results are directly comparable.
 

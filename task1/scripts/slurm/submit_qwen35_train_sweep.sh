@@ -23,6 +23,8 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TRAIN_SCRIPT="${SCRIPT_DIR}/train_lora_lumi.sh"
 QWEN35_OVERRIDES="${QWEN35_OVERRIDES:-${HOME}/agent-distillation/py-overrides}"
 SBATCH_EXPORT="ALL,CONTAINER_PYTHON_OVERRIDES=${QWEN35_OVERRIDES}"
+QWEN35_ATTN_IMPL="${QWEN35_ATTN_IMPL:-sdpa}"
+SBATCH_EXPORT+=",TRAIN_ATTN_IMPL=${QWEN35_ATTN_IMPL}"
 if [[ -n "${CONTAINER_VENV:-}" ]]; then
     SBATCH_EXPORT+=",CONTAINER_VENV=${CONTAINER_VENV}"
 fi
@@ -36,12 +38,12 @@ MODELS=(
     "Qwen/Qwen3.5-2B         2  4   16:00:00"
     "Qwen/Qwen3.5-4B         1  8   24:00:00"
     "Qwen/Qwen3.5-9B         1  16  36:00:00"
-    "Qwen/Qwen3.5-35B-A3B    1  16  48:00:00"
 )
 
 echo "=================================================="
 echo "Qwen3.5 training sweep — $(date)"
 echo "Overrides path: $QWEN35_OVERRIDES"
+echo "Attention impl: $QWEN35_ATTN_IMPL"
 echo "=================================================="
 
 SUBMITTED=()

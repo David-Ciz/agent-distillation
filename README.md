@@ -243,36 +243,36 @@ For detailed analysis and interpretation, see **[Task 1 Results Analysis](task1/
 
 Shows how student models agree/disagree with teacher on answer vs abstain decisions.
 
-![Answer State Distribution](task1/outputs/analysis/answer_state_distribution.png)
+![Answer State Distribution](task1/outputs/pre-lumi/analysis/answer_state_distribution.png)
 
 ### Abstain Detection Metrics
 
 Classification metrics (Accuracy, F1, Precision, Recall) for abstain detection.
 
-![Abstain Metrics Comparison](task1/outputs/analysis/abstain_metrics_comparison.png)
+![Abstain Metrics Comparison](task1/outputs/pre-lumi/analysis/abstain_metrics_comparison.png)
 
 ### Embedding Similarity Distribution
 
 Violin plots showing the distribution of semantic similarity between teacher and student answers.
 
-![Embedding Similarity Grouped](task1/outputs/analysis/violin_embedding-similarity-adjusted_grouped.png)
+![Embedding Similarity Grouped](task1/outputs/pre-lumi/analysis/violin_embedding-similarity-adjusted_grouped.png)
 
 ### Model Performance Heatmap
 
 Comprehensive comparison of all models across key metrics.
 
-![Metrics Heatmap](task1/outputs/analysis/metrics_heatmap.png)
+![Metrics Heatmap](task1/outputs/pre-lumi/analysis/metrics_heatmap.png)
 
 ### Training Effect by Model Size
 
 Comparison of Base, LoRA, and Full Finetune performance across model sizes.
 
-![Training Effect by Size](task1/outputs/analysis/training_effect_by_size.png)
+![Training Effect by Size](task1/outputs/pre-lumi/analysis/training_effect_by_size.png)
 
 ### Performance Improvement Rate
 
 Percentage improvement from base model after training.
 
-![Improvement Rate](task1/outputs/analysis/improvement_rate_by_training.png)
+![Improvement Rate](task1/outputs/pre-lumi/analysis/improvement_rate_by_training.png)
 
 ---

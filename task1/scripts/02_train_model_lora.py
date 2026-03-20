@@ -62,6 +62,12 @@ def get_rocm_safe_attn_impl() -> str:
         return "sdpa"
 
 
+def resolve_attn_impl(requested: str) -> str:
+    if requested == "auto":
+        return get_rocm_safe_attn_impl()
+    return requested
+
+
 def format_chat_example(llm_input: str, llm_output: str, tokenizer) -> str:
     return tokenizer.apply_chat_template(
         [
@@ -184,6 +190,13 @@ class MLflowMetricsCallback(TrainerCallback):
 )
 @click.option("--val-split", default=0.2, show_default=True, type=float, help="Validation split fraction.")
 @click.option(
+    "--attn-implementation",
+    default="auto",
+    show_default=True,
+    type=click.Choice(["auto", "sdpa", "eager", "flash_attention_2"]),
+    help="Attention backend to request from transformers.",
+)
+@click.option(
     "--mlflow-experiment",
     default="lora-training",
     show_default=True,
@@ -202,6 +215,7 @@ def main(
     lora_dropout,
     lora_target_modules,
     val_split,
+    attn_implementation,
     mlflow_experiment,
 ):
     # ------------------------------------------------------------------
@@ -265,7 +279,7 @@ def main(
     if is_main_process():
         logging.info(f"Loading model: {model_name}")
     tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
-    attn_impl = get_rocm_safe_attn_impl()
+    attn_impl = resolve_attn_impl(attn_implementation)
     if is_main_process():
         logging.info(f"Using attention implementation: {attn_impl}")
     model = AutoModelForCausalLM.from_pretrained(
