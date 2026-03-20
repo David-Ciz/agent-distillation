@@ -31,6 +31,7 @@
 #SBATCH --error=/users/%u/agent-distillation/logs/tta_%j.err
 
 set -euo pipefail
+ulimit -c 0
 
 module purge
 module use /appl/local/laifs/modules
@@ -74,6 +75,7 @@ echo "Samples:         ${TTA_SAMPLES}"
 
 srun singularity run "$SIF" \
     bash -c "
+        ulimit -c 0
         [ -n \"${CONTAINER_VENV}\" ] && source \"${CONTAINER_VENV}/bin/activate\"
         [ -n \"${CONTAINER_PYTHON_OVERRIDES:-}\" ] && [ -d \"${CONTAINER_PYTHON_OVERRIDES}\" ] && export PYTHONPATH=\"${CONTAINER_PYTHON_OVERRIDES}\${PYTHONPATH:+:\${PYTHONPATH}}\"
         cd ${REPO_DIR}

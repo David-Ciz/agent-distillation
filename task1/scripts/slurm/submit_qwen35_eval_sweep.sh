@@ -29,12 +29,14 @@ SCRATCH_DIR="/scratch/project_465002758/${USER:-daciz}/agent-distillation/task1/
 # TYPE: lora | full_finetune | base
 # ---------------------------------------------------------------------------
 MODELS_ARGS=(
-    "--models '${SCRATCH_DIR}/Qwen_Qwen3.5-0.8B-lora-final,Qwen3.5-0.8B-lora,lora,32'"
-    "--models '${SCRATCH_DIR}/Qwen_Qwen3.5-2B-lora-final,Qwen3.5-2B-lora,lora,32'"
     "--models '${SCRATCH_DIR}/Qwen_Qwen3.5-4B-lora-final,Qwen3.5-4B-lora,lora,16'"
-    "--models 'Qwen/Qwen3.5-0.8B,Qwen3.5-0.8B-base,base,32'"
-    "--models 'Qwen/Qwen3.5-2B,Qwen3.5-2B-base,base,32'"
+    "--models '${SCRATCH_DIR}/Qwen_Qwen3.5-9B-lora-final,Qwen3.5-9B-lora,lora,8'"
+    "--models '${SCRATCH_DIR}/Qwen_Qwen3.5-2B-lora-final,Qwen3.5-2B-lora,lora,32'"
+    "--models '${SCRATCH_DIR}/Qwen_Qwen3.5-35B-A3B-lora-final,Qwen3.5-35B-A3B-lora,lora,1'"
     "--models 'Qwen/Qwen3.5-4B,Qwen3.5-4B-base,base,16'"
+    "--models 'Qwen/Qwen3.5-9B,Qwen3.5-9B-base,base,8'"
+    "--models 'Qwen/Qwen3.5-2B,Qwen3.5-2B-base,base,32'"
+    "--models 'Qwen/Qwen3.5-35B-A3B,Qwen3.5-35B-A3B-base,base,1'"
 )
 
 MODELS_STR="${MODELS_ARGS[*]}"

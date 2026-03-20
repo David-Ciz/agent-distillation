@@ -36,10 +36,10 @@ fi
 # Columns: MODEL_NAME  BATCH_SIZE  GRAD_ACCUM  TIME_LIMIT
 # ---------------------------------------------------------------------------
 MODELS=(
-    "Qwen/Qwen2.5-0.5B-Instruct  4  2  02:00:00"
-    "Qwen/Qwen2.5-1.5B-Instruct  2  4  03:00:00"
-    "Qwen/Qwen2.5-3B-Instruct    2  4  04:00:00"
-    "Qwen/Qwen2.5-7B-Instruct    1  8  08:00:00"
+    "Qwen/Qwen2.5-0.5B-Instruct  4  2  04:00:00"
+    "Qwen/Qwen2.5-1.5B-Instruct  2  4  06:00:00"
+    "Qwen/Qwen2.5-3B-Instruct    2  4  08:00:00"
+    "Qwen/Qwen2.5-7B-Instruct    1  8  12:00:00"
 )
 
 echo "=================================================="

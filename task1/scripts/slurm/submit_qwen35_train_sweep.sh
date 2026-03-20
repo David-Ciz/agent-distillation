@@ -2,8 +2,8 @@
 # =============================================================================
 # submit_qwen35_train_sweep.sh — Submit the Qwen3.5 LoRA training sweep
 #
-# Keeps the baseline Qwen2.5 sweep stable while adding a dedicated Phase 6
-# sweep for the selected Qwen3.5 checkpoints.
+# Uses the standard / slow-path environment for the whole Qwen3.5 family to
+# keep training and evaluation workflows uniform.
 #
 # Usage:
 #   bash task1/scripts/slurm/submit_qwen35_train_sweep.sh
@@ -21,27 +21,27 @@ fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TRAIN_SCRIPT="${SCRIPT_DIR}/train_lora_lumi.sh"
-SBATCH_EXPORT="ALL"
-
-if [[ -n "${CONTAINER_PYTHON_OVERRIDES:-}" ]]; then
-    SBATCH_EXPORT+=",CONTAINER_PYTHON_OVERRIDES=${CONTAINER_PYTHON_OVERRIDES}"
-fi
+QWEN35_OVERRIDES="${QWEN35_OVERRIDES:-${HOME}/agent-distillation/py-overrides}"
+SBATCH_EXPORT="ALL,CONTAINER_PYTHON_OVERRIDES=${QWEN35_OVERRIDES}"
 if [[ -n "${CONTAINER_VENV:-}" ]]; then
     SBATCH_EXPORT+=",CONTAINER_VENV=${CONTAINER_VENV}"
 fi
 
 # ---------------------------------------------------------------------------
-# Qwen3.5 models to train
-# Conservative first-pass settings to minimize OOM risk on the first sweep.
+# Qwen3.5 models to train in the requested order using the standard override
+# path. These are the post-trained checkpoints, not the -Base variants.
 # ---------------------------------------------------------------------------
 MODELS=(
-    "Qwen/Qwen3.5-0.8B  4  2  06:00:00"
-    "Qwen/Qwen3.5-2B    2  4  12:00:00"
-    "Qwen/Qwen3.5-4B    1  8  20:00:00"
+    "Qwen/Qwen3.5-0.8B       4  2   10:00:00"
+    "Qwen/Qwen3.5-2B         2  4   16:00:00"
+    "Qwen/Qwen3.5-4B         1  8   24:00:00"
+    "Qwen/Qwen3.5-9B         1  16  36:00:00"
+    "Qwen/Qwen3.5-35B-A3B    1  16  48:00:00"
 )
 
 echo "=================================================="
 echo "Qwen3.5 training sweep — $(date)"
+echo "Overrides path: $QWEN35_OVERRIDES"
 echo "=================================================="
 
 SUBMITTED=()
