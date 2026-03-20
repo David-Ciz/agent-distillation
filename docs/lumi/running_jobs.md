@@ -63,6 +63,28 @@ When using `~/agent-distillation/py-overrides` for Qwen3.5:
 - If testing `flash-linear-attention`, prefer `--no-deps` first and inspect the
   target directory before running jobs.
 
+If you have a tested scratch override dir for Qwen3.5, you can switch to it per
+job without editing files:
+
+```bash
+CONTAINER_PYTHON_OVERRIDES=/scratch/project_465002758/$USER/qwen35-test-overrides \
+sbatch task1/scripts/slurm/train_lora_lumi.sh
+```
+
+The same pattern works for the sweep wrappers:
+
+```bash
+CONTAINER_PYTHON_OVERRIDES=/scratch/project_465002758/$USER/qwen35-test-overrides \
+bash task1/scripts/slurm/submit_qwen35_train_sweep.sh
+```
+
+You can also use the same override dir for setup checks:
+
+```bash
+PYTHONPATH=/scratch/project_465002758/$USER/qwen35-test-overrides:$PYTHONPATH \
+python task1/scripts/slurm/setup_checks/qwen35_kernel_check.py
+```
+
 ### Single LoRA job
 
 ```bash

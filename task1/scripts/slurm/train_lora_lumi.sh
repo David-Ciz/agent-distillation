@@ -70,6 +70,8 @@ GPU_MONITOR_PID=$!
 # Model / training hyperparams — override via env before sbatch, e.g.:
 #   MODEL_NAME=Qwen/Qwen2.5-0.5B-Instruct BATCH_SIZE=4 GRAD_ACCUM=2 \
 #       sbatch task1/scripts/slurm/train_lora_lumi.sh
+#   CONTAINER_PYTHON_OVERRIDES=/scratch/project_465002758/$USER/qwen35-test-overrides \
+#       MODEL_NAME=Qwen/Qwen3.5-2B sbatch task1/scripts/slurm/train_lora_lumi.sh
 # ------------------------------------------------------------------
 MODEL_NAME="${MODEL_NAME:-Qwen/Qwen2.5-3B-Instruct}"
 NUM_EPOCHS="${NUM_EPOCHS:-3}"
