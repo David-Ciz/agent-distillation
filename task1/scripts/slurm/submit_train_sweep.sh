@@ -22,6 +22,14 @@ fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TRAIN_SCRIPT="${SCRIPT_DIR}/train_lora_lumi.sh"
+SBATCH_EXPORT="ALL"
+
+if [[ -n "${CONTAINER_PYTHON_OVERRIDES:-}" ]]; then
+    SBATCH_EXPORT+=",CONTAINER_PYTHON_OVERRIDES=${CONTAINER_PYTHON_OVERRIDES}"
+fi
+if [[ -n "${CONTAINER_VENV:-}" ]]; then
+    SBATCH_EXPORT+=",CONTAINER_VENV=${CONTAINER_VENV}"
+fi
 
 # ---------------------------------------------------------------------------
 # Models to train — edit this list for your sweep
@@ -52,11 +60,13 @@ for entry in "${MODELS[@]}"; do
 
     if $DRY_RUN; then
         echo "[DRY RUN] Would submit: MODEL_NAME=$model BATCH_SIZE=$batch GRAD_ACCUM=$accum"
+        echo "[DRY RUN] sbatch --export=$SBATCH_EXPORT ..."
     else
         JOB_ID=$(MODEL_NAME="$model" \
                  BATCH_SIZE="$batch" \
                  GRAD_ACCUM="$accum" \
                  sbatch --time="$timelimit" \
+                        --export="$SBATCH_EXPORT" \
                         --job-name="$job_name" \
                         --parsable \
                         "$TRAIN_SCRIPT")
@@ -79,4 +89,3 @@ else
     echo "After all finish, run: bash task1/scripts/slurm/submit_eval_sweep.sh"
 fi
 echo "=================================================="
-
