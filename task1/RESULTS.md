@@ -145,6 +145,141 @@ The next refinement is now downstream rather than foundational:
 - per-category plots for the strongest routing candidates
 - validation on the fresh LUMI runs as they arrive
 
+### 7. Routing Simulation Produces a Positive Phase 3 Result
+
+We simulated five routing strategies over the archived pre-LUMI Qwen LoRA family:
+
+- Qwen 2.5 0.5B LoRA
+- Qwen 2.5 1.5B LoRA
+- Qwen 2.5 3B LoRA
+- Qwen 2.5 7B LoRA
+
+Summary result:
+
+| Strategy | Avg Cost (B params) | Embed Sim Adj | Embed Sim | Abstain F1 |
+|----------|---------------------|---------------|-----------|------------|
+| `always_small` | 0.50 | 0.7006 | 0.8243 | 0.8154 |
+| `always_large` | 7.00 | **0.8511** | **0.8997** | **0.9067** |
+| `blind_cascade` | 8.66 | 0.7683 | 0.8562 | 0.8406 |
+| `qa_routing` | **0.6824** | 0.7568 | 0.8510 | 0.8563 |
+| `qa_ensemble` | 12.00 | 0.8299 | 0.8903 | 0.8936 |
+
+What this means:
+
+- `qa_routing` is **much cheaper than `always_large`** while still recovering a substantial fraction of the quality gap
+- `qa_routing` is **materially better than `always_small`** at only a modest cost increase
+- `qa_routing` is **far cheaper than `blind_cascade`** and still outperforms the small-model baseline comfortably
+- `qa_ensemble` is strong but too expensive to be the main cost-saving story
+
+Most importantly:
+
+- On the archived run, `qa_routing` lies **above the line** between `always_small` and `always_large`
+- That is the positive Phase 3 outcome required by the research plan
+
+Important caveat:
+
+- The current `qa_routing` experiment is still an **oracle routing upper bound**
+- It routes using the known `false_confidence` label directly rather than a learned classifier or score
+
+So the result is promising but not yet deployable. The next step is to test whether the gain survives stronger baselines and more realistic routing rules:
+
+- random-routing ablation
+- threshold sensitivity
+- eventually, classifier-based routing on fresh LUMI results
+
+### 8. Random-Routing Ablation Confirms the Signal Matters
+
+We ran a random-routing baseline over the same Qwen LoRA family and routing architecture.
+
+Design:
+
+- keep the same staged routing structure
+- replace the oracle QA escalation decision with random escalation
+- match the stage-wise escalation probabilities of the oracle QA router
+- run 20 random seeds
+
+Result:
+
+| Metric | Random Routing Mean ± Std | Oracle QA Routing | Oracle - Random Mean |
+|--------|----------------------------|-------------------|----------------------|
+| Avg cost | 0.687 ± 0.025 | **0.682** | -0.0048 |
+| Embed Sim Adj | 0.7057 ± 0.0027 | **0.7568** | +0.0511 |
+| Raw Embed Sim | 0.8268 ± 0.0013 | **0.8510** | +0.0242 |
+| Token Overlap | 0.5705 ± 0.0020 | **0.6210** | +0.0505 |
+| Exact Match | 0.6426 ± 0.0019 | **0.6978** | +0.0552 |
+| Abstain F1 | 0.8181 ± 0.0017 | **0.8563** | +0.0382 |
+
+Interpretation:
+
+- The random baseline operates at essentially the **same average cost** as oracle QA routing
+- Oracle QA routing still wins by a large margin on every quality metric
+- This is strong evidence that the routing gain is coming from the **signal**, not merely from the multi-stage architecture
+
+This is the strongest result so far in favour of the routing direction.
+
+Remaining caveat:
+
+- The router is still oracle-labelled rather than learned
+- So the random ablation validates the usefulness of the signal, but not yet the deployability of the method
+
+What remains for Phase 4:
+
+- classifier-based or score-based routing on the fresh LUMI runs
+- comparison of the learned router against fresh post-LUMI evaluations as they arrive
+
+### 9. A First Non-Oracle Router Is Feasible
+
+We trained a simple false-confidence classifier for the Qwen LoRA routing chain using only features available from the current model output:
+
+- student answer text
+- abstain flag
+- answer length / output length
+
+Method:
+
+- logistic regression with TF-IDF text features + numeric features
+- evaluated with out-of-fold predictions on the archived pre-LUMI run
+- routed stage-by-stage using the predicted false-confidence probability
+
+Stage-wise classifier quality:
+
+| Model | Positive Rate | ROC AUC | Average Precision |
+|-------|---------------|---------|-------------------|
+| Qwen 2.5 0.5B LoRA | 5.9% | **0.969** | 0.534 |
+| Qwen 2.5 1.5B LoRA | 6.7% | 0.943 | 0.412 |
+| Qwen 2.5 3B LoRA | 4.7% | 0.917 | 0.245 |
+
+These are strong enough to justify a threshold sweep.
+
+Threshold sensitivity result:
+
+- The sweep is not brittle; there is a fairly broad flat region
+- Peak adjusted quality occurs around threshold `0.60`
+- A cost-matched operating point to the oracle router appears around threshold `0.85`
+
+Selected operating points:
+
+| Threshold | Avg Cost (B params) | Embed Sim Adj | Embed Sim | Abstain F1 |
+|-----------|---------------------|---------------|-----------|------------|
+| 0.60 | 1.157 | **0.7377** | **0.8442** | **0.8436** |
+| 0.85 | 0.697 | 0.7325 | 0.8406 | 0.8390 |
+| Oracle QA routing | 0.682 | **0.7568** | **0.8510** | **0.8563** |
+| Always small | 0.500 | 0.7006 | 0.8243 | 0.8154 |
+
+Interpretation:
+
+- The learned router does **not** match the oracle router yet
+- But it does recover a substantial part of the gain with a real scalar score
+- Around threshold `0.85`, it operates at almost the same cost as the oracle router while clearly beating the `always_small` baseline
+- The flat region from roughly `0.45` to `0.70` suggests the method is not hypersensitive to threshold choice
+
+Important caveat:
+
+- This is still evaluated on the archived pre-LUMI split using out-of-fold predictions
+- It is therefore a credible non-oracle prototype, but not yet the final held-out deployment claim
+
+This is enough to justify taking the learned routing setup forward onto the fresh LUMI evaluations as they complete.
+
 ---
 
 ## Detailed Visualizations

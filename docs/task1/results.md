@@ -126,6 +126,91 @@ The next refinement, if needed, is descriptive rather than foundational:
 - per-category plots for the strongest routing candidates
 - validation on the fresh LUMI runs as they arrive
 
+### Routing simulation is positive on the archived run
+
+We then simulated five routing strategies over the archived pre-LUMI Qwen LoRA family (`0.5B -> 1.5B -> 3B -> 7B`).
+
+| Strategy | Avg Cost (B params) | Embed Sim Adj | Abstain F1 |
+|----------|---------------------|---------------|------------|
+| always_small | 0.50 | 0.701 | 0.815 |
+| always_large | 7.00 | **0.851** | **0.907** |
+| blind_cascade | 8.66 | 0.768 | 0.841 |
+| qa_routing | **0.68** | 0.757 | 0.856 |
+| qa_ensemble | 12.00 | 0.830 | 0.894 |
+
+Interpretation:
+
+- `qa_routing` is substantially better than `always_small` while staying far cheaper than `always_large`
+- `qa_routing` also beats the naive abstention-based `blind_cascade` on cost by a large margin
+- On the archived run, `qa_routing` sits above the line between `always_small` and `always_large`, which is the positive result the routing paper needs
+
+Important caveat:
+
+- the current `qa_routing` simulation is still an **oracle upper bound**
+- it uses the labelled `false_confidence` category directly, not a deployable learned classifier
+
+So this result supports the routing direction, but the next step is still required:
+
+- compare against a random-routing baseline
+- replace the oracle decision with a thresholded or learned routing signal
+
+### Random-routing ablation supports the signal claim
+
+We also replaced the QA-based escalation decision with a random escalation decision that preserves the same stage-wise escalation architecture and approximately the same average cost.
+
+Result over 20 random seeds:
+
+| Metric | Random Routing Mean ± Std | Oracle QA Routing |
+|--------|----------------------------|-------------------|
+| Avg cost | 0.687 ± 0.025 | **0.682** |
+| Embed Sim Adj | 0.706 ± 0.003 | **0.757** |
+| Raw Embed Sim | 0.827 ± 0.001 | **0.851** |
+| Token Overlap | 0.570 ± 0.002 | **0.621** |
+| Exact Match | 0.643 ± 0.002 | **0.698** |
+| Abstain F1 | 0.818 ± 0.002 | **0.856** |
+
+Interpretation:
+
+- the random baseline uses essentially the same budget as oracle QA routing
+- despite that, oracle QA routing wins by a wide margin on every quality metric
+- this is the strongest current evidence that the gain comes from the QA signal itself, not just from adding a routing structure
+
+### A first non-oracle routing score works
+
+We then trained a simple false-confidence classifier for the Qwen LoRA routing chain using only model-side features available at inference time:
+
+- student answer text
+- abstain flag
+- answer length features
+
+The classifier was evaluated using out-of-fold predictions on the archived pre-LUMI run.
+
+Stage-wise classifier quality:
+
+| Model | ROC AUC | Average Precision |
+|-------|---------|-------------------|
+| Qwen 0.5B LoRA | **0.969** | 0.534 |
+| Qwen 1.5B LoRA | 0.943 | 0.412 |
+| Qwen 3B LoRA | 0.917 | 0.245 |
+
+Threshold sweep result:
+
+- the sweep shows a broad stable region rather than a brittle single-point optimum
+- the best quality is around threshold `0.6`
+- at threshold `0.6`, average cost is `1.16` B params, adjusted similarity is `0.738`, and Abstain F1 is `0.844`
+- at threshold `0.85`, average cost is `0.697` B params, adjusted similarity is `0.732`, and Abstain F1 is `0.839`
+
+Interpretation:
+
+- the learned router does not match the oracle router yet
+- but it still produces a non-oracle cost-quality tradeoff that is comfortably above the `always_small` baseline
+- the threshold sweep is fairly flat across a useful range, which is a good sign for robustness
+
+Important caveat:
+
+- these scores are out-of-fold on the archived pre-LUMI split, not a fresh held-out LUMI validation set
+- so this is a strong prototype result, but not yet the final deployable claim
+
 ---
 
 ## Visualisations

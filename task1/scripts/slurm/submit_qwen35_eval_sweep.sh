@@ -2,8 +2,9 @@
 # =============================================================================
 # submit_qwen35_eval_sweep.sh — Submit the Qwen3.5 evaluation sweep
 #
-# Evaluates the Qwen3.5 LoRA adapters from scratch plus their base models.
-# This keeps the baseline evaluation sweep unchanged.
+# Evaluates the trained Qwen3.5 LoRA final adapters in a single evaluation job.
+# This wrapper uses the same container override path as the Qwen3.5 training
+# sweep so evaluation runs under the same Python environment family.
 #
 # Usage:
 #   bash task1/scripts/slurm/submit_qwen35_eval_sweep.sh
@@ -18,23 +19,27 @@ if [[ "${1:-}" == "--dry-run" ]]; then
 fi
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_DIR="$(cd "${SCRIPT_DIR}/../../../" && pwd)"
+EVAL_SCRIPT="${SCRIPT_DIR}/eval_lumi.sh"
+QWEN35_OVERRIDES="${QWEN35_OVERRIDES:-${HOME}/agent-distillation/py-overrides}"
+SBATCH_EXPORT="ALL,CONTAINER_PYTHON_OVERRIDES=${QWEN35_OVERRIDES}"
+
+if [[ -n "${CONTAINER_VENV:-}" ]]; then
+    SBATCH_EXPORT+=",CONTAINER_VENV=${CONTAINER_VENV}"
+fi
 
 # Model weights live on scratch, not home
 SCRATCH_DIR="/scratch/project_465002758/${USER:-daciz}/agent-distillation/task1/outputs"
 
 # ---------------------------------------------------------------------------
-# Qwen3.5 models to evaluate
+# Qwen3.5 LoRA finals to evaluate
 # Format per entry: 'ADAPTER_PATH_OR_HF_ID,NAME,TYPE,GEN_BATCH'
 # TYPE: lora | full_finetune | base
 # ---------------------------------------------------------------------------
 MODELS_ARGS=(
+    "--models '${SCRATCH_DIR}/Qwen_Qwen3.5-0.8B-lora-final,Qwen3.5-0.8B-lora,lora,32'"
+    "--models '${SCRATCH_DIR}/Qwen_Qwen3.5-2B-lora-final,Qwen3.5-2B-lora,lora,32'"
     "--models '${SCRATCH_DIR}/Qwen_Qwen3.5-4B-lora-final,Qwen3.5-4B-lora,lora,16'"
     "--models '${SCRATCH_DIR}/Qwen_Qwen3.5-9B-lora-final,Qwen3.5-9B-lora,lora,8'"
-    "--models '${SCRATCH_DIR}/Qwen_Qwen3.5-2B-lora-final,Qwen3.5-2B-lora,lora,32'"
-    "--models 'Qwen/Qwen3.5-4B,Qwen3.5-4B-base,base,16'"
-    "--models 'Qwen/Qwen3.5-9B,Qwen3.5-9B-base,base,8'"
-    "--models 'Qwen/Qwen3.5-2B,Qwen3.5-2B-base,base,32'"
 )
 
 MODELS_STR="${MODELS_ARGS[*]}"
@@ -44,6 +49,7 @@ echo "Qwen3.5 evaluation sweep — $(date)"
 echo "Models to evaluate: ${#MODELS_ARGS[@]}"
 echo "=================================================="
 for m in "${MODELS_ARGS[@]}"; do echo "  $m"; done
+echo "Python overrides: $QWEN35_OVERRIDES"
 echo ""
 
 if $DRY_RUN; then
@@ -51,23 +57,12 @@ if $DRY_RUN; then
     exit 0
 fi
 
-JOB_ID=$(sbatch --parsable \
-    --job-name="agent-distill-qwen35-eval" \
-    --time=08:00:00 \
-    --export=ALL \
-    --wrap="
-        source ${SCRIPT_DIR}/container.env
-        export MLFLOW_TRACKING_URI=\"sqlite:////users/\${USER}/mlflow/mlflow.db\"
-        export MLFLOW_ARTIFACT_ROOT=\"/scratch/project_465002758/\${USER}/mlruns\"
-        export SCRATCH_OUTPUT_DIR=\"/scratch/project_465002758/\${USER}/agent-distillation/task1/outputs\"
-        [ -n \"\${CONTAINER_VENV}\" ] && VENV_CMD=\"source \${CONTAINER_VENV}/bin/activate &&\" || VENV_CMD=\"\"
-        srun singularity run \"\$SIF\" bash -c \"
-            \${VENV_CMD}
-            [ -n \"\${CONTAINER_PYTHON_OVERRIDES}\" ] && [ -d \"\${CONTAINER_PYTHON_OVERRIDES}\" ] && export PYTHONPATH=\"\${CONTAINER_PYTHON_OVERRIDES}\${PYTHONPATH:+:\${PYTHONPATH}}\"
-            cd ${REPO_DIR}
-            python task1/scripts/05_model_evaluation.py ${MODELS_STR}
-        \"
-    ")
+JOB_ID=$(EVAL_MODELS="$MODELS_STR" \
+    sbatch --parsable \
+        --job-name="agent-distill-qwen35-eval" \
+        --time=08:00:00 \
+        --export="$SBATCH_EXPORT" \
+        "$EVAL_SCRIPT")
 
 echo "Submitted eval sweep job: $JOB_ID"
 echo ""

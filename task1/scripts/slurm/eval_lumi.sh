@@ -8,7 +8,7 @@
 #      sbatch task1/scripts/slurm/eval_lumi.sh
 #    Uses the EVAL_MODELS default below.
 #
-# 2. Driven by submit_eval_sweep.sh (full sweep):
+# 2. Driven by submit_eval_sweep.sh / submit_qwen35_eval_sweep.sh:
 #    The sweep script passes --models args via the EVAL_MODELS env var.
 #
 # Override models on the command line:
@@ -57,6 +57,7 @@ SCRATCH_OUTPUT_DIR="/scratch/project_465002758/${USER}/agent-distillation/task1/
 EVAL_MODELS="${EVAL_MODELS:---models '${SCRATCH_OUTPUT_DIR}/Qwen_Qwen2.5-3B-Instruct-lora-final,Qwen2.5-3B-Instruct-lora,lora,32' --models 'Qwen/Qwen2.5-3B-Instruct,Qwen2.5-3B-Instruct-base,base,32'}"
 
 echo "Evaluating: ${EVAL_MODELS}"
+echo "Container venv: ${CONTAINER_VENV:-<none>}"
 
 srun singularity run "$SIF" \
     bash -c "
