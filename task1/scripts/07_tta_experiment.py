@@ -213,12 +213,14 @@ def generate_n_answers(
                     max_length=2048,
                 )
                 inputs = {k: v.to(device) for k, v in inputs.items()}
-                input_lengths = inputs["attention_mask"].sum(dim=1)
+                prompt_width = inputs["input_ids"].shape[1]
 
                 outputs = model.generate(**inputs, **gen_kwargs)
 
-                for i, (out_ids, in_len) in enumerate(zip(outputs, input_lengths)):
-                    generated_ids = out_ids[in_len:]
+                for i, out_ids in enumerate(outputs):
+                    # Batched left padding means the generated suffix starts
+                    # after the shared padded prompt width for every row.
+                    generated_ids = out_ids[prompt_width:]
                     text_out = tokenizer.decode(
                         generated_ids, skip_special_tokens=True
                     )

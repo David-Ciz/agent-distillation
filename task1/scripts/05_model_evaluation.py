@@ -185,7 +185,7 @@ def generate_answers_batched(
                 max_length=2048
             )
             inputs = {k: v.to(device) for k, v in inputs.items()}
-            input_lengths = inputs['attention_mask'].sum(dim=1)
+            prompt_width = inputs['input_ids'].shape[1]
             
             # Generate for entire batch
             outputs = model.generate(
@@ -197,9 +197,11 @@ def generate_answers_batched(
             )
             
             # Decode each output
-            for i, (output_ids, input_len, meta) in enumerate(zip(outputs, input_lengths, batch_metadata)):
-                # Extract only generated tokens (after input)
-                generated_ids = output_ids[input_len:]
+            for output_ids, meta in zip(outputs, batch_metadata):
+                # With left padding, generate() returns the full padded prompt for
+                # every row. Slice at the shared prompt width, not the per-row
+                # non-pad token count, or prompt tokens leak into the decode.
+                generated_ids = output_ids[prompt_width:]
                 student_output = tokenizer.decode(generated_ids, skip_special_tokens=True)
                 
                 # Extract answers using robust extraction
