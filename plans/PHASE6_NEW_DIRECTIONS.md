@@ -49,13 +49,37 @@ The baseline uses Qwen **2.5** (0.5B, 1.5B, 3B, 7B). Newer Qwen3-family models a
 
 ## Direction 2 — Model Collapse Detection
 
-**Goal**: Determine whether any trained models have collapsed — i.e. degenerated into a mode where they output the same (or near-identical) text regardless of input — and build a routine check into the evaluation pipeline.
+**Goal**: Determine whether any trained models have collapsed — either by degenerating into a mode where they output the same (or near-identical) text regardless of input, or by forgetting core reasoning / world knowledge during LoRA training — and build a routine check into the evaluation pipeline.
 
 ### Context
 
-Model collapse can be subtle: a model that always outputs the canonical abstain phrase ("I cannot answer based on the provided evidence.") will score a high student abstain rate but near-zero `both_answer` rate. It may also show suspiciously low perplexity variance across samples.
+Model collapse can be subtle. On the task dataset, a model that always outputs the canonical abstain phrase ("I cannot answer based on the provided evidence.") will score a high student abstain rate but near-zero `both_answer` rate. On general benchmarks, a model can also "look" aligned for retrieval / abstention while having quietly lost math, common-sense, coding, or factual QA capability.
 
 From the baseline, Qwen 0.5B LoRA already abstains at 87% vs the teacher's 70%, which is a yellow flag. A collapsed model would push this even higher (95–100%).
+
+To keep the check lightweight enough for LUMI, use a small benchmark suite rather than a broad battery: the "Golden Five" below are the routine guardrail set.
+
+### Benchmark suite for general-capability collapse
+
+Use `EleutherAI/lm-evaluation-harness` (`lm-eval`) to compare the base model against intermediate and final LoRA checkpoints.
+
+| Benchmark | Capability measured | Why it matters here |
+|-----------|---------------------|---------------------|
+| MMLU | General knowledge | Verifies the LoRA has not damaged broad factual competence across many subjects. |
+| GSM8K | Step-by-step logic | Usually the first benchmark to drop when reasoning quality starts to break. |
+| ARC-Challenge | Common-sense reasoning | Catches degradation in basic reasoning outside the training distribution. |
+| HumanEval | Coding / syntax | Checks whether structured-language competence remains intact. |
+| TruthfulQA | Factual honesty | Especially relevant because the project trains abstention behaviour and should not increase hallucination. |
+
+### Diagnostic protocol
+
+1. Run the Golden Five on the **base checkpoint** before LoRA training to establish the reference scores.
+2. During LoRA training, re-run the same suite every **500-1000 steps** on the latest checkpoint.
+3. On the task eval set, continue to run the lightweight collapse heuristics below on every evaluation pass.
+4. If a benchmark score drops materially, re-run that benchmark once with a short **force-answer diagnostic instruction** to distinguish over-abstention from real collapse:
+   - If the score rebounds when forced to answer, the model is likely over-cautious rather than collapsed.
+   - If the score stays low even when forced, treat that as genuine model collapse.
+5. Treat a **5-10% drop vs the base model**, especially on **GSM8K** or **MMLU**, as a red flag that warrants stopping the run and checking learning rate, LoRA rank, or data quality.
 
 ### Signals to check
 
@@ -69,7 +93,13 @@ From the baseline, Qwen 0.5B LoRA already abstains at 87% vs the teacher's 70%, 
 
 ### What to do
 
-1. **Add a collapse detection function** to `eval_utils.py`:
+1. **Adopt `lm-evaluation-harness` as the benchmark runner** for general-capability collapse checks. Use it to evaluate the Golden Five for the base model, intermediate checkpoints, and final LoRA adapters.
+
+2. **Add a reusable LUMI-friendly benchmark command / wrapper** so the Golden Five can be run from the existing training workflow, ideally via a dedicated SLURM entrypoint for checkpoint evaluation.
+
+3. **Log benchmark scores in MLflow** alongside the task metrics, using the base checkpoint as the reference. Record both the natural run and any force-answer diagnostic rerun.
+
+4. **Keep the current task-level collapse heuristics** by adding a collapse detection function to `eval_utils.py`:
 
    ```python
    def detect_collapse(results: List[Dict], threshold_abstain: float = 0.90,
@@ -84,24 +114,29 @@ From the baseline, Qwen 0.5B LoRA already abstains at 87% vs the teacher's 70%, 
        """
    ```
 
-2. **Call it inside `evaluate_model()`** in `05_model_evaluation.py` and log the result as an MLflow tag: `collapse_detected=true/false`.
+5. **Call it inside `evaluate_model()`** in `05_model_evaluation.py` and log the result as an MLflow tag: `collapse_detected=true/false`.
 
-3. **Surface it in `06_analyse_visualize_results.py`**: print a prominent warning in the console and add a `collapse_detected` column to `model_comparison_summary.csv`.
+6. **Surface it in `06_analyse_visualize_results.py`**: print a prominent warning in the console and add a `collapse_detected` column to `model_comparison_summary.csv`.
 
-4. **Retroactively check all existing eval runs**: write a small one-off script `task1/scripts/check_collapse.py` that reads `*_detailed_results.csv` files and reports any models that trip the thresholds. Run it against `task1/outputs/evaluations/` immediately.
+7. **Retroactively check all existing eval runs**: write a small one-off script `task1/scripts/check_collapse.py` that reads `*_detailed_results.csv` files and reports any models that trip the thresholds. Run it against `task1/outputs/evaluations/` immediately.
 
-5. **Add a collapse section to `task1/RESULTS.md`** with the findings.
+8. **Add a collapse section to `task1/RESULTS.md`** with the findings, including:
+   - Golden Five benchmark deltas vs base checkpoint
+   - Whether any force-answer reruns recovered the score
+   - Whether the task-level collapse heuristics also fired
 
 ### Files to modify / create
 
 | Action | File |
 |--------|------|
+| **Create / Modify** | `task1/scripts/slurm/*` — add a checkpoint-eval path for `lm-eval` on LUMI |
 | **Modify** | `task1/scripts/eval_utils.py` — add `detect_collapse()` |
 | **Modify** | `task1/scripts/05_model_evaluation.py` — call it, log to MLflow |
 | **Modify** | `task1/scripts/06_analyse_visualize_results.py` — warn + add column |
 | **Create** | `task1/scripts/check_collapse.py` — one-off retroactive check |
 | **Update** | `task1/RESULTS.md` — collapse findings section |
 | **Update** | `docs/task1/evaluation_metrics.md` — document collapse signals |
+| **Update** | `docs/lumi/overview.md` / `docs/lumi/running_jobs.md` — document Golden Five runs on LUMI |
 
 ---
 

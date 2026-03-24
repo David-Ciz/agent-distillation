@@ -153,6 +153,26 @@ bash task1/scripts/slurm/submit_qwen35_eval_sweep.sh
 bash task1/scripts/slurm/submit_qwen35_eval_sweep.sh --dry-run
 ```
 
+### Submit collapse benchmark sweeps (final checkpoints only)
+
+Qwen2.5 family:
+
+```bash
+bash task1/scripts/slurm/submit_collapse_eval_sweep.sh
+bash task1/scripts/slurm/submit_collapse_eval_sweep.sh --dry-run
+```
+
+Qwen3.5 family:
+
+```bash
+bash task1/scripts/slurm/submit_qwen35_collapse_sweep.sh
+bash task1/scripts/slurm/submit_qwen35_collapse_sweep.sh --dry-run
+```
+
+These launch the Golden Five `lm-eval` suite (`MMLU`, `GSM8K`,
+`ARC-Challenge`, `HumanEval`, `TruthfulQA`) against the final LoRA adapters and
+refresh the aggregate CSVs afterward.
+
 ### Single eval job
 
 ```bash
@@ -163,6 +183,26 @@ Override models:
 
 ```bash
 EVAL_MODELS="--models 'path,name,type,batch'" sbatch task1/scripts/slurm/eval_lumi.sh
+```
+
+### Single collapse benchmark job
+
+```bash
+sbatch task1/scripts/slurm/collapse_eval_lumi.sh
+```
+
+Override models or pass extra script args:
+
+```bash
+COLLAPSE_EVAL_MODELS="--models 'path,name,type,batch'" \
+COLLAPSE_EVAL_EXTRA_ARGS="--limit 20 --mlflow-experiment collapse-benchmarks" \
+sbatch task1/scripts/slurm/collapse_eval_lumi.sh
+```
+
+Local aggregation after syncing:
+
+```bash
+python task1/scripts/14_aggregate_collapse_benchmarks.py
 ```
 
 ---
@@ -207,6 +247,9 @@ scancel <JOB_ID>
 | `eval_lumi.sh` | Single evaluation job |
 | `submit_eval_sweep.sh` | Submit eval job covering all models |
 | `submit_qwen35_eval_sweep.sh` | Submit the Qwen3.5 evaluation sweep |
+| `collapse_eval_lumi.sh` | Single Golden Five collapse benchmark job |
+| `submit_collapse_eval_sweep.sh` | Submit the Qwen2.5 collapse benchmark sweep |
+| `submit_qwen35_collapse_sweep.sh` | Submit the Qwen3.5 collapse benchmark sweep |
 | `tta_lumi.sh` | Single TTA job |
 | `submit_tta_sweep.sh` | Submit one TTA job per model (phases A–D) |
 | `sync_results.sh` | Pull results from LUMI to local machine |

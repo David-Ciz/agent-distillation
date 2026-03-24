@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# sync_results.sh — Sync evaluation results and MLflow DB from LUMI to local
+# sync_results.sh — Sync evaluation / benchmark results and MLflow DB from LUMI to local
 #
 # Run this locally after your LUMI eval job finishes.
 #
@@ -14,7 +14,7 @@
 # Typical end-to-end flow:
 #   1. [LUMI] bash submit_train_sweep.sh       # submit all training jobs
 #   2. [LUMI] bash submit_eval_sweep.sh        # submit eval after training finishes
-#   3. [local] bash sync_results.sh            # pull CSVs + mlflow.db
+#   3. [local] bash sync_results.sh            # pull CSVs + benchmark outputs + mlflow.db
 #   4. [local] .venv/bin/python 06_analyse_visualize_results.py ...
 #   5. [local] mlflow ui --backend-store-uri sqlite:///mlflow/mlflow.db
 #
@@ -60,7 +60,7 @@ if $SYNC_MLFLOW; then
     echo "Syncing MLflow DB..."
     mkdir -p "${LOCAL_REPO}/mlflow"
     rsync -av --progress \
-        "${LUMI_USER}@${LUMI_HOST}:~/mlflow/mlflow.db" \
+        "lumi:~/mlflow/mlflow.db" \
         "${LOCAL_REPO}/mlflow/mlflow.db"
     echo "MLflow DB synced. Start UI with:"
     echo "  mlflow ui --backend-store-uri sqlite:///${LOCAL_REPO}/mlflow/mlflow.db --port 5000"
@@ -83,9 +83,22 @@ if $SYNC_RESULTS; then
         --include="evaluation.log" \
         --include="tta_run.log" \
         --exclude="*" \
-        "${LUMI_USER}@${LUMI_HOST}:${LUMI_REPO}/task1/outputs/evaluations/" \
+        "lumi:${LUMI_REPO}/task1/outputs/evaluations/" \
         "${LOCAL_REPO}/task1/outputs/evaluations/"
     echo "Results synced to: ${LOCAL_REPO}/task1/outputs/evaluations/"
+
+    echo ""
+    echo "Syncing collapse benchmark results..."
+    mkdir -p "${LOCAL_REPO}/task1/outputs/collapse_benchmarks"
+    rsync -av --progress \
+        --include="*/" \
+        --include="*.csv" \
+        --include="*.json" \
+        --include="collapse_benchmark.log" \
+        --exclude="*" \
+        "lumi:${LUMI_REPO}/task1/outputs/collapse_benchmarks/" \
+        "${LOCAL_REPO}/task1/outputs/collapse_benchmarks/"
+    echo "Collapse benchmark results synced to: ${LOCAL_REPO}/task1/outputs/collapse_benchmarks/"
 fi
 
 echo ""
@@ -106,5 +119,7 @@ echo "     open task1/outputs/evaluations/tta_run_<timestamp>/tta_comparison_sum
 echo ""
 echo "  4. View MLflow:"
 echo "     mlflow ui --backend-store-uri sqlite:///mlflow/mlflow.db --port 5000"
+echo ""
+echo "  5. Inspect aggregated collapse benchmark results:"
+echo "     open task1/outputs/collapse_benchmarks/aggregated/collapse_benchmark_aggregate_latest_wide.csv"
 echo "=================================================="
-
