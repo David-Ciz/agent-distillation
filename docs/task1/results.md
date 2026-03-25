@@ -18,6 +18,42 @@ Delta vs original baseline (Qwen 3B LoRA): −0.006 F1, −0.008 Embed Sim → *
 
 ---
 
+## Current Comparison (March 25, 2026)
+
+Latest synced evaluation run: `task1/outputs/evaluations/eval_run_20260324_173233`.
+
+This is the side-by-side comparison that matters:
+
+- archived pre-LUMI `Qwen2.5`
+- current LUMI `Qwen2.5`
+- current LUMI `Qwen3.5`
+
+Values are `Abstain Agreement / Exact Match / Embed Sim Adj`.
+
+Note: `Qwen3.5` does not match `Qwen2.5` sizes exactly, so the comparison is by nearest size tier: `0.5B~0.8B`, `1.5B~2B`, `3B~4B`, `7B~9B`.
+
+| Size Tier | Archived Qwen 2.5 LoRA | Current Qwen 2.5 LoRA | Current Qwen 3.5 LoRA | Reading |
+|-----------|--------------------------|------------------------|------------------------|---------|
+| 0.5B / 0.8B | Qwen 2.5 0.5B: `0.710 / 0.642 / 0.701` | Qwen 2.5 0.5B: `0.436 / 0.207 / 0.315` | Qwen 3.5 0.8B: `0.805 / 0.655 / 0.792` | Current `Qwen3.5` clearly wins; current `Qwen2.5-0.5B` is broken / unreliable |
+| 1.5B / 2B | Qwen 2.5 1.5B: `0.768 / 0.645 / 0.757` | Qwen 2.5 1.5B: `0.690 / 0.615 / 0.675` | Qwen 3.5 2B: `0.853 / 0.676 / 0.839` | Current `Qwen3.5-2B` is the best single current model |
+| 3B / 4B | Qwen 2.5 3B: `0.823 / 0.674 / 0.810` | Qwen 2.5 3B: `0.828 / 0.664 / 0.814` | Qwen 3.5 4B: `0.491 / 0.199 / 0.413` | `Qwen2.5-3B` is stable; current `Qwen3.5-4B` is still suspect |
+| 7B / 9B | Qwen 2.5 7B: `0.865 / 0.676 / 0.851` | Qwen 2.5 7B: `0.849 / 0.669 / 0.836` | Qwen 3.5 9B: `0.484 / 0.230 / 0.398` | `Qwen2.5-7B` remains strong; current `Qwen3.5-9B` is still suspect |
+
+### What this says
+
+- **Best current single model**: Qwen 3.5 2B LoRA
+- **Best current Qwen 2.5 model**: Qwen 2.5 7B LoRA
+- **Best archived Qwen 2.5 model**: Qwen 2.5 7B LoRA
+- **Most consistent family overall**: Qwen 2.5
+
+So the answer to "is Qwen 2.5 still best?" is:
+
+- **Against the archived baselines, most current Qwen 2.5 reruns are still worse**
+- **As a family, Qwen 2.5 is still more consistent than Qwen 3.5**
+- **As the best single current model, Qwen 3.5 2B LoRA is now slightly ahead**
+
+---
+
 ## Full Baseline (all models)
 
 | Model | Train Type | Abstain F1 | Abstain Acc | Embed Sim Adj | Student Abstain Rate |

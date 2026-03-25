@@ -79,6 +79,7 @@ def extract_answer(text: str) -> str:
         r"(?is)\bAnswer\b\s*[:\-\]]\s*(.*)$",
         r"(?is)\bfinal\s+answer\b\s*[:\-\]]\s*(.*)$",
         r"(?is)\bmy\s+answer\b\s*[:\-\]]\s*(.*)$",
+        r"(?is)\b(?:my\s+response\s+should\s+be|i\s+need\s+to\s+respond\s+with)\b\s*[:\-\]]?\s*[\"'`]?(.+?)(?:[\"'`]|$)",
     ]
 
     for p in patterns:
@@ -90,6 +91,17 @@ def extract_answer(text: str) -> str:
                 ans,
             )[0]
             return ans.strip()
+
+    abstain_sentence_patterns = [
+        r"(?is)(I\s+cannot\s+answer[^.\n]*(?:provided\s+evidence|the\s+evidence)[^.\n]*\.?)",
+        r"(?is)(I\s+cannot\s+provide\s+an?\s+answer[^.\n]*(?:provided\s+evidence|the\s+evidence)[^.\n]*\.?)",
+        r"(?is)(I\s+cannot\s+determine[^.\n]*\.?)",
+        r"(?is)(unable\s+to\s+(?:answer|determine|provide)[^.\n]*\.?)",
+    ]
+    for p in abstain_sentence_patterns:
+        m = re.search(p, t)
+        if m:
+            return normalize_text(m.group(1))
 
     if len(t) < 500 and "\n" not in t[:100]:
         return t
@@ -430,4 +442,3 @@ def setup_logging(log_file: str):
 def utc_timestamp() -> str:
     """Get UTC timestamp string."""
     return datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S_UTC")
-

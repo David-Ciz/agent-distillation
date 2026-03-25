@@ -1,5 +1,4 @@
 import os
-import re
 import sys
 import logging
 import time
@@ -42,10 +41,6 @@ SCRATCH_OUTPUT_DIR = os.environ.get("SCRATCH_OUTPUT_DIR", OUTPUT_DIR)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 os.makedirs(SCRATCH_OUTPUT_DIR, exist_ok=True)
 
-MAX_SEQ_LENGTH = 2048
-_TOKENIZER = None
-
-
 # ---------------------------------------------------------------------------
 # Distributed helpers
 # ---------------------------------------------------------------------------
@@ -76,28 +71,6 @@ def format_chat_example(llm_input: str, llm_output: str, tokenizer) -> str:
         ],
         tokenize=False,
         add_generation_prompt=False,
-    )
-
-
-def tokenize_batch(examples):
-    encoded = _TOKENIZER(
-        examples["text"],
-        truncation=True,
-        max_length=MAX_SEQ_LENGTH,
-        padding=False,
-    )
-    encoded["labels"] = [ids[:] for ids in encoded["input_ids"]]
-    return encoded
-
-
-def make_tokenized_cache_path(csv_path: str, model_name: str, split_name: str) -> str:
-    dataset_hash = hash_file(csv_path)[:12]
-    model_safe = re.sub(r"[^A-Za-z0-9._-]+", "_", model_name)
-    cache_dir = os.path.join(SCRATCH_OUTPUT_DIR, "tokenized_datasets")
-    os.makedirs(cache_dir, exist_ok=True)
-    return os.path.join(
-        cache_dir,
-        f"{model_safe}-{dataset_hash}-{split_name}-msl{MAX_SEQ_LENGTH}.arrow",
     )
 
 
@@ -328,33 +301,16 @@ def main(
         dataloader_pin_memory=True,
     )
 
-    # ------------------------------------------------------------------
-    # Pre-tokenize once and reuse cached Arrow shards across ranks/reruns
-    # ------------------------------------------------------------------
-    global _TOKENIZER
-    _TOKENIZER = tokenizer
+    train_dataset = Dataset.from_pandas(train_df, preserve_index=False)
 
-    formatted_dataset = Dataset.from_dict(
-        {
-            "text": [
+    def formatting_prompts_func(example):
+        if isinstance(example["llm_input"], list):
+            return [
                 format_chat_example(llm_input, llm_output, tokenizer)
-                for llm_input, llm_output in zip(train_df["llm_input"], train_df["llm_output"])
+                for llm_input, llm_output in zip(example["llm_input"], example["llm_output"])
             ]
-        }
-    )
-    train_cache_file = make_tokenized_cache_path(csv_path, model_name, "train")
 
-    with training_args.main_process_first(desc="tokenize train dataset"):
-        if is_main_process():
-            logging.info(f"Tokenizing train dataset (cache: {train_cache_file})")
-        dataset = formatted_dataset.map(
-            tokenize_batch,
-            batched=True,
-            remove_columns=["text"],
-            load_from_cache_file=True,
-            cache_file_name=train_cache_file,
-            desc="Tokenizing train dataset",
-        )
+        return format_chat_example(example["llm_input"], example["llm_output"], tokenizer)
 
     # ------------------------------------------------------------------
     # Log params to MLflow (before training starts)
@@ -379,7 +335,6 @@ def main(
             "train_samples": len(train_df),
             "val_samples": len(val_df),
             "val_split": val_split,
-            "max_seq_length": MAX_SEQ_LENGTH,
             "num_gpus": torch.cuda.device_count(),
             "gpu_type": torch.cuda.get_device_name(0) if torch.cuda.is_available() else "cpu",
             "container_sif": os.environ.get("SIF", "local"),
@@ -391,8 +346,9 @@ def main(
     # ------------------------------------------------------------------
     trainer = SFTTrainer(
         model=model,
-        train_dataset=dataset,
+        train_dataset=train_dataset,
         peft_config=peft_config,
+        formatting_func=formatting_prompts_func,
         args=training_args,
         processing_class=tokenizer,
         callbacks=[MLflowMetricsCallback()] if is_main_process() else [],
