@@ -55,8 +55,10 @@ SCRATCH_OUTPUT_DIR="/scratch/project_465002758/${USER}/agent-distillation/task1/
 
 # Default model list — override by setting EVAL_MODELS before sbatch
 EVAL_MODELS="${EVAL_MODELS:---models '${SCRATCH_OUTPUT_DIR}/Qwen_Qwen2.5-3B-Instruct-lora-final,Qwen2.5-3B-Instruct-lora,lora,32' --models 'Qwen/Qwen2.5-3B-Instruct,Qwen2.5-3B-Instruct-base,base,32'}"
+EVAL_MAX_NEW_TOKENS="${EVAL_MAX_NEW_TOKENS:-256}"
 
 echo "Evaluating: ${EVAL_MODELS}"
+echo "Max new tokens: ${EVAL_MAX_NEW_TOKENS}"
 echo "Container venv: ${CONTAINER_VENV:-<none>}"
 
 srun singularity run "$SIF" \
@@ -65,7 +67,7 @@ srun singularity run "$SIF" \
         [ -n \"${CONTAINER_VENV}\" ] && source \"${CONTAINER_VENV}/bin/activate\"
         [ -n \"${CONTAINER_PYTHON_OVERRIDES:-}\" ] && [ -d \"${CONTAINER_PYTHON_OVERRIDES}\" ] && export PYTHONPATH=\"${CONTAINER_PYTHON_OVERRIDES}\${PYTHONPATH:+:\${PYTHONPATH}}\"
         cd ${REPO_DIR}
-        python task1/scripts/05_model_evaluation.py ${EVAL_MODELS}
+        python task1/scripts/05_model_evaluation.py ${EVAL_MODELS} --max-new-tokens ${EVAL_MAX_NEW_TOKENS}
     "
 
 echo "Evaluation complete."

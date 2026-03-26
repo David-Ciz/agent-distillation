@@ -262,6 +262,7 @@ def evaluate_model(
     max_samples: int = -1,
     batch_size: int = 4,
     gen_batch_size: int = 8,
+    max_new_tokens: int = 256,
     compute_generation: bool = True,
     embedding_model: str = "Qwen/Qwen3-Embedding-0.6B"
 ) -> Dict:
@@ -277,6 +278,7 @@ def evaluate_model(
     logging.info(f"Model path: {model_path}")
     logging.info(f"Max samples: {max_samples if max_samples > 0 else 'all'}")
     logging.info(f"Generation batch size: {gen_batch_size}")
+    logging.info(f"Max new tokens: {max_new_tokens}")
     logging.info(f"{'='*80}")
     
     # Load model
@@ -302,6 +304,7 @@ def evaluate_model(
         "config": {
             "batch_size": batch_size,
             "gen_batch_size": gen_batch_size,
+            "max_new_tokens": max_new_tokens,
             "embedding_model": embedding_model,
         }
     }
@@ -324,6 +327,7 @@ def evaluate_model(
         logging.info(f"Generating student answers (batch_size={gen_batch_size})...")
         results = generate_answers_batched(
             model, tokenizer, dataset, device,
+            max_new_tokens=max_new_tokens,
             max_samples=max_samples,
             batch_size=gen_batch_size
         )
@@ -559,6 +563,13 @@ def parse_model_config(config_str: str) -> Dict:
     help="Default generation batch size (overridable per-model via the config string).",
 )
 @click.option(
+    "--max-new-tokens",
+    default=256,
+    show_default=True,
+    type=int,
+    help="Maximum number of new tokens to generate per sample.",
+)
+@click.option(
     "--embedding-model",
     default="Qwen/Qwen3-Embedding-0.6B",
     show_default=True,
@@ -582,6 +593,7 @@ def main(
     num_samples,
     batch_size,
     gen_batch_size,
+    max_new_tokens,
     embedding_model,
     loss_only,
     mlflow_experiment,
@@ -626,6 +638,7 @@ def main(
         logging.info(f"  - {cfg['name']}: {cfg['path']} (type={cfg['type']}, batch={cfg['gen_batch_size']})")
     logging.info(f"Eval dataset:  {eval_dataset}")
     logging.info(f"Num samples:   {max_samples if max_samples > 0 else 'all'}")
+    logging.info(f"Max new toks:  {max_new_tokens}")
     logging.info(f"Output dir:    {run_output_dir}")
 
     # ------------------------------------------------------------------
@@ -647,6 +660,7 @@ def main(
             "eval_dataset_sha256": eval_dataset_sha256,
             "num_eval_samples_requested": num_samples,
             "num_eval_samples_loaded": len(eval_df),
+            "max_new_tokens": max_new_tokens,
             "embedding_model": embedding_model,
             "loss_only": loss_only,
             "models": "; ".join(models),
@@ -674,6 +688,7 @@ def main(
                     "num_eval_samples": len(eval_df) if max_samples <= 0 else min(max_samples, len(eval_df)),
                     "embedding_model": embedding_model,
                     "gen_batch_size": cfg['gen_batch_size'],
+                    "max_new_tokens": max_new_tokens,
                     "batch_size": batch_size,
                 })
 
@@ -687,6 +702,7 @@ def main(
                         max_samples=max_samples,
                         batch_size=batch_size,
                         gen_batch_size=cfg['gen_batch_size'],
+                        max_new_tokens=max_new_tokens,
                         compute_generation=not loss_only,
                         embedding_model=embedding_model,
                     )
