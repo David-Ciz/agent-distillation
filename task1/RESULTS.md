@@ -24,9 +24,34 @@ New training + evaluation runs on LUMI using the MLflow-tracked pipeline. Models
 
 ---
 
-## Current Comparison (March 25, 2026)
+## Current Comparison
 
-Latest synced evaluation run: `task1/outputs/evaluations/eval_run_20260324_173233`.
+There are now two relevant synced evaluation checkpoints:
+
+- `task1/outputs/evaluations/eval_run_20260324_173233`: broad family comparison across current `Qwen2.5` and `Qwen3.5`
+- `task1/outputs/evaluations/eval_run_20260326_154836`: targeted rerun after restoring the legacy `SFTTrainer(formatting_func=...)` path and evaluating with a larger generation cap
+
+### Targeted Rerun (March 26, 2026)
+
+This rerun is the strongest current evidence for the training rollback.
+
+| Model | Prior Current Run | March 26 Rerun | Reading |
+|-------|-------------------|----------------|---------|
+| Qwen 2.5 0.5B LoRA | `0.436 / 0.207 / 0.315` | `0.453 / 0.292 / 0.368` | Better than the broken March 24 run, but still weak |
+| Qwen 2.5 3B LoRA | `0.828 / 0.664 / 0.814` | `0.819 / 0.662 / 0.807` | Essentially flat; good control result |
+| Qwen 3.5 4B LoRA | `0.491 / 0.199 / 0.413` | `0.886 / 0.673 / 0.857` | Major recovery; now the strongest current rerun |
+
+Values are `Abstain Agreement / Exact Match / Embed Sim Adj`.
+
+What this says:
+
+- **Qwen 3.5 4B LoRA recovered strongly** after the training rollback and corrected evaluation settings
+- **Qwen 2.5 3B LoRA stayed stable**, which makes it a useful control
+- **Qwen 2.5 0.5B LoRA improved, but is still not a strong candidate**
+
+### Broad Family Snapshot (March 24, 2026)
+
+Latest full-family synced evaluation run: `task1/outputs/evaluations/eval_run_20260324_173233`.
 
 This is the side-by-side table the current comparison needs:
 
@@ -41,22 +66,22 @@ Note: `Qwen3.5` does not match `Qwen2.5` sizes exactly, so the comparison is by 
 | Size Tier | Archived Qwen 2.5 LoRA | Current Qwen 2.5 LoRA | Current Qwen 3.5 LoRA | Reading |
 |-----------|--------------------------|------------------------|------------------------|---------|
 | 0.5B / 0.8B | Qwen 2.5 0.5B: `0.710 / 0.642 / 0.701` | Qwen 2.5 0.5B: `0.436 / 0.207 / 0.315` | Qwen 3.5 0.8B: `0.805 / 0.655 / 0.792` | Current `Qwen3.5` clearly wins; current `Qwen2.5-0.5B` is broken / unreliable |
-| 1.5B / 2B | Qwen 2.5 1.5B: `0.768 / 0.645 / 0.757` | Qwen 2.5 1.5B: `0.690 / 0.615 / 0.675` | Qwen 3.5 2B: `0.853 / 0.676 / 0.839` | Current `Qwen3.5-2B` is the best single current model |
-| 3B / 4B | Qwen 2.5 3B: `0.823 / 0.674 / 0.810` | Qwen 2.5 3B: `0.828 / 0.664 / 0.814` | Qwen 3.5 4B: `0.491 / 0.199 / 0.413` | `Qwen2.5-3B` is stable; current `Qwen3.5-4B` is still suspect |
+| 1.5B / 2B | Qwen 2.5 1.5B: `0.768 / 0.645 / 0.757` | Qwen 2.5 1.5B: `0.690 / 0.615 / 0.675` | Qwen 3.5 2B: `0.853 / 0.676 / 0.839` | In the March 24 full sweep, `Qwen3.5-2B` was the strongest clean result |
+| 3B / 4B | Qwen 2.5 3B: `0.823 / 0.674 / 0.810` | Qwen 2.5 3B: `0.828 / 0.664 / 0.814` | Qwen 3.5 4B: `0.491 / 0.199 / 0.413` | This row is outdated as a verdict; March 26 rerun recovered `Qwen3.5-4B` substantially |
 | 7B / 9B | Qwen 2.5 7B: `0.865 / 0.676 / 0.851` | Qwen 2.5 7B: `0.849 / 0.669 / 0.836` | Qwen 3.5 9B: `0.484 / 0.230 / 0.398` | `Qwen2.5-7B` remains strong; current `Qwen3.5-9B` is still suspect |
 
 ### What this says
 
-- **Best current single model**: Qwen 3.5 2B LoRA
+- **Best current rerun so far**: Qwen 3.5 4B LoRA
 - **Best current Qwen 2.5 model**: Qwen 2.5 7B LoRA
 - **Best archived Qwen 2.5 model**: Qwen 2.5 7B LoRA
-- **Most consistent family overall**: Qwen 2.5
+- **Most consistent family in the March 24 broad sweep**: Qwen 2.5
 
 So the answer to "is Qwen 2.5 still best?" is:
 
 - **Against the archived baselines, most current Qwen 2.5 reruns are still worse**
-- **As a family, Qwen 2.5 is still more consistent than Qwen 3.5**
-- **As the best single current model, Qwen 3.5 2B LoRA is now slightly ahead**
+- **In the last broad family sweep, Qwen 2.5 was still more consistent than Qwen 3.5**
+- **In the latest targeted rerun, Qwen 3.5 4B LoRA is the best current result**
 
 ---
 
