@@ -8,6 +8,7 @@ normalizes them into stable CSV/JSON artifacts for downstream aggregation.
 """
 
 import json
+import importlib.util
 import logging
 import os
 import re
@@ -171,6 +172,19 @@ def build_lm_eval_command(
         command.append("--confirm_run_unsafe_code")
 
     return command
+
+
+def ensure_lm_eval_available() -> None:
+    if importlib.util.find_spec("lm_eval") is not None:
+        return
+
+    raise RuntimeError(
+        "The active Python environment cannot import `lm_eval`. "
+        "For LUMI jobs, set `CONTAINER_VENV` to a venv created with "
+        "`python -m venv --system-site-packages` inside the container and install "
+        "`lm-evaluation-harness` there, or otherwise ensure `python -m lm_eval` "
+        f"works for `{sys.executable}` before submitting the collapse benchmark job."
+    )
 
 
 def find_results_json(output_dir: str) -> str:
@@ -386,6 +400,9 @@ def main(
             raise click.BadParameter(str(exc), param_hint="--models")
 
     resolved_tasks = resolve_tasks(tasks)
+    ensure_lm_eval_available()
+    if confirm_run_unsafe_code and any(task == "humaneval" for task in resolved_tasks):
+        os.environ.setdefault("HF_ALLOW_CODE_EVAL", "1")
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     run_name = f"collapse_benchmark_run_{timestamp}"
@@ -448,6 +465,8 @@ def main(
                 confirm_run_unsafe_code=confirm_run_unsafe_code,
             )
             logging.info("Command: %s", shlex.join(command))
+            if confirm_run_unsafe_code and any(task == "humaneval" for task in resolved_tasks):
+                logging.info("HF_ALLOW_CODE_EVAL=%s", os.environ.get("HF_ALLOW_CODE_EVAL", ""))
 
             try:
                 subprocess.run(command, check=True)
