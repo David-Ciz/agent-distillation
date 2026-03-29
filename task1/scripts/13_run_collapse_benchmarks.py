@@ -41,6 +41,18 @@ DEFAULT_TASKS: Tuple[str, ...] = (
     "truthfulqa_mc1",
 )
 
+SMOKE_TASKS: Tuple[str, ...] = (
+    "mmlu_world_religions",
+    "arc_challenge",
+    "gsm8k",
+)
+
+TASK_SUITES: Dict[str, Tuple[str, ...]] = {
+    "golden_five": DEFAULT_TASKS,
+    "full": DEFAULT_TASKS,
+    "smoke": SMOKE_TASKS,
+}
+
 TASK_DISPLAY_NAMES: Dict[str, str] = {
     "mmlu": "MMLU",
     "gsm8k": "GSM8K",
@@ -88,9 +100,17 @@ def parse_model_config(config_str: str) -> Dict[str, object]:
     }
 
 
-def resolve_tasks(tasks: Iterable[str]) -> List[str]:
+def resolve_tasks(tasks: Iterable[str], suite: str) -> List[str]:
     resolved = [task.strip() for task in tasks if task.strip()]
-    return resolved if resolved else list(DEFAULT_TASKS)
+    if resolved:
+        return resolved
+
+    suite_key = suite.strip().lower()
+    if suite_key not in TASK_SUITES:
+        raise ValueError(
+            f"Unknown benchmark suite '{suite}'. Valid options: {', '.join(sorted(TASK_SUITES))}"
+        )
+    return list(TASK_SUITES[suite_key])
 
 
 def resolve_base_model_for_lora(adapter_path: str) -> str:
@@ -327,6 +347,13 @@ def print_summary_table(summary_df: pd.DataFrame) -> None:
     help="Benchmark task to run. Repeat to override the default Golden Five suite.",
 )
 @click.option(
+    "--suite",
+    default="full",
+    show_default=True,
+    type=click.Choice(sorted(TASK_SUITES.keys()), case_sensitive=False),
+    help="Named benchmark suite to run when --task is not provided.",
+)
+@click.option(
     "--output-dir",
     default=COLLAPSE_OUTPUT_DIR,
     show_default=True,
@@ -379,6 +406,7 @@ def print_summary_table(summary_df: pd.DataFrame) -> None:
 def main(
     models: Tuple[str, ...],
     tasks: Tuple[str, ...],
+    suite: str,
     output_dir: str,
     batch_size: int,
     device: str,
@@ -399,7 +427,7 @@ def main(
         except ValueError as exc:
             raise click.BadParameter(str(exc), param_hint="--models")
 
-    resolved_tasks = resolve_tasks(tasks)
+    resolved_tasks = resolve_tasks(tasks, suite=suite)
     ensure_lm_eval_available()
     if confirm_run_unsafe_code and any(task == "humaneval" for task in resolved_tasks):
         os.environ.setdefault("HF_ALLOW_CODE_EVAL", "1")
@@ -425,7 +453,11 @@ def main(
     with mlflow.start_run(run_name=run_name):
         mlflow.log_params(
             {
-                "benchmark_suite": "golden_five" if tuple(resolved_tasks) == DEFAULT_TASKS else "custom",
+                "benchmark_suite": (
+                    suite.lower()
+                    if not tasks
+                    else ("golden_five" if tuple(resolved_tasks) == DEFAULT_TASKS else "custom")
+                ),
                 "tasks": ",".join(resolved_tasks),
                 "num_models": len(model_configs),
                 "device": device,

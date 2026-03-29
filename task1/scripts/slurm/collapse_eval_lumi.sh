@@ -42,9 +42,11 @@ fi
 
 SCRATCH_OUTPUT_DIR="/scratch/project_465002758/${USER}/agent-distillation/task1/outputs"
 COLLAPSE_EVAL_MODELS="${COLLAPSE_EVAL_MODELS:---models '${SCRATCH_OUTPUT_DIR}/Qwen_Qwen2.5-3B-Instruct-lora-final,Qwen2.5-3B-Instruct-lora,lora,4'}"
+COLLAPSE_EVAL_SUITE="${COLLAPSE_EVAL_SUITE:-full}"
 COLLAPSE_EVAL_EXTRA_ARGS="${COLLAPSE_EVAL_EXTRA_ARGS:-}"
 
 echo "Benchmarking models: ${COLLAPSE_EVAL_MODELS}"
+echo "Benchmark suite:  ${COLLAPSE_EVAL_SUITE}"
 if [[ -n "${COLLAPSE_EVAL_EXTRA_ARGS}" ]]; then
     echo "Extra args:          ${COLLAPSE_EVAL_EXTRA_ARGS}"
 fi
@@ -56,7 +58,7 @@ srun singularity run "$SIF" \
         [ -n \"${CONTAINER_VENV}\" ] && source \"${CONTAINER_VENV}/bin/activate\"
         [ -n \"${CONTAINER_PYTHON_OVERRIDES:-}\" ] && [ -d \"${CONTAINER_PYTHON_OVERRIDES}\" ] && export PYTHONPATH=\"${CONTAINER_PYTHON_OVERRIDES}\${PYTHONPATH:+:\${PYTHONPATH}}\"
         cd ${REPO_DIR}
-        python task1/scripts/13_run_collapse_benchmarks.py ${COLLAPSE_EVAL_MODELS} ${COLLAPSE_EVAL_EXTRA_ARGS}
+        python task1/scripts/13_run_collapse_benchmarks.py --suite ${COLLAPSE_EVAL_SUITE} ${COLLAPSE_EVAL_MODELS} ${COLLAPSE_EVAL_EXTRA_ARGS}
         python task1/scripts/14_aggregate_collapse_benchmarks.py
     "
 
