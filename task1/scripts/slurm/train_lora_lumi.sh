@@ -47,7 +47,7 @@ mkdir -p "${SCRATCH_OUTPUT_DIR}"
 echo "Job: $SLURM_JOB_ID  Node: $(hostname)  GPUs: 8"
 echo "MLflow tracking URI: $MLFLOW_TRACKING_URI"
 echo "Model output dir:    $SCRATCH_OUTPUT_DIR"
-if [[ -n "${CONTAINER_PYTHON_OVERRIDES:-}" && -d "${CONTAINER_PYTHON_OVERRIDES}" ]]; then
+if [[ -n "${CONTAINER_PYTHON_OVERRIDES:-}" ]]; then
     echo "Python overrides:    $CONTAINER_PYTHON_OVERRIDES"
 fi
 
@@ -86,7 +86,7 @@ srun singularity run "$SIF" \
     bash -c "
         ulimit -c 0
         [ -n \"${CONTAINER_VENV}\" ] && source \"${CONTAINER_VENV}/bin/activate\"
-        [ -n \"${CONTAINER_PYTHON_OVERRIDES:-}\" ] && [ -d \"${CONTAINER_PYTHON_OVERRIDES}\" ] && export PYTHONPATH=\"${CONTAINER_PYTHON_OVERRIDES}\${PYTHONPATH:+:\${PYTHONPATH}}\"
+        [ -n \"${CONTAINER_PYTHON_OVERRIDES:-}\" ] && export PYTHONPATH=\"${CONTAINER_PYTHON_OVERRIDES}\${PYTHONPATH:+:\${PYTHONPATH}}\"
         python -m torch.distributed.run \
             --nproc_per_node=8 \
             --standalone \

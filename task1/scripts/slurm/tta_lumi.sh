@@ -48,7 +48,7 @@ echo "Job: $SLURM_JOB_ID  Node: $(hostname)  GPUs: 1"
 export MLFLOW_TRACKING_URI="sqlite:////users/${USER}/mlflow/mlflow.db"
 export MLFLOW_ARTIFACT_ROOT="/scratch/project_465002758/${USER}/mlruns"
 echo "MLflow tracking URI: $MLFLOW_TRACKING_URI"
-if [[ -n "${CONTAINER_PYTHON_OVERRIDES:-}" && -d "${CONTAINER_PYTHON_OVERRIDES}" ]]; then
+if [[ -n "${CONTAINER_PYTHON_OVERRIDES:-}" ]]; then
     echo "Python overrides:    $CONTAINER_PYTHON_OVERRIDES"
 fi
 
@@ -77,7 +77,7 @@ srun singularity run "$SIF" \
     bash -c "
         ulimit -c 0
         [ -n \"${CONTAINER_VENV}\" ] && source \"${CONTAINER_VENV}/bin/activate\"
-        [ -n \"${CONTAINER_PYTHON_OVERRIDES:-}\" ] && [ -d \"${CONTAINER_PYTHON_OVERRIDES}\" ] && export PYTHONPATH=\"${CONTAINER_PYTHON_OVERRIDES}\${PYTHONPATH:+:\${PYTHONPATH}}\"
+        [ -n \"${CONTAINER_PYTHON_OVERRIDES:-}\" ] && export PYTHONPATH=\"${CONTAINER_PYTHON_OVERRIDES}\${PYTHONPATH:+:\${PYTHONPATH}}\"
         cd ${REPO_DIR}
         python task1/scripts/07_tta_experiment.py \
             ${TTA_MODELS} \
